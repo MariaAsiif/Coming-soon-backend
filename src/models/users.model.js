@@ -14,6 +14,9 @@
      full_name: {
          type: String
      },
+     userName: {
+        type: String
+     },
      email: {
          type: String,
          unique: true,
@@ -23,6 +26,9 @@
      },
      password: {
          type: String
+     },
+     ipAddress:{
+        type: String
      },
      phoneNumber: {
         type: String
@@ -60,10 +66,6 @@
      is_verified: {
          type: Boolean,
          default: false,
-     },
-     hourlyrate: {
-         type: Number,
-         default: 0
      },
      
      //GeoJSON: coordinates data must be in longitude then latitude order as supported by GeoJSON

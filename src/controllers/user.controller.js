@@ -69,8 +69,11 @@ var getprofilefromid = (req, res) => {
 
 var signup = async (req, res) => {
     console.log("signup is called");
+    let ipAddress = req.connection.remoteAddress
+    console.log('ip ' + ipAddress)
     try {
         var userData = req.body;
+        userData.ipAddress = ipAddress
         console.log(userData);
         if (userData._id) {
             // mongoose userData._id
@@ -136,7 +139,7 @@ var signup = async (req, res) => {
                 
 
                 
-                   /* res.mailer.send('emails/verification-code.html', {
+                    res.mailer.send('emails/verification-code.html', {
                         verification_code: userData.verification_code,
                         title: project.title,
                         to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
@@ -145,7 +148,7 @@ var signup = async (req, res) => {
                         if (err) {
                             return console.error("Email could not sent: ", err)
                         }
-                    });*/
+                    });
                
 
                 

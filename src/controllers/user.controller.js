@@ -26,6 +26,7 @@ logger = require("../helpers/logger");
 responseHelper = require("../helpers/response.helper");
 
 const { lookup } = require('geoip-lite')
+const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN)
 
 
 var AS = async (req, res) => {
@@ -80,7 +81,7 @@ var signup = async (req, res) => {
         if(locationData != null)
         {userData.country = locationData.country}
 
-        console.log(userData);
+        //console.log(userData);
         if (userData._id) {
             // mongoose userData._id
             let exists = await userHelper.isUserIdExists(userData._id);
@@ -155,13 +156,15 @@ var signup = async (req, res) => {
                             return console.error("Email could not sent: ", err)
                         }
                     });
+
+                    sendSMS(req)
                
 
                 
                 userandtoken = await userHelper.updateUser(userData)
             }
         }
-        var message = 'Successfully Loaded User';
+        var message = 'Successfully Signed Up User';
         var responseData = userandtoken.user._doc;
         responseData.new_user = new_user;
         responseHelper.success(res, responseData, message, userandtoken.token);
@@ -172,6 +175,88 @@ var signup = async (req, res) => {
     }
 
 };
+
+function sendSMS(req){
+    console.log('sendSMS Called')
+    var userData = req.body
+    if (userData.phoneNumber) {
+        client
+        .verify
+        .services(process.env.SERVICE_ID)
+        .verifications
+        .create({
+            to: `+${userData.phoneNumber}`,
+            channel: userData.channel==='call' ? 'call' : 'sms' 
+        })
+        .then(data => {
+            //console.log('sms sent')
+            //console.log(data)
+            /* res.status(200).send({
+                message: "Verification is sent!!",
+                phonenumber: userData.phonenumber,
+                data
+            }) */
+
+            return {
+                message: "Verification is sent!!",
+                phoneNumber: userData.phoneNumber,
+                data
+            }
+        }) 
+     } else {
+        /* res.status(400).send({
+            message: "Wrong phone number :(",
+            phonenumber: userData.phonenumber,
+            data
+        }) */
+        console.log("error")
+        return {
+            message: "Wrong phone number :(",
+            phoneNumber: userData.phoneNumber,
+            data
+        }
+     }
+} //end sendSMS
+
+var verifyPhoneNumber = async (req, res) => {
+    try {
+        let userData = req.body
+        if (userData.phoneNumber && (userData.code).length === 6) {
+            client
+                .verify
+                .services(process.env.SERVICE_ID)
+                .verificationChecks
+                .create({
+                    to: `+${userData.phoneNumber}`,
+                    code: userData.code
+                })
+                .then(data => {
+                    if (data.status === "approved") {
+
+                        var message = "User is Verified!!";
+                    responseHelper.success(res, data, message)
+                    }
+                })
+        } else {
+            /* res.status(400).send({
+                message: "Wrong phone number or code :(",
+                phonenumber: userData.phonenumber,
+                data
+            }) */
+
+            var err = {
+                message: "Wrong phone number or code :(",
+                phoneNumber: userData.phoneNumber,
+                data
+            }
+
+            responseHelper.requestfailure(res, err)
+        }
+    } catch(err) {
+        
+        responseHelper.requestfailure(res, err);
+  }
+} //end function
 
 var signin = async (req, res) => {
     console.log("signin is called");
@@ -860,6 +945,7 @@ module.exports = {
       logout,
       signup,
       signin,
+      verifyPhoneNumber,
       updateprofile,
       getprofilefromid,
       reportUser,

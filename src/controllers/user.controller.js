@@ -25,6 +25,8 @@ logger = require("../helpers/logger");
 //userHelper = require("../helpers/user.helper");
 responseHelper = require("../helpers/response.helper");
 
+const { lookup } = require('geoip-lite')
+
 
 var AS = async (req, res) => {
   console.log("AS is called");
@@ -69,11 +71,15 @@ var getprofilefromid = (req, res) => {
 
 var signup = async (req, res) => {
     console.log("signup is called");
-    let ipAddress = req.connection.remoteAddress
-    console.log('ip ' + ipAddress)
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    const locationData = lookup(ip)
+    console.log(locationData)
     try {
         var userData = req.body;
-        userData.ipAddress = ipAddress
+        userData.ipAddress = ip
+        if(locationData != null)
+        {userData.country = locationData.country}
+
         console.log(userData);
         if (userData._id) {
             // mongoose userData._id
@@ -184,6 +190,10 @@ var signin = async (req, res) => {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
             if (exists) {
+                if(!exists.is_verified) {
+                    return responseHelper.requestfailure(res, 'Please verify your email address')
+                }
+
                 if (!userData.password) {
                     return responseHelper.requestfailure(res, 'Please provide password to signin');
                 }
@@ -203,7 +213,7 @@ var signin = async (req, res) => {
             }
         }
         var message = 'Successfully Singed In';
-        var responseData = userandtoken.user._doc;
+        var responseData = _.omit(userandtoken.user._doc, ['password']) //userandtoken.user._doc;
         responseData.new_user = new_user;
         return responseHelper.success(res, responseData, message, userandtoken.token);
     }
@@ -348,7 +358,7 @@ var updateprofilepic = async (req, res) => {
     var imgnamenew;
     var storage = multer.diskStorage({
         destination: function (req, file, cb) {
-          cb(null, './public/uploads/profile_pics')
+          cb(null, './public/uploads/dp')
         },
         filename: function (req, file, cb) {
             imgnamenew = Date.now() + '-' +file.originalname;
@@ -368,7 +378,7 @@ var updateprofilepic = async (req, res) => {
             return res.status(500).json(err)
         }
        
-        var user = {profile_picture_url : '/uploads/profile_pics/' + imgnamenew};
+        var user = {profile_picture_url : '/uploads/dp/' + imgnamenew};
 
         try {
             
@@ -455,19 +465,19 @@ var forgotPassword = async (req, res) => {
     var userData = req.body;
     userData.email = userData.email.toLowerCase();
     try {
-        let devicetype = req.device.type.toUpperCase()
+        //let devicetype = req.device.type.toUpperCase()
         
         let exists = await userHelper.isUserEmailExists(userData.email);
-        console.log(exists)
+        
         if (!exists) {
             let err = "Email doesn't exists";
             return responseHelper.requestfailure(res, err);
         }
 
-        if(exists && exists.role != "admin" && devicetype == "DESKTOP"){
+        /* if(exists && exists.role != "admin" && devicetype == "DESKTOP"){
             let err = "Only Admin can change password";
             return responseHelper.requestfailure(res, err);
-        }
+        } */
         let randomize = require('randomatic');
         exists.verification_code = randomize('0', 4, {});
         await exists.save();
@@ -502,7 +512,7 @@ var verifyCode = async (req, res) => {
         }
         userandtoken = await userHelper.updateUser({_id: exists._id, is_verified: true});
         var message = "Code verified successfully";
-        var responseData = userandtoken.user._doc;
+        var responseData = _.omit(userandtoken.user._doc, ['password']);
         responseData.new_user = false;
         return responseHelper.success(res, responseData, message, userandtoken.token);
     }

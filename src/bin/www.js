@@ -41,8 +41,8 @@ base_url = '';
 clientURL = '';
 
 project = {
-    title: 'Placement APP',
-    description: 'Placement App Server'
+    title: 'Coming Soon',
+    description: 'Coming Soon Server'
 };
 
 mailer.extend(app, {

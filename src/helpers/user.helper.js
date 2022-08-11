@@ -123,7 +123,8 @@ module.exports = {
           email: 1,
           password: 1,
           active: 1,
-          role: 1
+          role: 1,
+          is_verified: 1
         })
         .then((user)=>{
             if (user) {
@@ -163,7 +164,7 @@ module.exports = {
         .then((userfound) =>{
                 user = _.omit(user, ['role', 'password', 'email', '_id', 'platform']);
                 return User.findOneAndUpdate({_id: userfound._id}, mongoDotNotation.flatten(JSON.parse(JSON.stringify(user))), {new: true})
-                .populate('clientgroup')
+                
                 //.populate('currentCourseClassEnrolled')
                 .then(async (updateduser) =>{
                         if(user.fcm_tokens) {
@@ -174,7 +175,8 @@ module.exports = {
                         var token = module.exports.getToken(updateduser);
                         module.exports.manipulateUserToNullArraysForAndroid(updateduser);
                         var obj = {};
-                        obj.user = updateduser;
+                        obj.user =  updateduser;
+                        
                         obj.token = token;
                         return obj;
                 })        

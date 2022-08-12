@@ -11,9 +11,24 @@
      _id: {
        type: String
      },
-     full_name: {
-         type: String
+     first_name: {
+         type: String,
+         required: true,
+         uppercase: true
      },
+     first_family_name: {
+        type: String,
+        uppercase: true,
+        required: true
+    },
+    second_family_name: {
+        type: String,
+        uppercase: true
+    },
+    third_family_name: {
+        type: String,
+        uppercase: true
+    },
      userName: {
         type: String
      },
@@ -31,7 +46,8 @@
         type: String
      },
      phoneNumber: {
-        type: String
+        type: String,
+        required: true
     },
      active: {
          type: Boolean,

@@ -162,7 +162,7 @@ module.exports = {
         console.log("updateUser HelperFunction is called");
         return User.findOne({_id: user._id})
         .then((userfound) =>{
-                user = _.omit(user, ['role', 'password', 'email', '_id', 'platform']);
+                user = _.omit(user, ['first_name', 'first_family_name', 'second_family_name', 'third_family_name', 'role', 'password', 'email', '_id', 'platform']);
                 return User.findOneAndUpdate({_id: userfound._id}, mongoDotNotation.flatten(JSON.parse(JSON.stringify(user))), {new: true})
                 
                 //.populate('currentCourseClassEnrolled')

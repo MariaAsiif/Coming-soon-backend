@@ -226,7 +226,7 @@ module.exports = {
                 e: user.email,
                 d: user._id,
                 p: user.profile_picture_url,
-                r: user.role === 'dispatcher' ? '_dp' : (user.role === 'driver' ? '_d': '_a'),
+                r: user.role === 'subscriber' ? '_ss' : (user.role === 'subscriber' ? '_ss': '_a'),
                 }, process.env.JWT_SECRETE);
         return token;
     },

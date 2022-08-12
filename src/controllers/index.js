@@ -4,4 +4,6 @@
  
 module.exports = {
   user: require("./user.controller"),  
+  jobCategories: require('./categories.controller'),
+
 };

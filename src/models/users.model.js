@@ -11,6 +11,9 @@
      _id: {
        type: String
      },
+     title: {
+        type: String
+     },
      first_name: {
          type: String,
          required: true,
@@ -75,6 +78,29 @@
          type: String,
          default: ''
      },
+     state: {
+        type: String,
+        default: ''
+    },
+    city: {
+        type: String,
+        default: ''
+    },
+    currentIndustry: {
+        type: String
+    },
+    positionofInterest: {
+        type: String
+    },
+    age: {
+        type: String
+    },
+    dob: {
+        type: Date
+    },
+    filepath: {
+        type: String
+    },
      verification_code: {
          type: String,
          default: '',

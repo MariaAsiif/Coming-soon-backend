@@ -4,7 +4,25 @@ var Schema = mongoose.Schema;
 
 mongoose.set('debug', true);
 
-
+physicalLocationSchema = new Schema({
+    
+    country: {
+        type: String
+    },
+    state: {
+        type: String
+    },
+    province: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    
+},
+{
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+});
 
 jobsSchema = new Schema({
 
@@ -22,7 +40,15 @@ jobsSchema = new Schema({
         type: String,
         default: '/uploads/dp/default.png'
     },
+    jobCategory: {
+        type: String,
+        ref: "categories"
+    },
     jobtype: {
+        type: String,
+        enum: ["full time", "part time", "internship"]
+    },
+    jobclass: {
         type: String,
         enum: ["onsite", "remote", "hybrid"]
     },
@@ -46,9 +72,7 @@ jobsSchema = new Schema({
         type: Boolean,
         default: false
     },
-    physicalLocation: {
-        type: String
-    },
+    physicalLocation: physicalLocationSchema,
     //GeoJSON: coordinates data must be in longitude then latitude order as supported by GeoJSON
     location: {
         type: {

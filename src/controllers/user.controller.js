@@ -74,7 +74,7 @@ var signup = async (req, res) => {
     console.log("signup is called");
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     const locationData = lookup(ip)
-    console.log(locationData)
+    //console.log(locationData)
     try {
         var userData = req.body;
         userData.ipAddress = ip
@@ -269,11 +269,15 @@ var signin = async (req, res) => {
                 userandtoken = await userHelper.updateUser(userData)
             } else {
                 let err = "User doesn't exists";
-                responseHelper.requestfailure(res, err);
+                responseHelper.requestfailure(res, err)
             }
         } else {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
+            if(exists.role == "subscriber"){
+                let err = "User not allowed to signin";
+                responseHelper.requestfailure(res, err);
+            }
             if (exists) {
                 if(!exists.is_verified) {
                     return responseHelper.requestfailure(res, 'Please verify your email address')

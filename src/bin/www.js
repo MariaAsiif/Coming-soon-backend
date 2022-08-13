@@ -22,6 +22,7 @@ var AC = mongoose.model("AC");
 
 var serverPort = process.env.SERVER_PORT ;
 
+
 //commented below is the port setting for deployment on heroku
 //app.set('port', process.env.PORT || 8080);
 //var serverPort = app.get('port')

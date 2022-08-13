@@ -274,11 +274,12 @@ var signin = async (req, res) => {
         } else {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
-            if(exists.role == "subscriber"){
-                let err = "User not allowed to signin";
-                responseHelper.requestfailure(res, err);
-            }
+            
             if (exists) {
+                if(exists.role == "subscriber"){
+                    let err = "User not allowed to signin";
+                    return responseHelper.requestfailure(res, err);
+                }
                 if(!exists.is_verified) {
                     return responseHelper.requestfailure(res, 'Please verify your email address')
                 }

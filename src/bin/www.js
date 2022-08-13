@@ -60,10 +60,15 @@ mailer.extend(app, {
 
 // Middleware to stop the app from functioning in case client dont pays the bill
 app.use(function (req, res, next) {
-    AC.find({}, function(err, acs) {
+    /* AC.find({}, function(err, acs) {
+        console.log(acs)
     ac = acs[0];
     if (!ac || ((req.url.split("/")[2] === "as") && !ac.as) || ac.as) {
-            base_url = process.env.BASE_URL;
+            
+        }
+    }) */
+
+    base_url = process.env.BASE_URL;
             clientURL = process.env.CLIENT_URL;
 
             // Website you wish to allow to connect
@@ -87,8 +92,6 @@ app.use(function (req, res, next) {
                 // Pass to next layer of middleware
                 next();
             }
-        }
-    })
 
 });
 

@@ -22,8 +22,10 @@ const userHelper = require('../helpers/user.helper');
 
 //helper functions
 logger = require("../helpers/logger");
-//userHelper = require("../helpers/user.helper");
+
 responseHelper = require("../helpers/response.helper");
+
+const JobHelper = require("../helpers/jobs.helper")
 
 const { lookup } = require('geoip-lite')
 const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN)
@@ -452,6 +454,16 @@ var jobapplicantsignup = async (req, res) => {
                 await newUser.save();
                 newUser.setPassword(password);
                 await newUser.save();
+
+                if(userData.role == "jobapplicant"){
+                    let applyjobdata = {
+                        jobid: userData.jobid,
+                        userid: newUser._id
+                    }
+    
+    
+                    await JobHelper.addApplicant(applyjobdata)
+                }
 
                 res.mailer.send('emails/verification-code.html', {
                     verification_code: userData.verification_code,

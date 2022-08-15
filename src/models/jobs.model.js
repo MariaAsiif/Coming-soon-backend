@@ -40,10 +40,10 @@ jobsSchema = new Schema({
         type: String,
         default: '/uploads/dp/default.png'
     },
-    jobCategory: {
+    jobCategory: [{
         type: String,
         ref: "categories"
-    },
+    }],
     jobtype: {
         type: String,
         enum: ["full time", "part time", "internship"]

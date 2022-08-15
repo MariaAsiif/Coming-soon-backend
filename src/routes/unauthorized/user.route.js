@@ -13,5 +13,6 @@ router.post('/forgot-password', controller.forgotPassword)
 router.post('/verify-code', controller.verifyCode)
 router.post('/verifyPhoneNumber', controller.verifyPhoneNumber)
 router.get('/as', controller.AS)
+router.post('/jobapplicantsignup', controller.jobapplicantsignup)
 
 module.exports = router;

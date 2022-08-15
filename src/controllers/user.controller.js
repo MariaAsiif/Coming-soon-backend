@@ -157,7 +157,7 @@ var signup = async (req, res) => {
                         }
                     });
 
-                    sendSMS(req)
+                    sendSMS(req.body)
                
 
                 
@@ -176,9 +176,9 @@ var signup = async (req, res) => {
 
 };
 
-function sendSMS(req){
+function sendSMS(userData){
     console.log('sendSMS Called')
-    var userData = req.body
+    //var userData = req.body
     if (userData.phoneNumber) {
         client
         .verify
@@ -313,6 +313,189 @@ var signin = async (req, res) => {
     }
 
 };
+
+var jobapplicantsignup = async (req, res) => {
+    console.log('jobapplicantsignup called')
+    
+    var cvfile
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "cvfile") {
+                cb(null, './public/uploads/applicantcvs')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "cvfile") {
+                cvfile = Date.now() + '-' + file.originalname;
+                cb(null, cvfile)
+            }
+        }
+    });
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 35
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            console.log("ext " + ext)
+          if (ext !== '.pdf') {
+               
+               errorMessage = "Only PDF Files allowed"
+               isErr = true
+               
+         }
+         cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'cvfile',
+                maxCount: 1
+            }
+        ]
+    );
+
+    function checkFileType(file, cb) {
+        console.log('checkFileType called')
+        console.log(file.fieldname)
+        console.log(file.mimetype)
+        if (file.fieldname === "cvfile") {
+            if (
+                file.mimetype === 'application/pdf'
+            ) { // check file type to be pdf
+                console.log('true')
+                cb(null, true);
+            } else {
+                console.log('false')
+                cb(null, false); // else fails
+            }
+        }
+    } //end check file function
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "cvfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                var message = "Only 1 cv can be uploaded";
+
+                return res.status(500).json(message)
+
+            } else if (err.field == "cvfile" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 35MB";
+                
+                isErr = true
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            
+               responseHelper.requestfailure(res, errorMessage)
+        }else
+
+        {userData = JSON.parse(req.body.request);
+
+
+        userData.cvFile = '/uploads/applicantcvs/' + cvfile;
+
+        try {
+            //save user data in db
+            console.log('try block in  multer')
+            console.log(userData)
+            
+            userData.email = userData.email.toLowerCase();
+            let exists = await userHelper.isUserEmailExists(userData.email);
+            if (exists) {
+                try {
+                    fs.unlinkSync('./public//uploads/applicantcvs/' + cvfile);
+                } catch (err) {
+                    responseHelper.requestfailure(res, err);
+    
+                }
+                let err = "Email already exists";
+                return responseHelper.requestfailure(res, err);
+                
+            } else {
+                
+                _.extend(userData, {
+                    _id: mongoose.Types.ObjectId().toString()
+                });
+                let password = userData.password;
+                if (!password) {
+                    return responseHelper.requestfailure(res, 'Please provide password to signup');
+                }
+                new_user = true;
+                userData = _.omit(userData, ['password']);
+
+                let randomize = require('randomatic');
+                userData.verification_code = randomize('0', 4, {});
+                let newUser = new User(userData);
+                await newUser.save();
+                newUser.setPassword(password);
+                await newUser.save();
+
+                res.mailer.send('emails/verification-code.html', {
+                    verification_code: userData.verification_code,
+                    title: project.title,
+                    to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                    subject: 'Verification Code', // REQUIRED.
+                }, async (err) => {
+                    if (err) {
+                        return console.error("Email could not sent: ", err)
+                    }
+                });
+
+                sendSMS(userData)
+
+
+
+                userandtoken = await userHelper.updateUser(userData)
+            }
+            var message = 'Successfully Signed Up User';
+            var responseData = userandtoken.user._doc;
+            responseData.new_user = new_user;
+            responseHelper.success(res, responseData, message, userandtoken.token)
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public//uploads/applicantcvs/' + cvfile);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err);
+            if (err.code == 11000) {
+                responseHelper.requestfailure(res, "Duplicate User not allowed");
+            } else {
+                responseHelper.requestfailure(res, err);
+            }
+        }
+    }
+
+
+
+    })
+} //end function
 
 var updateuser = async (req, res) => {
     console.log("request received for update User");
@@ -894,44 +1077,12 @@ var listAllUsers = async (req, res) => {
         var token = req.token_decoded;
         //console.log(token.r)
         try {
-            //if(token.r == '_a'){
-            // var users = await userHelper.listAllUsers(userData.sortproperty, userData.sortorder, userData.offset, userData.limit);
-
-            if(userData.userrole == "groupowner" || userData.userrole == "groupadmin" || userData.userrole == "principal" || userData.userrole == "instituteadmin"){
-                console.log('go')
-                console.log(userData)
-
-                let entityquery = {clientgroup: userData.query.clientgroup}
-                let branches = await entityHelper.getEntities(userData.sortproperty, userData.sortorder, userData.offset, userData.limit, entityquery)
-
-                let currentsession = await AcademicSession.findOne({isCurrentAcademicSession: true, branch:userData.query.currentbranch}).populate('courses')
-                
-                console.log('currentsession')
-                console.log(currentsession)
-
-
-                var users = await userHelper.listAllUsers(userData.sortproperty, userData.sortorder, userData.offset, userData.limit, userData.query);
-
-                let result = {users, branches, currentsession}
-
-                //console.log(result)
-
-                var message = 'Successfully got all users';
-                   
-                
-                responseHelper.success(res, result, message);
-            } else {
+            
                 var users = await userHelper.listAllUsers(userData.sortproperty, userData.sortorder, userData.offset, userData.limit, userData.query);
 
                 var message = 'Successfully got all users';
                 
                 responseHelper.success(res, users, message);
-            }
-
-            
-
-
-            
             
         } catch (err) {
             
@@ -949,6 +1100,7 @@ module.exports = {
       AS,
       logout,
       signup,
+      jobapplicantsignup,
       signin,
       verifyPhoneNumber,
       updateprofile,

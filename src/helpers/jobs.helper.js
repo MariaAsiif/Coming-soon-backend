@@ -43,7 +43,8 @@ module.exports = {
         console.log("getAllJobs HelperFunction is called");
 
         
-        const jobs = await Job.find()        
+        const jobs = await Job.find()  
+        .populate('jobCategory')      
         .populate('applicants')
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
@@ -64,7 +65,8 @@ module.exports = {
         console.log("getAllJobsForPublicView HelperFunction is called");
 
         var where = {jobstatus: "active"}
-        const jobs = await Job.find(where)        
+        const jobs = await Job.find(where) 
+        .populate('jobCategory')            
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);

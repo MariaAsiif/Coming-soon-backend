@@ -107,7 +107,57 @@ var applyForJob = async (req, res) => {
       responseHelper.requestfailure(res, err);
     }
     
+  };
+
+  var addApprovedApplicants = async (req, res) => {
+    console.log("request received for addApprovedApplicants");
+    
+    try {
+      var userData = req.body;
+      var result = await jobsHelper.addApprovedApplicant(userData)
+      var message = "Applicant approved for the job successfully";
+        return responseHelper.success(res, result, message);
+
+    }catch(err) {
+      logger.error(err);
+      responseHelper.requestfailure(res, err);
+    }
+    
+  };
+
+  var addSelectedApplicant = async (req, res) => {
+    console.log("request received for addSelectedApplicant");
+    
+    try {
+      var userData = req.body;
+      var result = await jobsHelper.addSelectedApplicant(userData)
+      var message = "Approved Selected successfully";
+        return responseHelper.success(res, result, message);
+
+    }catch(err) {
+      logger.error(err);
+      responseHelper.requestfailure(res, err);
+    }
+    
     //res.send(result);
+  };
+
+  
+
+  var getApprovedApplicants = async (req, res) => {
+    console.log("request received for getApprovedApplicants");
+    
+    try {
+      var userData = req.body;
+      var result = await jobsHelper.getApprovedApplicants(userData)
+      var message = "Approved applicants fetched successfully";
+        return responseHelper.success(res, result, message);
+
+    }catch(err) {
+      logger.error(err);
+      responseHelper.requestfailure(res, err);
+    }
+    
   };
 
 
@@ -158,7 +208,10 @@ module.exports = {
     createjob,
     updatejob,
     listjobs,
-    applyForJob,    
+    applyForJob,
+    addApprovedApplicants,
+    getApprovedApplicants,
+    addSelectedApplicant,
     changejobstatus,
     listjobsforpublicview
     

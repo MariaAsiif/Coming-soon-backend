@@ -35,6 +35,51 @@ module.exports = {
         return job;
         
     },
+
+    addApprovedApplicant: async (data) => {
+        console.log("addApprovedApplicant HelperFunction is called");
+        var where = {_id: data.jobid};
+        const job = await Job.findOne(where)
+
+        job.approvedApplicants.push(data.userid);
+        
+        await job.save()
+        return job;
+        
+    },
+    addInterviews: async (data) => {
+        console.log("addInterviews HelperFunction is called");
+        var where = {_id: data.jobid};
+        const job = await Job.findOne(where)
+
+        job.interviews.push(data.interviewid);
+        
+        await job.save()
+        return job;
+        
+    },
+    addSelectedApplicant: async (data) => {
+        console.log("addSelectedApplicant HelperFunction is called");
+        var where = {_id: data.jobid};
+        const job = await Job.findOne(where)
+
+        job.selectedApplicant = data.userid
+        
+        await job.save()
+        return job;
+        
+    },
+
+    getApprovedApplicants: async (data) => {
+        console.log("addApplicant HelperFunction is called");
+        var where = {_id: data.jobid};
+        const job = await Job.findOne(where)
+        .populate('approvedApplicants', '_id email first_name phoneNumber')
+
+        
+        return job;
+        
+    },
     
     
     

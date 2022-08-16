@@ -67,6 +67,18 @@ jobsSchema = new Schema({
         type: String,
         ref: "users"
     }],
+    approvedApplicants: [{
+        type: String,
+        ref: "users"
+    }],
+    interviews: [{
+        type: String,
+        ref: "interviews"
+    }],
+    selectedApplicant: {
+        type: String,
+        ref: "users"
+    },
 
     jobawarded: {
         type: Boolean,

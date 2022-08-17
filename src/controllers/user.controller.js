@@ -75,8 +75,9 @@ var getprofilefromid = (req, res) => {
 var signup = async (req, res) => {
     console.log("signup is called");
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    console.log('ip '+ip)
     const locationData = lookup(ip)
-    //console.log(locationData)
+    console.log(locationData)
     try {
         var userData = req.body;
         userData.ipAddress = ip

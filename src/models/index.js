@@ -4,5 +4,6 @@ module.exports = {
   ac: require("./ac.model"), 
   jobCategories: require("./categories.model"),
   jobs: require("./jobs.model"),
-  interviews: require("./interviewschedule.model")
+  interviews: require("./interviewschedule.model"),
+  zoommeetings: require("./zoommeeting.model")
 };

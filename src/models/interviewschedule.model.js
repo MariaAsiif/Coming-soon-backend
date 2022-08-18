@@ -31,8 +31,9 @@ const interviewScheduleSchema = new Schema({
     type:String,
     enum: ["scheduled", "pending", "incomplete", "completed"]
   },
-  interviewLink: {
+  zoomMeeting: {
     type:String,
+    ref: 'zoommeetings'
   },
   interviewPhysicalAddress: {
     type:String,

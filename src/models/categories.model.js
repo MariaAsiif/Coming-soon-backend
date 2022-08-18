@@ -19,6 +19,8 @@ const jobsCategoriesSchema = new Schema({
 
 
 
+
+
 jobsCategoriesSchema.plugin(timestamps);
 const categoriesModel = mongoose.model("categories", jobsCategoriesSchema);
 

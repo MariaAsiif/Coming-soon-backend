@@ -34,6 +34,7 @@ module.exports = {
         .populate('jobApplicant', requiredFields)
         .populate('interviewers', requiredFields)
         .populate('interviewForJob')
+        .populate('zoomMeeting')
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);

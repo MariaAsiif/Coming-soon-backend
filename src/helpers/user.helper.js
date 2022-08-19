@@ -222,7 +222,7 @@ module.exports = {
         var jwt = require('jsonwebtoken');
         var token = jwt.sign({
                 a: user.active,
-                n: user.full_name,
+                n: user.first_name,
                 e: user.email,
                 d: user._id,
                 p: user.profile_picture_url,

@@ -19,7 +19,7 @@ const promise = require('bluebird');
 //async for async tasks
 var async = require('async');
 const jobsHelper = require('../helpers/jobs.helper');
-const { json } = require('body-parser');
+const {json} = require('body-parser');
 
 //helper functions
 logger = require("../helpers/logger");
@@ -27,7 +27,7 @@ logger = require("../helpers/logger");
 responseHelper = require("../helpers/response.helper");
 
 const constants = require("../hardCodedData").constants;
-    
+
 var pageSize = parseInt(config.PAGE_SIZE);
 
 var createjob = async (req, res) => {
@@ -54,111 +54,110 @@ var createjob = async (req, res) => {
 
 
 var listjobs = async (req, res) => {
-  console.log("listjobs called");
-  
-      var userData = req.body;
-      
-      
-      try {
-          
-      var jobs = await jobsHelper.getAllJobs( userData.sortproperty, userData.sortorder, userData.radius, userData.offset, userData.limit);
-      
-      var message = 'Successfully loaded';
-          var responseData = jobs;
-          
-          responseHelper.success(res, responseData, message);
-      } catch (err) {
-          
-          responseHelper.requestfailure(res, err);
-      }
-  };
-
-  var listjobsforpublicview = async (req, res) => {
     console.log("listjobs called");
-    
-        var userData = req.body;
-        
-        
-        try {
-            
-        var jobs = await jobsHelper.getAllJobsForPublicView( userData.sortproperty, userData.sortorder, userData.radius, userData.offset, userData.limit);
-        
+
+    var userData = req.body;
+
+
+    try {
+
+        var jobs = await jobsHelper.getAllJobs(userData.sortproperty, userData.sortorder, userData.radius, userData.offset, userData.limit);
+
         var message = 'Successfully loaded';
-            var responseData = jobs;
-            
-            responseHelper.success(res, responseData, message);
-        } catch (err) {
-            
-            responseHelper.requestfailure(res, err);
-        }
-    };
+        var responseData = jobs;
+
+        responseHelper.success(res, responseData, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+};
+
+var listjobsforpublicview = async (req, res) => {
+    console.log("listjobs called");
+
+    var userData = req.body;
+
+
+    try {
+
+        var jobs = await jobsHelper.getAllJobsForPublicView(userData.sortproperty, userData.sortorder, userData.radius, userData.offset, userData.limit);
+
+        var message = 'Successfully loaded';
+        var responseData = jobs;
+
+        responseHelper.success(res, responseData, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+};
 
 var applyForJob = async (req, res) => {
     console.log("request received for applyForJob");
-    
+
     try {
-      var userData = req.body;
-      var result = await jobsHelper.addApplicant(userData)
-      var message = "Job applied successfully";
+        var userData = req.body;
+        var result = await jobsHelper.addApplicant(userData)
+        var message = "Job applied successfully";
         return responseHelper.success(res, result, message);
 
-    }catch(err) {
-      logger.error(err);
-      responseHelper.requestfailure(res, err);
+    } catch (err) {
+        logger.error(err);
+        responseHelper.requestfailure(res, err);
     }
-    
-  };
 
-  var addApprovedApplicants = async (req, res) => {
+};
+
+var addApprovedApplicants = async (req, res) => {
     console.log("request received for addApprovedApplicants");
-    
+
     try {
-      var userData = req.body;
-      var result = await jobsHelper.addApprovedApplicant(userData)
-      var message = "Applicant approved for the job successfully";
+        var userData = req.body;
+        var result = await jobsHelper.addApprovedApplicant(userData)
+        var message = "Applicant approved for the job successfully";
         return responseHelper.success(res, result, message);
 
-    }catch(err) {
-      logger.error(err);
-      responseHelper.requestfailure(res, err);
+    } catch (err) {
+        logger.error(err);
+        responseHelper.requestfailure(res, err);
     }
-    
-  };
 
-  var addSelectedApplicant = async (req, res) => {
+};
+
+var addSelectedApplicant = async (req, res) => {
     console.log("request received for addSelectedApplicant");
-    
+
     try {
-      var userData = req.body;
-      var result = await jobsHelper.addSelectedApplicant(userData)
-      var message = "Approved Selected successfully";
+        var userData = req.body;
+        var result = await jobsHelper.addSelectedApplicant(userData)
+        var message = "Approved Selected successfully";
         return responseHelper.success(res, result, message);
 
-    }catch(err) {
-      logger.error(err);
-      responseHelper.requestfailure(res, err);
+    } catch (err) {
+        logger.error(err);
+        responseHelper.requestfailure(res, err);
     }
-    
+
     //res.send(result);
-  };
+};
 
-  
 
-  var getApprovedApplicants = async (req, res) => {
+var getApprovedApplicants = async (req, res) => {
     console.log("request received for getApprovedApplicants");
-    
+
     try {
-      var userData = req.body;
-      var result = await jobsHelper.getApprovedApplicants(userData)
-      var message = "Approved applicants fetched successfully";
+        var userData = req.body;
+        var result = await jobsHelper.getApprovedApplicants(userData)
+        var message = "Approved applicants fetched successfully";
         return responseHelper.success(res, result, message);
 
-    }catch(err) {
-      logger.error(err);
-      responseHelper.requestfailure(res, err);
+    } catch (err) {
+        logger.error(err);
+        responseHelper.requestfailure(res, err);
     }
-    
-  };
+
+};
 
 
 var changejobstatus = async (req, res) => {
@@ -187,21 +186,40 @@ var changejobstatus = async (req, res) => {
 
 var updatejob = async (req, res) => {
     console.log("updatejob called");
-    
-        var jobdata = req.body;
-  
-        try {
-            
+
+    var jobdata = req.body;
+
+    try {
+
         var updatedjob = await jobsHelper.updateJob(jobdata);
         var message = 'Job Updated successfully';
-            
-            
-            responseHelper.success(res, updatedjob, message);
-        } catch (err) {
-            
-            responseHelper.requestfailure(res, err);
-        }
-  };
+
+
+        responseHelper.success(res, updatedjob, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+};
+
+var deletejob = async (req, res) => {
+    console.log("deletejob called")
+
+    var jobdata = req.body;
+
+    try {
+
+        var deletedjob = await jobsHelper.deleteJob(jobdata);
+        var message = 'Job Deleted successfully';
+
+
+        responseHelper.success(res, deletedjob, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+
+}
 
 
 module.exports = {
@@ -213,8 +231,8 @@ module.exports = {
     getApprovedApplicants,
     addSelectedApplicant,
     changejobstatus,
-    listjobsforpublicview
-    
+    listjobsforpublicview,
+    deletejob
 };
 
 

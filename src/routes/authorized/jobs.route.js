@@ -14,5 +14,6 @@ router.post('/addApprovedApplicants', controller.addApprovedApplicants)
 router.post('/getApprovedApplicants', controller.getApprovedApplicants)
 router.post('/addSelectedApplicant', controller.addSelectedApplicant)
 router.post('/changejobstatus', controller.changejobstatus)
+router.post('/deletejob', controller.deletejob)
 
 module.exports = router;

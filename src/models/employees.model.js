@@ -14,13 +14,14 @@ var employees = new Schema({
         type: String
     },
     department: {
-        type: Strings
+        type: String
     },
     currentDesignation: {
         type: String
     },
     allDesignations: [{
         type: String,
+
     }],
     skills: [{
         type: String,

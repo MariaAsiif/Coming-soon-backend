@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+const {employees} = require("./index");
 var Schema = mongoose.Schema;
 var departments = new Schema({
         departmentName: {
@@ -30,11 +31,4 @@ var departments = new Schema({
     }
 );
 
-EmployeeSchema.on('index', function (err) {
-    if (err) {
-        console.error('Departments index error: %s', err);
-    } else {
-        console.info('Departments indexing complete');
-    }
-});
-module.exports = mongoose.model('departments', EmployeeSchema);
+module.exports = mongoose.model('departments', departments);

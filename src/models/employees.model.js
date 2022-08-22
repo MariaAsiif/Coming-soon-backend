@@ -14,12 +14,12 @@ var employees = new Schema({
         type: String
     },
     department: {
-<<<<<<< HEAD
+
         type: String,
-        ref: "departments"
-=======
+        ref: "departments",
+
         type: String
->>>>>>> 52e6fc25de28f21d7c746f8615f5333a0807c40e
+
     },
     currentDesignation: {
         type: String,
@@ -27,11 +27,9 @@ var employees = new Schema({
     },
     allDesignations: [{
         type: String,
-<<<<<<< HEAD
-        ref: "designations"
-=======
 
->>>>>>> 52e6fc25de28f21d7c746f8615f5333a0807c40e
+        ref: "designations"
+
     }],
     skills: [{
         type: String,

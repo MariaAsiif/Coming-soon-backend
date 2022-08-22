@@ -8,6 +8,6 @@ module.exports = {
   jobs: require("./jobs.controller"),
   interviews: require('./interviews.controller'),
   zoommeetings: require('./zoommeeting.controller'),
-  recruitments: require('./recruitments.controller')
-
+  recruitments: require('./recruitments.controller'),
+  employees: require('./employees.controller')
 };

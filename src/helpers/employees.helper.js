@@ -28,7 +28,7 @@ module.exports = {
     },
     findEmployeeById: async (employeeid) => {
         console.log("findEmployeeById HelperFunction is called");
-<<<<<<< HEAD
+
         return await Employee.findById(employeeid).populate('users')
         .populate('user')
         .populate('department')
@@ -36,9 +36,8 @@ module.exports = {
         //.populate('allDesignations')
         .populate('job')
         .populate('reportedTo')
-=======
-        return await Employee.findById(employeeid).populate('user')
->>>>>>> 52e6fc25de28f21d7c746f8615f5333a0807c40e
+
+
 
     },
     updateEmployee: async (data) => {
@@ -47,7 +46,7 @@ module.exports = {
 
     },
     getAllEmployees: async (sortProperty, sortOrder = 1, offset = 0, limit = 10) => {
-<<<<<<< HEAD
+
         const employees = await Employee.find()
         .populate('user')
         .populate('department')
@@ -55,12 +54,7 @@ module.exports = {
         //.populate('allDesignations')
         .populate('job')
         .populate('reportedTo')
-=======
-        const employees = await Employee.find().populate('user')
->>>>>>> 52e6fc25de28f21d7c746f8615f5333a0807c40e
-            .sort({[sortProperty]: sortOrder})
-            .skip(offset)
-            .limit(limit);
+
 
         const employeesSize = employees.length
 

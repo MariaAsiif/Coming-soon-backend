@@ -27,6 +27,7 @@ logger = require("../helpers/logger");
 responseHelper = require("../helpers/response.helper");
 
 const constants = require("../hardCodedData").constants;
+const rectruitmentHelper = require('../helpers/recruitment.helper')
 
 var pageSize = parseInt(config.PAGE_SIZE);
 
@@ -39,6 +40,15 @@ var createjob = async (req, res) => {
 
         if (role == '_a') {
             var result = await jobsHelper.createJob(userData)
+
+            let obj = {
+                recruitmentid: userData.recruitmentid,
+                jobid: result._id
+            }
+
+            await rectruitmentHelper.addJobsToRecruitment(obj)
+
+
             var message = "Job posted successfully";
             return responseHelper.success(res, result, message)
         } else {

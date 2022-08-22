@@ -8,6 +8,7 @@ const jobCategoriesRoutes = require('./categories.route')
 const jobsRoutes = require('./jobs.route')
 const interviewRoutes = require('./interviews.route')
 const zoomMeetingRoutes = require('./zoommeeting.route')
+const recruitmentRoutes = require('./recruitments.route')
 
 
 //call appropriate routes
@@ -16,5 +17,6 @@ router.use('/jobcategories', jobCategoriesRoutes)
 router.use ('/jobs', jobsRoutes)
 router.use ('/interviews', interviewRoutes)
 router.use ('/zoommeetings', zoomMeetingRoutes)
+router.use ('/recruitments', recruitmentRoutes)
 
 module.exports = router

@@ -14,19 +14,19 @@ var employees = new Schema({
         type: String
     },
     department: {
-        type: String
+        type: Strings
     },
     currentDesignation: {
         type: String
     },
     allDesignations: [{
-        type: String
+        type: String,
     }],
     skills: [{
-        type: String
+        type: String,
     }],
     responsibilities: [{
-        type: String
+        type: String,
     }],
     job: {
         type: String
@@ -41,7 +41,7 @@ var employees = new Schema({
         type: String
     },
     permissions: [{
-        type: String
+        type: String,
     }],
     attachedDocuments: [{
         type: String

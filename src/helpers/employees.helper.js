@@ -19,20 +19,25 @@ module.exports = {
         console.log("createCategory HelperFunction is called");
         const user = new User()
         user.role = data.role;
-        const employee = new Employee(data);
-        await employee.save()
-        return employee;
+        if (await user.save()) {
+            const employee = new Employee(data);
+            await employee.save()
+            return employee;
+        }
+
     },
     findEmployeeById: async (employeeid) => {
         console.log("findEmployeeById HelperFunction is called");
-        return await Employee.findById(employeeid)
+        return await Employee.findById(employeeid).populate('users')
 
-    }, updateEmployee: async (data) => {
+    },
+    updateEmployee: async (data) => {
         console.log("updateEmployee HelperFunction is called");
         return await Employee.findOneAndUpdate({_id: data._id}, data, {new: true});
 
-    }, getAllEmployees: async (sortProperty, sortOrder = 1, offset = 0, limit = 10) => {
-        const employees = await Employee.find()
+    },
+    getAllEmployees: async (sortProperty, sortOrder = 1, offset = 0, limit = 10) => {
+        const employees = await Employee.find().populate('users')
             .sort({[sortProperty]: sortOrder})
             .skip(offset)
             .limit(limit);

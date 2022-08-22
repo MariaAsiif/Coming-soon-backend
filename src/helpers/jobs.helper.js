@@ -156,8 +156,13 @@ module.exports = {
 
     deleteJob: async (data) => {
         console.log("deleteJob HelperFunction is called");
+        console.log(data)
 
-        return await Job.findByIdAndRemove(data.jobid);
+        
+        const result = await Job.findByIdAndRemove(data.jobid)
+        
+
+        return result
         
 
     },

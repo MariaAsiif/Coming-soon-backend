@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('users');
 var Job = mongoose.model('jobs');
 var config = require('dotenv').config();
+const Recruitment = mongoose.model('recruitments')
 
 
 //Lodash for data manipulation
@@ -219,8 +220,15 @@ var deletejob = async (req, res) => {
 
     try {
 
+        var recruitement = await Recruitment.findById(jobdata.recruitmentid)
+        
+        recruitement.openJobs.splice(recruitement.openJobs.indexOf(jobdata.jobid), 1)
+        
+        await recruitement.save() 
+
+
         var deletedjob = await jobsHelper.deleteJob(jobdata);
-        var message = 'Job Deleted successfully';
+        var message = 'Job Deleted successfully'
 
 
         responseHelper.success(res, deletedjob, message);

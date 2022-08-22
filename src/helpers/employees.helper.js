@@ -29,6 +29,12 @@ module.exports = {
     findEmployeeById: async (employeeid) => {
         console.log("findEmployeeById HelperFunction is called");
         return await Employee.findById(employeeid).populate('users')
+        .populate('user')
+        .populate('department')
+        //.populate('currentDesignation')
+        //.populate('allDesignations')
+        .populate('job')
+        .populate('reportedTo')
 
     },
     updateEmployee: async (data) => {
@@ -37,7 +43,13 @@ module.exports = {
 
     },
     getAllEmployees: async (sortProperty, sortOrder = 1, offset = 0, limit = 10) => {
-        const employees = await Employee.find().populate('users')
+        const employees = await Employee.find()
+        .populate('user')
+        .populate('department')
+        //.populate('currentDesignation')
+        //.populate('allDesignations')
+        .populate('job')
+        .populate('reportedTo')
             .sort({[sortProperty]: sortOrder})
             .skip(offset)
             .limit(limit);

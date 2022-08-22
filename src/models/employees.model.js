@@ -14,13 +14,16 @@ var employees = new Schema({
         type: String
     },
     department: {
-        type: Strings
+        type: String,
+        ref: "departments"
     },
     currentDesignation: {
-        type: String
+        type: String,
+        ref: "designations"
     },
     allDesignations: [{
         type: String,
+        ref: "designations"
     }],
     skills: [{
         type: String,
@@ -29,7 +32,8 @@ var employees = new Schema({
         type: String,
     }],
     job: {
-        type: String
+        type: String,
+        ref: "jobs"
     },
     joiningDate: {
         type: Date
@@ -38,7 +42,8 @@ var employees = new Schema({
         type: String
     },
     reportedTo: {
-        type: String
+        type: String,
+        ref: "users"
     },
     permissions: [{
         type: String,

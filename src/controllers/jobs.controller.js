@@ -168,7 +168,7 @@ var changejobstatus = async (req, res) => {
     try {
         var role = req.token_decoded.r
 
-        if (role == '_a') {
+        if (role === '_a') {
             var jobstatuschanged = await jobsHelper.changeJobStatus(jobdata);
             var message = 'Status changed successfully';
 

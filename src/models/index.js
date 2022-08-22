@@ -5,5 +5,6 @@ module.exports = {
   jobCategories: require("./categories.model"),
   jobs: require("./jobs.model"),
   interviews: require("./interviewschedule.model"),
-  zoommeetings: require("./zoommeeting.model")
+  zoommeetings: require("./zoommeeting.model"),
+  employees: require("./employees.model")
 };

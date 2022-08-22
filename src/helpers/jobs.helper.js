@@ -73,11 +73,8 @@ module.exports = {
     getApprovedApplicants: async (data) => {
         console.log("addApplicant HelperFunction is called");
         var where = {_id: data.jobid};
-        const job = await Job.findOne(where)
-        .populate('approvedApplicants', '_id email first_name phoneNumber')
-
-        
-        return job;
+        return await Job.findOne(where)
+            .populate('approvedApplicants', '_id email first_name phoneNumber');
         
     },
     
@@ -144,20 +141,16 @@ module.exports = {
 
     updateJob: async (data) => {
         console.log("updateJob HelperFunction is called");
-        
-        const result = await Job.findOneAndUpdate({_id: data._id}, data, {new: true})
 
-        return result; 
+        return await Job.findOneAndUpdate({_id: data._id}, data, {new: true});
                 
     },
 
     findJobById: async ( jobid) => {
         console.log("findJobById HelperFunction is called");
-        
-        const result = await Job.findById(jobid)
-        .populate('applicants')
-                
-        return result; 
+
+        return await Job.findById(jobid)
+            .populate('applicants');
                 
     },
 

@@ -31,7 +31,6 @@
     "mongo-dot-notation": "^1.2.0",
     "mongoose": "^4.6.4",
     "mongoose-float": "^1.0.2",
-    "mongoose-regex-search": "^0.8.30",
     "mongoose-timestamp": "^0.6.0",
     "multer": "^1.2.0",
     "passport": "^0.2.2",

@@ -118,8 +118,8 @@ var removeDepartment = async (req, res) => {
 
         if (role == "_a") {
             var departmentData = req.body
-
-            var result = await departmentHelper.removeDepartment(departmentData.id)
+            departmentData.lastModifiedBy = req.token_decoded.d
+            var result = await departmentHelper.removeDepartment(departmentData)
 
             var message = "Department removed successfully"
 

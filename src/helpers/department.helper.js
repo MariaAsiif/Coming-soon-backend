@@ -31,8 +31,8 @@ module.exports = {
         const departments = await Department.find(query.critarion)
         .populate('employees', query.employeeFields)
         .populate('addedby', query.addedby)
-        .populate('departmentHead', query.departmenthead)
-        .populate('lastModifiedBy', query.lastmodified)
+        .populate('departmentHead', query.departmentHead)
+        .populate('lastModifiedBy', query.lastModifiedBy)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);
@@ -51,7 +51,7 @@ module.exports = {
     getDepartmentsList: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, query) => {
         console.log("getDepartments Model Function called")
 
-        const departments = await Department.find(query.critarion).select('_id departmentName')
+        const departments = await Department.find(query.critarion).select(query.fields/* '_id departmentName' */)
         
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
@@ -79,14 +79,15 @@ module.exports = {
 
     
 
-    removeDepartment: async (id) => {
+    removeDepartment: async (data) => {
         console.log("removeDepartment HelperFunction is called");
 
-        const department = await Department.findById(id);
+        const department = await Department.findById(data.id);
         if(department == null){
              var error = "Department does not exists."
              return error
         }
+        department.lastModifiedBy = data.lastModifiedBy
         department.active = false
         department.save()
         return department;
@@ -100,8 +101,8 @@ module.exports = {
         const department = await Department.findOne(query.critarion)
         .populate('employees', query.employeeFields)
         .populate('addedby', query.addedby)
-        .populate('departmentHead', query.departmenthead)
-        .populate('lastModifiedBy', query.lastmodified)
+        .populate('departmentHead', query.departmentHead)
+        .populate('lastModifiedBy', query.lastModifiedBy)
         
         return department;
         

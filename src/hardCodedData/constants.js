@@ -7,5 +7,5 @@ module.exports = {
 		online: 1
 	},
 	platforms: [ 'facebook', 'google', 'email', 'apple'],
-	roles: [ 'superadmin', 'subscriber', 'jobapplicant', 'interviewer', 'It sales', 'Botonist', 'Marketing', 'Business development', 'Doctors', 'Lawyers', 'Chemist/pharmacist', 'Vendor', 'Agriculture scientist', 'Customer support'],
+	roles: [ 'superadmin', 'subscriber', 'jobapplicant', 'hr', 'interviewer', 'itsales', 'botonist', 'marketing', 'usinessdevelopment', 'doctor', 'lawyer', 'chemist', 'pharmacist', 'vendor', 'agriculturescientist', 'customersupport'],
 };

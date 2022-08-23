@@ -6,12 +6,16 @@ var departments = new Schema({
             type: String,
             required: true
         },
-        employees: [{
-            type: employees
-        }],
-        description: [{
+        departmentCode: {
             type: String
+        },
+        employees: [{
+            type: String,
+            ref: "users"
         }],
+        description: {
+            type: String
+        },
         addedby: {
             type: String,
             ref: 'users'
@@ -24,6 +28,11 @@ var departments = new Schema({
             type: String,
             ref: 'users'
         },
+        active: {
+            type: Boolean,
+            default: true
+        },
+        assets: []
     },
     {
         timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},

@@ -9,5 +9,6 @@ module.exports = {
   interviews: require('./interviews.controller'),
   zoommeetings: require('./zoommeeting.controller'),
   recruitments: require('./recruitments.controller'),
-  employees: require('./employees.controller')
+  employees: require('./employees.controller'),
+  departments: require('./department.controller')
 };

@@ -199,13 +199,19 @@ function sendSMS(userData){
                 phonenumber: userData.phonenumber,
                 data
             }) */
+            //console.log("succuess")
+            //console.log(data)
 
             return {
                 message: "Verification is sent!!",
                 phoneNumber: userData.phoneNumber,
                 data
             }
-        }) 
+        })
+        .catch(error => {
+            console.log('failure')
+            console.log(error)
+        })
      } else {
         /* res.status(400).send({
             message: "Wrong phone number :(",

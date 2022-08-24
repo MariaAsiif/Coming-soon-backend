@@ -27,6 +27,10 @@ var AC = mongoose.model("AC");
 app.set('port', process.env.PORT || 8080);
 var serverPort = app.get('port')
 
+app.get('/', (req, res) => {
+    res.send("Hello World")
+})
+
 app.set('views', path.join(__dirname, '../views'));
 
 app.engine('html', require('ejs').renderFile);

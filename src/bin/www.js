@@ -2,7 +2,7 @@
 logger = require("../helpers/logger");
 var express = require('express');
 var app = express(); // Init Express APP
-var server = require('http').Server(app); 
+var server = require('https').Server(app); 
 const cors = require('cors');
 var device = require('express-device');
 mailer = require('express-mailer');

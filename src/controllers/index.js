@@ -10,5 +10,6 @@ module.exports = {
   zoommeetings: require('./zoommeeting.controller'),
   recruitments: require('./recruitments.controller'),
   employees: require('./employees.controller'),
-  departments: require('./department.controller')
+  departments: require('./department.controller'),
+  quotes: require('./quote.controller')
 };

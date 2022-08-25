@@ -11,6 +11,7 @@ const zoomMeetingRoutes = require('./zoommeeting.route')
 const recruitmentRoutes = require('./recruitments.route')
 const employeeRoutes = require('./employees.route')
 const departmentRoutes = require('./departments.route')
+const quotesRoutes = require('./quotes.route')
 
 //call appropriate routes
 router.use ('/users', usersRoutes)
@@ -21,5 +22,6 @@ router.use ('/zoommeetings', zoomMeetingRoutes)
 router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
 router.use ('/departmens', departmentRoutes)
+router.use ('/quotes', quotesRoutes)
 
 module.exports = router

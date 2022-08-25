@@ -8,5 +8,6 @@ module.exports = {
   zoommeetings: require("./zoommeeting.model"),
   recruitments: require("./recruitment.model"),
   employees: require("./employees.model"),
-  departments: require('./departments.model')
+  departments: require('./departments.model'),
+  quotes: require('./quotes.model')
 };

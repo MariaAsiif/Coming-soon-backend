@@ -20,6 +20,6 @@ router.use ('/interviews', interviewRoutes)
 router.use ('/zoommeetings', zoomMeetingRoutes)
 router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
-router.use ('/departmens', departmentRoutes)
+router.use ('/departments', departmentRoutes)
 
 module.exports = router

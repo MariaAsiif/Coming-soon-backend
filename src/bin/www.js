@@ -2,7 +2,7 @@
 logger = require("../helpers/logger");
 var express = require('express');
 var app = express(); // Init Express APP
-var server = require('https').Server(app); 
+var server = require('http').Server(app); 
 const cors = require('cors');
 var device = require('express-device');
 mailer = require('express-mailer');
@@ -20,12 +20,12 @@ var mongoose = require("mongoose");
 var AC = mongoose.model("AC");
 
 
-//var serverPort = process.env.SERVER_PORT ;
+var serverPort = process.env.SERVER_PORT ;
 
 
 //commented below is the port setting for deployment on heroku
-app.set('port', process.env.PORT || 8080);
-var serverPort = app.get('port')
+//app.set('port', process.env.PORT || 8080);
+//var serverPort = app.get('port')
 
 app.get('/', (req, res) => {
     res.send("Hello World")

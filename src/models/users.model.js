@@ -69,6 +69,7 @@ usersSchema = new Schema({
     positionOfInterest: {
         type: String
     },
+    interest: [],
     age: {
         type: String
     },

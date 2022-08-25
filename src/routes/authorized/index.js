@@ -12,6 +12,7 @@ const recruitmentRoutes = require('./recruitments.route')
 const employeeRoutes = require('./employees.route')
 const departmentRoutes = require('./departments.route')
 const quotesRoutes = require('./quotes.route')
+const tickerRoutes = require('./tickers.route')
 
 //call appropriate routes
 router.use ('/users', usersRoutes)
@@ -23,5 +24,6 @@ router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
 router.use ('/departmens', departmentRoutes)
 router.use ('/quotes', quotesRoutes)
+router.use ('/tickers', tickerRoutes)
 
 module.exports = router

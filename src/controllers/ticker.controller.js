@@ -17,6 +17,8 @@ const promise = require('bluebird')
 
 //async for async tasks
 var async = require('async')
+var multer = require('multer');
+const fs = require('fs');
 
 const tickerHelper = require('../helpers/ticker.helper')
 
@@ -85,13 +87,13 @@ var createTicker = async (req, res) => {
 
             if (err.field == "logoimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
-                var message = "Only 1 cv can be uploaded";
+                var message = "Only 1 image can be uploaded";
 
                 return res.status(500).json(message)
 
             } else if (err.field == "logoimg" && err.code == "LIMIT_FILE_SIZE") {
 
-                errorMessage = "File Limit is 35MB";
+                errorMessage = "File Limit is 1MB";
                 
                 isErr = true
                 
@@ -113,28 +115,41 @@ var createTicker = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-        userData.logoimg = '/uploads/applicantcvs/' + logoimg
+        userData.logoFile = '/uploads/logoimages/' + logoimg
+
+        try {
+            
+            var role = req.token_decoded.r
+            userData.addedby = req.token_decoded.d
+    
+            if (role == '_a') {
+                var result = await tickerHelper.createTicker(userData)
+                var message = "Ticker created successfully"
+                return responseHelper.success(res, result, message)
+            } else {
+                let err = "Unauthorized to create Ticker"
+                return responseHelper.requestfailure(res, err)
+            }
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public//uploads/logoimages/' + logoimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
         }
 
     })
-    try {
-        var tickerData = req.body
-        var role = req.token_decoded.r
-        tickerData.addedby = req.token_decoded.d
-
-        if (role == '_a') {
-            var result = await tickerHelper.createTicker(tickerData)
-            var message = "Ticker created successfully"
-            return responseHelper.success(res, result, message)
-        } else {
-            let err = "Unauthorized to create Ticker"
-            return responseHelper.requestfailure(res, err)
-        }
-
-    } catch (err) {
-        logger.error(err)
-        responseHelper.requestfailure(res, err)
-    }
+    
 } //end function
 
 

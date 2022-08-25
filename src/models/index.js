@@ -9,5 +9,6 @@ module.exports = {
   recruitments: require("./recruitment.model"),
   employees: require("./employees.model"),
   departments: require('./departments.model'),
-  quotes: require('./quotes.model')
+  quotes: require('./quotes.model'),
+  tickers: require('./tickers.model')
 };

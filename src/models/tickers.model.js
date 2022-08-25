@@ -1,20 +1,13 @@
 var mongoose = require('mongoose');
 const {employees} = require("./index");
 var Schema = mongoose.Schema;
-var quotes = new Schema({
-        quoteText: {
+var ticker = new Schema({
+        tickerText: {
             type: String,
             required: true
         },
-        authorName: {
-            type: String,
-            required: true
-        },
-        quoteColor: {
+        logoFile: {
             type: String
-        },
-        quoteDate: {
-            type: Date
         },
         addedby: {
             type: String,
@@ -36,4 +29,4 @@ var quotes = new Schema({
     }
 );
 
-module.exports = mongoose.model('quotes', quotes);
+module.exports = mongoose.model('tickers', ticker);

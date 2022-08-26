@@ -20,7 +20,8 @@ var async = require('async')
 var multer = require('multer');
 const fs = require('fs');
 
-const tickerHelper = require('../helpers/ticker.helper')
+
+const feedbackHelper = require('../helpers/feeback.helper')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -32,22 +33,22 @@ const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
 
-var createTicker = async (req, res) => {
-    console.log('createTicker')
-    var logoimg
+var createFeedback = async (req, res) => {
+    console.log('createFeedback called')
+    var feedbackimg
     let isErr = false
     let errorMessage = ''
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            if (file.fieldname === "logoimg") {
-                cb(null, './public/uploads/logoimages')
+            if (file.fieldname === "feedbackimg") {
+                cb(null, './public/uploads/feedbackimages')
             }
         },
         filename: (req, file, cb) => {
-            if (file.fieldname === "logoimg") {
-                logoimg = Date.now() + '-' + file.originalname
-                cb(null, logoimg)
+            if (file.fieldname === "feedbackimg") {
+                feedbackimg = Date.now() + '-' + file.originalname
+                cb(null, feedbackimg)
             }
         }
     })
@@ -55,13 +56,13 @@ var createTicker = async (req, res) => {
     const upload = multer({
         storage: storage,
         limits: {
-            fileSize: 1024 * 1024 * 1
+            fileSize: 1024 * 1024 * 2
         },
         fileFilter: (req, file, cb) => {
             
             let ext = path.extname(file.originalname);
             console.log("ext " + ext)
-          if (ext !== '.png'  || ext !== '.jpg'  || ext !== '.jpeg'  || ext !== '.gif' ) {
+          if (ext !== '.png'  || ext !== '.jpg'  || ext !== '.jpeg'  || ext !== '.gif') {
                
                errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
                isErr = true
@@ -72,7 +73,7 @@ var createTicker = async (req, res) => {
     }).fields(
         [
             {
-                name: 'logoimg',
+                name: 'feedbackimg',
                 maxCount: 1
             }
         ]
@@ -85,15 +86,15 @@ var createTicker = async (req, res) => {
         if (err instanceof multer.MulterError) {
 
 
-            if (err.field == "logoimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
                 var message = "Only 1 image can be uploaded";
 
                 return res.status(500).json(message)
 
-            } else if (err.field == "logoimg" && err.code == "LIMIT_FILE_SIZE") {
+            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
 
-                errorMessage = "File Limit is 1MB";
+                errorMessage = "File Limit is 2 MB";
                 
                 isErr = true
                 
@@ -115,26 +116,26 @@ var createTicker = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-        userData.logoFile = '/uploads/logoimages/' + logoimg
+        userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
 
         try {
             
             var role = req.token_decoded.r
             userData.addedby = req.token_decoded.d
     
-            if (role == '_a') {
-                var result = await tickerHelper.createTicker(userData)
-                var message = "Ticker created successfully"
+            /* if (role == '_a') { */
+                var result = await feedbackHelper.createFeedback(userData)
+                var message = "Feedback created successfully"
                 return responseHelper.success(res, result, message)
-            } else {
-                let err = "Unauthorized to create Ticker"
+            /* } else {
+                let err = "Unauthorized to create Feedback"
                 return responseHelper.requestfailure(res, err)
-            }
+            } */
     
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public//uploads/logoimages/' + logoimg);
+                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
@@ -153,14 +154,14 @@ var createTicker = async (req, res) => {
 } //end function
 
 
-var getTickersWithFullDetails = async (req, res) => {
-    console.log("getTickersWithFullDetails called")
-    var tickerData = req.body
+var getFeedbacksWithFullDetails = async (req, res) => {
+    console.log("getFeedbacksWithFullDetails called")
+    var feedbackData = req.body
 
 
     try {
 
-        var result = await tickerHelper.getTickersWithFullDetails(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+        var result = await feedbackHelper.getFeedbacksWithFullDetails(feedbackData.sortproperty, feedbackData.sortorder, feedbackData.offset, feedbackData.limit, feedbackData.query)
 
         var message = 'Successfully loaded'
 
@@ -171,14 +172,14 @@ var getTickersWithFullDetails = async (req, res) => {
     }
 }
 
-var getTickersList = async (req, res) => {
-    console.log("getTickersList called")
-    var tickerData = req.body
+var getFeedbacksList = async (req, res) => {
+    console.log("getFeedbacksList called")
+    var feedbackData = req.body
 
 
     try {
 
-        var result = await tickerHelper.getTickersList(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+        var result = await feedbackHelper.getFeedbacksList(feedbackData.sortproperty, feedbackData.sortorder, feedbackData.offset, feedbackData.limit, feedbackData.query)
 
         var message = 'Successfully loaded'
 
@@ -189,18 +190,18 @@ var getTickersList = async (req, res) => {
     }
 }
 
-var updateTicker = async (req, res) => {
-    console.log("request received for updateTicker")
+var updateFeedback = async (req, res) => {
+    console.log("request received for updateFeedback")
 
-    var tickerData = req.body
+    var feedbackData = req.body
     var role = req.token_decoded.r
     try {
-        tickerData.lastModifiedBy = req.token_decoded.d
+        feedbackData.lastModifiedBy = req.token_decoded.d
         if (role == '_a') {
-            var result = await tickerHelper.updateTicker(tickerData)
-            var message = 'Ticker Updated successfully'
+            var result = await feedbackHelper.updateFeedback(feedbackData)
+            var message = 'Feedback Updated successfully'
         } else {
-            let err = "Unauthorized to Update Ticker"
+            let err = "Unauthorized to Update Feedback"
             return responseHelper.requestfailure(res, err)
         }
 
@@ -210,24 +211,24 @@ var updateTicker = async (req, res) => {
     }
 }
 
-var removeTicker = async (req, res) => {
-    console.log("removeTicker called")
+var removeFeedback = async (req, res) => {
+    console.log("removeFeedback called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var tickerData = req.body
-            tickerData.lastModifiedBy = req.token_decoded.d
-            var result = await tickerHelper.removeTicker(tickerData)
+            var feedbackData = req.body
+            feedbackData.lastModifiedBy = req.token_decoded.d
+            var result = await feedbackHelper.removeFeedback(feedbackData)
 
-            var message = "Ticker removed successfully"
+            var message = "Feedback removed successfully"
 
-            if (result == "Ticker does not exists.") {
-                message = "Ticker does not exists."
+            if (result == "Feedback does not exists.") {
+                message = "Feedback does not exists."
             }
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can remove a Ticker"
+            var error = "Only Admin can remove a Feedback"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -237,25 +238,25 @@ var removeTicker = async (req, res) => {
 
 }
 
-var findTickerById = async (req, res) => {
-    console.log("findTickerById called")
+var findFeedbackById = async (req, res) => {
+    console.log("findFeedbackById called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var tickerData = req.body
+            var feedbackData = req.body
 
-            var result = await tickerHelper.findTickerById(tickerData)
+            var result = await feedbackHelper.findFeedbackById(feedbackData)
             console.log(result)
-            var message = "Ticker find successfully"
+            var message = "Feedback find successfully"
             if (result == null) {
-                message = "Ticker does not exists."
+                message = "Feedback does not exists."
             }
 
 
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can find a Ticker"
+            var error = "Only Admin can find a Feedback"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -269,12 +270,12 @@ var findTickerById = async (req, res) => {
 
 
 module.exports = {
-    createTicker,
-    getTickersWithFullDetails,
-    getTickersList,
-    updateTicker,
-    removeTicker,
-    findTickerById
+    createFeedback,
+    getFeedbacksWithFullDetails,
+    getFeedbacksList,
+    updateFeedback,
+    removeFeedback,
+    findFeedbackById
 
 }
 

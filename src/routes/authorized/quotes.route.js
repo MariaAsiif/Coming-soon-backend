@@ -8,7 +8,7 @@ const router = express.Router()
 const controller = require('../../controllers').quotes
 
 router.post('/createQuote', controller.createQuote)
-router.post('/getQuotesWithFullDetails', controller.getQuotesWithFullDetails)
+
 router.post('/updateQuote', controller.updateQuote)
 router.post('/removeQuote', controller.removeQuote)
 router.post('/getQuotesList', controller.getQuotesList)

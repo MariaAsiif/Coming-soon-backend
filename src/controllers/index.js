@@ -12,5 +12,6 @@ module.exports = {
   employees: require('./employees.controller'),
   departments: require('./department.controller'),
   quotes: require('./quote.controller'),
-  tickers: require('./ticker.controller')
+  tickers: require('./ticker.controller'),
+  feedbacks: require('./feedback.controller')
 };

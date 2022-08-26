@@ -61,8 +61,9 @@ var createFeedback = async (req, res) => {
         fileFilter: (req, file, cb) => {
             
             let ext = path.extname(file.originalname);
-            console.log("ext " + ext)
-          if (ext !== '.png'  || ext !== '.jpg'  || ext !== '.jpeg'  || ext !== '.gif') {
+            
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          if (!extentions.includes(ext)){
                
                errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
                isErr = true
@@ -120,8 +121,8 @@ var createFeedback = async (req, res) => {
 
         try {
             
-            var role = req.token_decoded.r
-            userData.addedby = req.token_decoded.d
+            //var role = req.token_decoded.r
+            //userData.addedby = req.token_decoded.d
     
             /* if (role == '_a') { */
                 var result = await feedbackHelper.createFeedback(userData)

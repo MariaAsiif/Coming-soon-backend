@@ -120,18 +120,28 @@ var createFeedback = async (req, res) => {
         userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
 
         try {
-            
-            //var role = req.token_decoded.r
-            //userData.addedby = req.token_decoded.d
-    
-            /* if (role == '_a') { */
-                var result = await feedbackHelper.createFeedback(userData)
+            var result = await feedbackHelper.createFeedback(userData)
+
+            res.mailer.send('emails/feedback.html', {
+                user: userData.userName,
+                feedback: userData.feedbackDescription,
+                customeremail: userData.userEmail,
+                title: 'Feedback',   //project.title
+                to: process.env.FEEDBACK_EMAIL, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                subject: 'Feedback', // REQUIRED.
+            }, function (err) {
+                if (err) {
+                    return console.error("Email could not sent: ", err)
+                }
+                /* var message = "Client's Feedback successfully sent to Admin";
+                return responseHelper.success(res, {}, message); */
+            })
+
+
+
                 var message = "Feedback created successfully"
                 return responseHelper.success(res, result, message)
-            /* } else {
-                let err = "Unauthorized to create Feedback"
-                return responseHelper.requestfailure(res, err)
-            } */
+            
     
         } catch (err) {
 

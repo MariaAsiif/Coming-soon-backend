@@ -20,6 +20,10 @@ const feedbacksSchema = new Schema({
   },
   imageUrl: {
     type: String,
+  },
+  active: {
+    type: Boolean,
+    default: true
   }
 });
 

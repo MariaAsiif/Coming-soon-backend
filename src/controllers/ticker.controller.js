@@ -61,13 +61,15 @@ var createTicker = async (req, res) => {
             
             let ext = path.extname(file.originalname);
             console.log("ext " + ext)
-          if (ext !== '.png'  || ext !== '.jpg'  || ext !== '.jpeg'  || ext !== '.gif' ) {
+            
+            let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          if (!extentions.includes(ext)){
                
                errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
                isErr = true
                
          }
-         cb(null, true);
+         cb(null, true)
         }
     }).fields(
         [

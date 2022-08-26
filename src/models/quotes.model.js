@@ -14,7 +14,7 @@ var quotes = new Schema({
             type: String
         },
         quoteDate: {
-            type: String
+            type: Date
         },
         addedby: {
             type: String,

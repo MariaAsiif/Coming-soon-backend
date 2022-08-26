@@ -38,14 +38,14 @@ var createDepartment = async (req, res) => {
         var role = req.token_decoded.r
         DepartmentData.addedby = req.token_decoded.d
 
-        if (role == '_a') {
+        /* if (role == '_a') { */
             var result = await departmentHelper.createDepartment(DepartmentData)
             var message = "Job Department created successfully"
             return responseHelper.success(res, result, message)
-        } else {
+        /* } else {
             let err = "Unauthorized to create Job Department"
             return responseHelper.requestfailure(res, err)
-        }
+        } */
 
     } catch (err) {
         logger.error(err)

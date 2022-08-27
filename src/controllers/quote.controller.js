@@ -39,14 +39,11 @@ var createQuote = async (req, res) => {
         var role = req.token_decoded.r
         quoteData.addedby = req.token_decoded.d
 
-        if (role == '_a') {
+        
             var result = await quoteHelper.createQuote(quoteData)
             var message = "Quote created successfully"
             return responseHelper.success(res, result, message)
-        } else {
-            let err = "Unauthorized to create Quote"
-            return responseHelper.requestfailure(res, err)
-        }
+        
 
     } catch (err) {
         logger.error(err)
@@ -98,13 +95,10 @@ var updateQuote = async (req, res) => {
     var role = req.token_decoded.r
     try {
         quoteData.lastModifiedBy = req.token_decoded.d
-        if (role == '_a') {
+        
             var result = await quoteHelper.updateQuote(quoteData)
             var message = 'Quote Updated successfully'
-        } else {
-            let err = "Unauthorized to Update Quote"
-            return responseHelper.requestfailure(res, err)
-        }
+        
 
         responseHelper.success(res, result, message)
     } catch (err) {
@@ -117,7 +111,7 @@ var removeQuote = async (req, res) => {
     try {
         var role = req.token_decoded.r
 
-        if (role == "_a") {
+       
             var quoteData = req.body
             quoteData.lastModifiedBy = req.token_decoded.d
             var result = await quoteHelper.removeQuote(quoteData)
@@ -128,10 +122,7 @@ var removeQuote = async (req, res) => {
                 message = "Quote does not exists."
             }
             return responseHelper.success(res, result, message)
-        } else {
-            var error = "Only Admin can remove a Quote"
-            responseHelper.requestfailure(res, error)
-        }
+        
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }
@@ -144,7 +135,7 @@ var findQuoteById = async (req, res) => {
     try {
         var role = req.token_decoded.r
 
-        if (role == "_a") {
+        
             var quoteData = req.body
 
             var result = await quoteHelper.findQuoteById(quoteData)
@@ -156,10 +147,7 @@ var findQuoteById = async (req, res) => {
 
 
             return responseHelper.success(res, result, message)
-        } else {
-            var error = "Only Admin can find a Quote"
-            responseHelper.requestfailure(res, error)
-        }
+        
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }

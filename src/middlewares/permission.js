@@ -1,7 +1,7 @@
 
 function permit(allowed) {
-  console.log('permit called')
-  console.log(allowed)
+  /* console.log('permit called')
+  console.log(allowed) */
   
   const isAllowed = role => allowed.indexOf(role) > -1;
 

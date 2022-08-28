@@ -11,7 +11,7 @@ var config = require('dotenv').config()
 
 //Lodash for data manipulation
 const _ = require('lodash')
-
+const Feedback = mongoose.model('feedbacks')
 //bluebird for promises
 const promise = require('bluebird')
 
@@ -33,7 +33,7 @@ const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
 
-var createFeedback = async (req, res) => {
+var createPublicFeedback = async (req, res) => {
     console.log('createFeedback called')
     var feedbackimg
     let isErr = false
@@ -164,6 +164,140 @@ var createFeedback = async (req, res) => {
     
 } //end function
 
+var createAdminFeedback = async (req, res) => {
+    console.log('createFeedback called')
+    var feedbackimg
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "feedbackimg") {
+                cb(null, './public/uploads/feedbackimages')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "feedbackimg") {
+                feedbackimg = Date.now() + '-' + file.originalname
+                cb(null, feedbackimg)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 2
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          if (!extentions.includes(ext)){
+               
+               errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+               isErr = true
+               
+         }
+         cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'feedbackimg',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                var message = "Only 1 image can be uploaded";
+
+                return res.status(500).json(message)
+
+            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 2 MB";
+                
+                isErr = true
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            
+               responseHelper.requestfailure(res, errorMessage)
+        }else
+
+        {userData = JSON.parse(req.body.request);
+
+
+        userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+
+        try {
+
+            var adminid = req.token_decoded.d
+            userData.addedby = adminid
+            var result = await feedbackHelper.createFeedback(userData)
+
+            res.mailer.send('emails/feedback.html', {
+                user: userData.userName,
+                feedback: userData.feedbackDescription,
+                customeremail: userData.userEmail,
+                title: 'Feedback',   //project.title
+                to: process.env.FEEDBACK_EMAIL, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                subject: 'Feedback', // REQUIRED.
+            }, function (err) {
+                if (err) {
+                    return console.error("Email could not sent: ", err)
+                }
+                /* var message = "Client's Feedback successfully sent to Admin";
+                return responseHelper.success(res, {}, message); */
+            })
+
+
+
+                var message = "Feedback created successfully"
+                return responseHelper.success(res, result, message)
+            
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
+        }
+
+    })
+    
+} //end function
+
 
 var getFeedbacksWithFullDetails = async (req, res) => {
     console.log("getFeedbacksWithFullDetails called")
@@ -202,6 +336,139 @@ var getFeedbacksList = async (req, res) => {
 }
 
 var updateFeedback = async (req, res) => {
+    var feedbackimg
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "feedbackimg") {
+                cb(null, './public/uploads/feedbackimages')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "feedbackimg") {
+                feedbackimg = Date.now() + '-' + file.originalname
+                cb(null, feedbackimg)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 2
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          if (!extentions.includes(ext)){
+               
+               errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+               isErr = true
+               
+         }
+         cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'feedbackimg',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                var message = "Only 1 image can be uploaded";
+
+                return res.status(500).json(message)
+
+            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 2 MB";
+                
+                isErr = true
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            
+               responseHelper.requestfailure(res, errorMessage)
+        }else
+
+        {userData = JSON.parse(req.body.request);
+
+
+        //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+
+        try {
+
+            if(feedbackimg !== undefined){
+                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            }
+
+            var adminid = req.token_decoded.d
+            userData.lastModifiedBy = adminid
+
+            let existingFB = await Feedback.findById(userData.feedbackid)
+
+            if(feedbackimg !== undefined && existingFB.imageUrl !== '') {
+                const imgpath = './public/' + existingFB.imageUrl;
+                    try {
+                    fs.unlinkSync(imgpath);
+                    } catch(err) {
+                        console.log('Error Deleting old, probably already removed');
+                        return responseHelper.requestfailure(res, err);
+                    }
+                }
+
+            var result = await feedbackHelper.updateFeedback(userData)
+
+            
+                var message = "Feedback updated successfully"
+                return responseHelper.success(res, result, message)
+            
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
+        }
+
+    })
+  }
+/* 
+var updateFeedbackOld = async (req, res) => {
     console.log("request received for updateFeedback")
 
     var feedbackData = req.body
@@ -221,7 +488,7 @@ var updateFeedback = async (req, res) => {
         responseHelper.requestfailure(res, err)
     }
 }
-
+ */
 var removeFeedback = async (req, res) => {
     console.log("removeFeedback called")
     try {
@@ -281,7 +548,8 @@ var findFeedbackById = async (req, res) => {
 
 
 module.exports = {
-    createFeedback,
+    createPublicFeedback,
+    createAdminFeedback,
     getFeedbacksWithFullDetails,
     getFeedbacksList,
     updateFeedback,

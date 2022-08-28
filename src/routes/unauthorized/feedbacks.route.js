@@ -7,7 +7,7 @@ const router = express.Router()
 
 const controller = require('../../controllers').feedbacks
 
-router.post('/createFeedback', controller.createFeedback)
+router.post('/createPublicFeedback', controller.createPublicFeedback)
 
 
 

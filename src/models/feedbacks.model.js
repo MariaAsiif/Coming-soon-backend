@@ -21,6 +21,14 @@ const feedbacksSchema = new Schema({
   imageUrl: {
     type: String,
   },
+  addedby: {
+    type: String,
+    ref: 'users'
+  },
+  lastModifiedBy: {
+    type: String,
+    ref: 'users'
+  },
   active: {
     type: Boolean,
     default: true

@@ -112,6 +112,13 @@ var createTicker = async (req, res) => {
         }
         
         if(isErr){
+
+            try {
+                fs.unlinkSync('./public//uploads/logoimages/' + logoimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
             
                responseHelper.requestfailure(res, errorMessage)
         }else
@@ -119,10 +126,11 @@ var createTicker = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-        userData.logoFile = '/uploads/logoimages/' + logoimg
 
         try {
-            
+            if(logoimg !== undefined){
+                userData.logoFile = '/uploads/logoimages/' +logoimg;
+            }
             var role = req.token_decoded.r
             userData.addedby = req.token_decoded.d
     

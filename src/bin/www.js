@@ -20,12 +20,12 @@ var mongoose = require("mongoose");
 var AC = mongoose.model("AC");
 
 
-var serverPort = process.env.SERVER_PORT ;
+//var serverPort = process.env.SERVER_PORT ;
 
 
 //commented below is the port setting for deployment on heroku
-//app.set('port', process.env.PORT || 8080);
-//var serverPort = app.get('port')
+app.set('port', process.env.PORT || 8080);
+var serverPort = app.get('port')
 
 app.get('/', (req, res) => {
     res.send("Hello World")
@@ -39,7 +39,7 @@ app.set('view engine', 'html');
 
 app.use(express.static(path.join(__dirname, '../../public')));
 
-app.use(bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, '../public/uploads')}));
+//app.use(bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, '../public/uploads')}));
 app.use(cors());
 
 base_url = '';

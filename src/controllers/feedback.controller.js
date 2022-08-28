@@ -89,9 +89,9 @@ var createPublicFeedback = async (req, res) => {
 
             if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
-                var message = "Only 1 image can be uploaded";
-
-                return res.status(500).json(message)
+                errorMessage = "Only 1 image can be uploaded";
+                isErr = true
+                //return res.status(500).json(message)
 
             } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
 
@@ -111,15 +111,30 @@ var createPublicFeedback = async (req, res) => {
         
         if(isErr){
             
-               responseHelper.requestfailure(res, errorMessage)
+            if(errorMessage == "File Limit is 2 MB"){
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if(errorMessage == "Only 1 image can be uploaded"){
+                return responseHelper.requestfailure(res, errorMessage)
+            }
+            
+            try {
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+            } catch (err) {
+              return  responseHelper.requestfailure(res, err);
+
+            }
+            return responseHelper.requestfailure(res, errorMessage)
         }else
 
         {userData = JSON.parse(req.body.request);
 
 
-        userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+       //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
 
         try {
+            if(feedbackimg !== undefined){
+                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            }
             var result = await feedbackHelper.createFeedback(userData)
 
             res.mailer.send('emails/feedback.html', {
@@ -146,14 +161,14 @@ var createPublicFeedback = async (req, res) => {
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
             } catch (err) {
-                responseHelper.requestfailure(res, err);
+                return  responseHelper.requestfailure(res, err);
 
             }
 
             logger.error(err)
-            responseHelper.requestfailure(res, err)
+            return responseHelper.requestfailure(res, err)
         }
 
 
@@ -220,9 +235,9 @@ var createAdminFeedback = async (req, res) => {
 
             if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
-                var message = "Only 1 image can be uploaded";
-
-                return res.status(500).json(message)
+                errorMessage = "Only 1 image can be uploaded";
+                isErr = true
+                //return res.status(500).json(message)
 
             } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
 
@@ -241,17 +256,30 @@ var createAdminFeedback = async (req, res) => {
         }
         
         if(isErr){
+            if(errorMessage == "File Limit is 2 MB"){
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if(errorMessage == "Only 1 image can be uploaded"){
+                return responseHelper.requestfailure(res, errorMessage)
+            }
             
-               responseHelper.requestfailure(res, errorMessage)
+            try {
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+            } catch (err) {
+              return  responseHelper.requestfailure(res, err);
+
+            }
+            return responseHelper.requestfailure(res, errorMessage)
         }else
 
         {userData = JSON.parse(req.body.request);
 
 
-        userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+        //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
 
         try {
-
+            if(feedbackimg !== undefined){
+                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            }
             var adminid = req.token_decoded.d
             userData.addedby = adminid
             var result = await feedbackHelper.createFeedback(userData)
@@ -280,7 +308,7 @@ var createAdminFeedback = async (req, res) => {
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
@@ -390,9 +418,9 @@ var updateFeedback = async (req, res) => {
 
             if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
-                var message = "Only 1 image can be uploaded";
-
-                return res.status(500).json(message)
+                errorMessage = "Only 1 image can be uploaded";
+                isErr = true
+                //return res.status(500).json(message)
 
             } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
 
@@ -411,8 +439,19 @@ var updateFeedback = async (req, res) => {
         }
         
         if(isErr){
+            if(errorMessage == "File Limit is 2 MB"){
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if(errorMessage == "Only 1 image can be uploaded"){
+                return responseHelper.requestfailure(res, errorMessage)
+            }
             
-               responseHelper.requestfailure(res, errorMessage)
+            try {
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+            } catch (err) {
+              return  responseHelper.requestfailure(res, err);
+
+            }
+            return responseHelper.requestfailure(res, errorMessage)
         }else
 
         {userData = JSON.parse(req.body.request);
@@ -451,7 +490,7 @@ var updateFeedback = async (req, res) => {
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public//uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 

@@ -12,4 +12,6 @@ module.exports = {
   quotes: require('./quotes.model'),
   tickers: require('./tickers.model'),
   feedbacks: require("./feedbacks.model"),
+  permissions: require('./permissions.model'),
+  roles: require('./roles.model')
 };

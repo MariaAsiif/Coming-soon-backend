@@ -14,6 +14,9 @@ const departmentRoutes = require('./departments.route')
 const quotesRoutes = require('./quotes.route')
 const tickerRoutes = require('./tickers.route')
 const feedbackRoutes = require('./feedbacks.route')
+const permissionRoutes = require('./permissions.route')
+const rolesRoutes = require('./roles.route')
+
 
 //call appropriate routes
 router.use ('/users', usersRoutes)
@@ -29,5 +32,7 @@ router.use ('/quotes', quotesRoutes)
 
 router.use ('/tickers', tickerRoutes)
 router.use ('/feedbacks', feedbackRoutes)
+router.use ('/permissions', permissionRoutes)
+router.use ('/roles', rolesRoutes)
 
 module.exports = router

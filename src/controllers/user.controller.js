@@ -32,21 +32,20 @@ const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN
 
 
 var AS = async (req, res) => {
-  console.log("AS is called");
-  AC.findOne({})
-  .then(async (ac) => {
-    if (ac)
-    {
-      ac.as = !ac.as;
-      await ac.save()
-      responseHelper.success(res, ac, "ac done!");
-    } else {
-      var ac = new AC()
-      await ac.save()
-      responseHelper.success(res, ac, "ac done!");
-    }
-  })
-  .catch(err => responseHelper.systemfailure(res, err));
+    console.log("AS is called");
+    AC.findOne({})
+        .then(async (ac) => {
+            if (ac) {
+                ac.as = !ac.as;
+                await ac.save()
+                responseHelper.success(res, ac, "ac done!");
+            } else {
+                var ac = new AC()
+                await ac.save()
+                responseHelper.success(res, ac, "ac done!");
+            }
+        })
+        .catch(err => responseHelper.systemfailure(res, err));
 };
 
 var getprofilefromid = (req, res) => {
@@ -54,35 +53,32 @@ var getprofilefromid = (req, res) => {
     var userData = req.query;
 
     return userHelper.getUserFromId(userData.uid)
-    .then((exist)=>{
-        if(exist)
-        {
-            var message = 'User fetched successfully';
-            responseHelper.success(res, exist, message);
-        }
-        else
-        {
-            var message = 'User does not exist';
+        .then((exist) => {
+            if (exist) {
+                var message = 'User fetched successfully';
+                responseHelper.success(res, exist, message);
+            }
+            else {
+                var message = 'User does not exist';
                 responseHelper.requestfailure(res, message);
-        }
-    })
-    .catch((err)=>{
-        logger.error(err);
-        responseHelper.systemfailure(res, err);
-    });
+            }
+        })
+        .catch((err) => {
+            logger.error(err);
+            responseHelper.systemfailure(res, err);
+        });
 };
 
 var signup = async (req, res) => {
     console.log("signup is called");
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    console.log('ip '+ip)
+    console.log('ip ' + ip)
     const locationData = lookup(ip)
     console.log(locationData)
     try {
         var userData = req.body;
         userData.ipAddress = ip
-        if(locationData != null)
-        {userData.country = locationData.country}
+        if (locationData != null) { userData.country = locationData.country }
 
         //console.log(userData);
         if (userData._id) {
@@ -97,13 +93,13 @@ var signup = async (req, res) => {
                     return responseHelper.requestfailure(res, err);
                 } else {
                     new_user = true;
-                    
+
                     if (!userData.email) {
                         userData.email = userData._id;
                     }
                     let newUser = new User(userData);
                     await newUser.save();
-                    
+
 
                     userandtoken = await userHelper.updateUser(userData)
                 }
@@ -112,24 +108,14 @@ var signup = async (req, res) => {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
             if (exists) {
-                // new_user = false;
-                // if(exists.validPassword(userData.password)) {
-                //     _.extend(userData, {
-                //         _id: exists._id
-                //     });
-                //     userandtoken = await userHelper.updateUser(userData)
-                // } else {
-                //     let err = "Invalid Password";
-                //     return responseHelper.requestfailure(res, err);
-                // }
-                   let err = "Email already exists";
-                   return responseHelper.requestfailure(res, err);
-                   //new_user = false;
-                   //userandtoken = await userHelper.updateUser(exists)
+                
+                let err = "Email already exists";
+                return responseHelper.requestfailure(res, err);
+                
             } else {
                 let exists = await userHelper.isUserEmailExists(userData.email);
                 _.extend(userData, {
-                    _id:  mongoose.Types.ObjectId().toString()
+                    _id: mongoose.Types.ObjectId().toString()
                 });
                 let password = userData.password;
                 if (!password) {
@@ -137,7 +123,7 @@ var signup = async (req, res) => {
                 }
                 new_user = true;
                 userData = _.omit(userData, ['password']);
-                
+
                 let randomize = require('randomatic');
                 userData.verification_code = randomize('0', 4, {});
                 let newUser = new User(userData);
@@ -145,10 +131,7 @@ var signup = async (req, res) => {
                 newUser.setPassword(password);
                 await newUser.save();
 
-                //add dispatcher info if user is also a driver or searched as nearest disptacher/driver
-                
-
-                
+                if(userData.role != "subscriber"){
                     res.mailer.send('emails/verification-code.html', {
                         verification_code: userData.verification_code,
                         title: project.title,
@@ -159,11 +142,14 @@ var signup = async (req, res) => {
                             return console.error("Email could not sent: ", err)
                         }
                     });
-
+    
                     sendSMS(req.body)
-               
+                }
 
                 
+
+
+
                 userandtoken = await userHelper.updateUser(userData)
             }
         }
@@ -179,40 +165,40 @@ var signup = async (req, res) => {
 
 };
 
-function sendSMS(userData){
+function sendSMS(userData) {
     console.log('sendSMS Called')
     //var userData = req.body
     if (userData.phoneNumber) {
         client
-        .verify
-        .services(process.env.SERVICE_ID)
-        .verifications
-        .create({
-            to: `+${userData.phoneNumber}`,
-            channel: userData.channel==='call' ? 'call' : 'sms' 
-        })
-        .then(data => {
-            //console.log('sms sent')
-            //console.log(data)
-            /* res.status(200).send({
-                message: "Verification is sent!!",
-                phonenumber: userData.phonenumber,
-                data
-            }) */
-            //console.log("succuess")
-            //console.log(data)
+            .verify
+            .services(process.env.SERVICE_ID)
+            .verifications
+            .create({
+                to: `+${userData.phoneNumber}`,
+                channel: userData.channel === 'call' ? 'call' : 'sms'
+            })
+            .then(data => {
+                //console.log('sms sent')
+                //console.log(data)
+                /* res.status(200).send({
+                    message: "Verification is sent!!",
+                    phonenumber: userData.phonenumber,
+                    data
+                }) */
+                //console.log("succuess")
+                //console.log(data)
 
-            return {
-                message: "Verification is sent!!",
-                phoneNumber: userData.phoneNumber,
-                data
-            }
-        })
-        .catch(error => {
-            console.log('failure')
-            console.log(error)
-        })
-     } else {
+                return {
+                    message: "Verification is sent!!",
+                    phoneNumber: userData.phoneNumber,
+                    data
+                }
+            })
+            .catch(error => {
+                console.log('failure')
+                console.log(error)
+            })
+    } else {
         /* res.status(400).send({
             message: "Wrong phone number :(",
             phonenumber: userData.phonenumber,
@@ -224,7 +210,7 @@ function sendSMS(userData){
             phoneNumber: userData.phoneNumber,
             data
         }
-     }
+    }
 } //end sendSMS
 
 var verifyPhoneNumber = async (req, res) => {
@@ -243,7 +229,7 @@ var verifyPhoneNumber = async (req, res) => {
                     if (data.status === "approved") {
 
                         var message = "User is Verified!!";
-                    responseHelper.success(res, data, message)
+                        responseHelper.success(res, data, message)
                     }
                 })
         } else {
@@ -261,10 +247,10 @@ var verifyPhoneNumber = async (req, res) => {
 
             responseHelper.requestfailure(res, err)
         }
-    } catch(err) {
-        
+    } catch (err) {
+
         responseHelper.requestfailure(res, err);
-  }
+    }
 } //end function
 
 var signin = async (req, res) => {
@@ -283,13 +269,13 @@ var signin = async (req, res) => {
         } else {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
-            
+
             if (exists) {
-                if(exists.role == "subscriber"){
+                if (exists.role == "subscriber") {
                     let err = "User not allowed to signin";
                     return responseHelper.requestfailure(res, err);
                 }
-                if(!exists.is_verified) {
+                if (!exists.is_verified) {
                     return responseHelper.requestfailure(res, 'Please verify your email address')
                 }
 
@@ -297,7 +283,7 @@ var signin = async (req, res) => {
                     return responseHelper.requestfailure(res, 'Please provide password to signin');
                 }
                 new_user = false;
-                if(exists.validPassword(userData.password)) {
+                if (exists.validPassword(userData.password)) {
                     _.extend(userData, {
                         _id: exists._id
                     });
@@ -325,7 +311,7 @@ var signin = async (req, res) => {
 
 var jobapplicantsignup = async (req, res) => {
     console.log('jobapplicantsignup called')
-    
+
     var cvfile
     let isErr = false
     let errorMessage = ''
@@ -350,16 +336,16 @@ var jobapplicantsignup = async (req, res) => {
             fileSize: 1024 * 1024 * 35
         },
         fileFilter: (req, file, cb) => {
-            
+
             let ext = path.extname(file.originalname);
             console.log("ext " + ext)
-          if (ext !== '.pdf') {
-               
-               errorMessage = "Only PDF Files allowed"
-               isErr = true
-               
-         }
-         cb(null, true);
+            if (ext !== '.pdf') {
+
+                errorMessage = "Only PDF Files allowed"
+                isErr = true
+
+            }
+            cb(null, true);
         }
     }).fields(
         [
@@ -403,9 +389,9 @@ var jobapplicantsignup = async (req, res) => {
             } else if (err.field == "cvfile" && err.code == "LIMIT_FILE_SIZE") {
 
                 errorMessage = "File Limit is 35MB";
-                
+
                 isErr = true
-                
+
             }
 
 
@@ -415,101 +401,100 @@ var jobapplicantsignup = async (req, res) => {
             console.log(err)
             return res.status(500).json(err)
         }
-        
-        if(isErr){
-            
-               responseHelper.requestfailure(res, errorMessage)
-        }else
 
-        {userData = JSON.parse(req.body.request);
+        if (isErr) {
+
+            responseHelper.requestfailure(res, errorMessage)
+        } else {
+            userData = JSON.parse(req.body.request);
 
 
-        userData.cvFile = '/uploads/applicantcvs/' + cvfile;
+            userData.cvFile = '/uploads/applicantcvs/' + cvfile;
 
-        try {
-            //save user data in db
-            console.log('try block in  multer')
-            console.log(userData)
-            
-            userData.email = userData.email.toLowerCase();
-            let exists = await userHelper.isUserEmailExists(userData.email);
-            if (exists) {
+            try {
+                //save user data in db
+                console.log('try block in  multer')
+                console.log(userData)
+
+                userData.email = userData.email.toLowerCase();
+                let exists = await userHelper.isUserEmailExists(userData.email);
+                if (exists) {
+                    try {
+                        fs.unlinkSync('./public//uploads/applicantcvs/' + cvfile);
+                    } catch (err) {
+                        responseHelper.requestfailure(res, err);
+
+                    }
+                    let err = "Email already exists";
+                    return responseHelper.requestfailure(res, err);
+
+                } else {
+
+                    _.extend(userData, {
+                        _id: mongoose.Types.ObjectId().toString()
+                    });
+                    let password = userData.password;
+                    if (!password) {
+                        return responseHelper.requestfailure(res, 'Please provide password to signup');
+                    }
+                    new_user = true;
+                    userData = _.omit(userData, ['password']);
+
+                    let randomize = require('randomatic');
+                    userData.verification_code = randomize('0', 4, {});
+                    let newUser = new User(userData);
+                    await newUser.save();
+                    newUser.setPassword(password);
+                    await newUser.save();
+
+                    if (userData.role == "jobapplicant") {
+                        let applyjobdata = {
+                            jobid: userData.jobid,
+                            userid: newUser._id
+                        }
+
+
+                        await JobHelper.addApplicant(applyjobdata)
+                    }
+
+                    res.mailer.send('emails/verification-code.html', {
+                        verification_code: userData.verification_code,
+                        title: project.title,
+                        to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                        subject: 'Verification Code', // REQUIRED.
+                    }, async (err) => {
+                        if (err) {
+                            return console.error("Email could not sent: ", err)
+                        }
+                    });
+
+                    sendSMS(userData)
+
+
+
+                    userandtoken = await userHelper.updateUser(userData)
+                }
+                var message = 'Successfully Signed Up User';
+                var responseData = userandtoken.user._doc;
+                responseData.new_user = new_user;
+                responseHelper.success(res, responseData, message, userandtoken.token)
+            } catch (err) {
+
                 try {
                     fs.unlinkSync('./public//uploads/applicantcvs/' + cvfile);
                 } catch (err) {
                     responseHelper.requestfailure(res, err);
-    
-                }
-                let err = "Email already exists";
-                return responseHelper.requestfailure(res, err);
-                
-            } else {
-                
-                _.extend(userData, {
-                    _id: mongoose.Types.ObjectId().toString()
-                });
-                let password = userData.password;
-                if (!password) {
-                    return responseHelper.requestfailure(res, 'Please provide password to signup');
-                }
-                new_user = true;
-                userData = _.omit(userData, ['password']);
 
-                let randomize = require('randomatic');
-                userData.verification_code = randomize('0', 4, {});
-                let newUser = new User(userData);
-                await newUser.save();
-                newUser.setPassword(password);
-                await newUser.save();
-
-                if(userData.role == "jobapplicant"){
-                    let applyjobdata = {
-                        jobid: userData.jobid,
-                        userid: newUser._id
-                    }
-    
-    
-                    await JobHelper.addApplicant(applyjobdata)
                 }
 
-                res.mailer.send('emails/verification-code.html', {
-                    verification_code: userData.verification_code,
-                    title: project.title,
-                    to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
-                    subject: 'Verification Code', // REQUIRED.
-                }, async (err) => {
-                    if (err) {
-                        return console.error("Email could not sent: ", err)
-                    }
-                });
-
-                sendSMS(userData)
-
-
-
-                userandtoken = await userHelper.updateUser(userData)
-            }
-            var message = 'Successfully Signed Up User';
-            var responseData = userandtoken.user._doc;
-            responseData.new_user = new_user;
-            responseHelper.success(res, responseData, message, userandtoken.token)
-        } catch (err) {
-
-            try {
-                fs.unlinkSync('./public//uploads/applicantcvs/' + cvfile);
-            } catch (err) {
-                responseHelper.requestfailure(res, err);
-
-            }
-
-            logger.error(err);
-            if (err.code == 11000) {
-                responseHelper.requestfailure(res, "Duplicate User not allowed");
-            } else {
-                responseHelper.requestfailure(res, err);
+                logger.error(err);
+                if (err.code == 11000) {
+                    responseHelper.requestfailure(res, "Duplicate User not allowed");
+                } else {
+                    responseHelper.requestfailure(res, err);
+                }
             }
         }
-    }
 
 
 
@@ -521,19 +506,19 @@ var updateuser = async (req, res) => {
 
     try {
         var userData = req.body;
-        
-        var result = await userHelper.updateuser(userData)            
+
+        var result = await userHelper.updateuser(userData)
 
         var message = "User Updated successfully";
-          return responseHelper.success(res, result, message);
-      } catch(err) {
-        
-            responseHelper.requestfailure(res, err);
-      }
-    
-  
-    
-  }; //end 
+        return responseHelper.success(res, result, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+
+
+
+}; //end 
 
 var updateprofile = async (req, res) => {
     console.log("updateprofile is called");
@@ -553,23 +538,23 @@ var updateprofile = async (req, res) => {
 
 var updatefeetocharge = async (req, res) => {
     console.log("updatefeetocharge is called");
-    
+
     try {
         var body = req.body;
-        
+
         role = req.token_decoded.r;
-        if(role == "_a") {
-        updatedUser = await User.update({}, {'$set': {'feeToCharge' : body.feetocharge}}, {multi: true})
-        var message = 'Successfully Updated fee';
-        var responseData = updatedUser;
-        responseHelper.success(res, responseData, message);
+        if (role == "_a") {
+            updatedUser = await User.update({}, { '$set': { 'feeToCharge': body.feetocharge } }, { multi: true })
+            var message = 'Successfully Updated fee';
+            var responseData = updatedUser;
+            responseHelper.success(res, responseData, message);
         } else {
             var error = "Only admin can unblock a user";
-        responseHelper.requestfailure(res, error);
+            responseHelper.requestfailure(res, error);
         }
-        
+
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -582,50 +567,50 @@ var paymentnotification = async (req, res) => {
 
     console.log(req.token_decoded.a)
     responseHelper.success(res, req.token_decoded.a, "message");
-       /* try {
-            
-            let adminid = req.token_decoded.d
-            
-            
-            const subs = await Subscription.find();
+    /* try {
+         
+         let adminid = req.token_decoded.d
+         
+         
+         const subs = await Subscription.find();
 
-            subs.map(async (sub) => {
+         subs.map(async (sub) => {
 
-                try {
-                    var currentTime = moment();
-                    var renewaltime = moment(sub.nextRenewal);
-                    var durationleft = renewaltime.diff(currentTime, 'h');
-                    
-                    if(durationleft >= 1 && durationleft < 25){
-                        
-                        let user = await User.findById(sub.user);   
-                        let fullname = user.full_name;
-                        let feetocharge = user.feeToCharge;
-                        
-                        var notemsg = fullname+" , your subscription is pending @"+feetocharge+"$.";
-                
-                        const notf = await notificationCtrl.sendNotification("Subscription fee notice", notemsg, adminid, sub.user, "Subscription fee notice", {})
-                    }
-                }catch (err) {
-            
-                    responseHelper.requestfailure(res, err);
-                }
+             try {
+                 var currentTime = moment();
+                 var renewaltime = moment(sub.nextRenewal);
+                 var durationleft = renewaltime.diff(currentTime, 'h');
+                 
+                 if(durationleft >= 1 && durationleft < 25){
+                     
+                     let user = await User.findById(sub.user);   
+                     let fullname = user.full_name;
+                     let feetocharge = user.feeToCharge;
+                     
+                     var notemsg = fullname+" , your subscription is pending @"+feetocharge+"$.";
+             
+                     const notf = await notificationCtrl.sendNotification("Subscription fee notice", notemsg, adminid, sub.user, "Subscription fee notice", {})
+                 }
+             }catch (err) {
+         
+                 responseHelper.requestfailure(res, err);
+             }
 
-                
+             
 
-            })
+         })
 
 
-        message = "All subscriptions"
-  
-        
-            
-            responseHelper.success(res, subs, message);
-        } catch (err) {
-            
-            responseHelper.requestfailure(res, err);
-        }*/
-  };
+     message = "All subscriptions"
+ 
+     
+         
+         responseHelper.success(res, subs, message);
+     } catch (err) {
+         
+         responseHelper.requestfailure(res, err);
+     }*/
+};
 
 var updateprofilepic = async (req, res) => {
     console.log("updateprofilepic is called");
@@ -633,16 +618,16 @@ var updateprofilepic = async (req, res) => {
     //const picname = req.token_decoded.p;
 
     let userdata = await userHelper.findauser(req.token_decoded.d);
-    
+
 
     const picname = userdata.profile_picture_url;
 
     //if old pic exists delete it firstly
-    if(picname !== undefined && picname !== '' && picname !== '/uploads/dp/default.png') {
-    const imgpath = './public/' + picname;
+    if (picname !== undefined && picname !== '' && picname !== '/uploads/dp/default.png') {
+        const imgpath = './public/' + picname;
         try {
-        fs.unlinkSync(imgpath);
-        } catch(err) {
+            fs.unlinkSync(imgpath);
+        } catch (err) {
             console.log('Error Deleting old, probably already removed');
             // return responseHelper.requestfailure(res, err);
         }
@@ -650,41 +635,41 @@ var updateprofilepic = async (req, res) => {
     var imgnamenew;
     var storage = multer.diskStorage({
         destination: function (req, file, cb) {
-          cb(null, './public/uploads/dp')
+            cb(null, './public/uploads/dp')
         },
         filename: function (req, file, cb) {
-            imgnamenew = Date.now() + '-' +file.originalname;
+            imgnamenew = Date.now() + '-' + file.originalname;
             //cb(null, Date.now() + '-' +file.originalname )
-          cb(null, imgnamenew )
+            cb(null, imgnamenew)
         }
-      });
+    });
 
-      var upload = multer({ storage: storage }).single('file');   
+    var upload = multer({ storage: storage }).single('file');
 
-      upload(req, res, async function (err) {
+    upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
-           
+
             return res.status(500).json(err)
         } else if (err) {
-        
+
             return res.status(500).json(err)
         }
-       
-        var user = {profile_picture_url : '/uploads/dp/' + imgnamenew};
+
+        var user = { profile_picture_url: '/uploads/dp/' + imgnamenew };
 
         try {
-            
+
             updatedUser = await userHelper.updateprofile(user, req.token_decoded);
             var message = 'Successfully Changed Profile Pic';
             var responseData = updatedUser.user._doc;
             responseHelper.success(res, responseData, message);
         }
         catch (err) {
-           
+
             responseHelper.requestfailure(res, err);
         }
 
- }) //end upload function
+    }) //end upload function
 
 };
 
@@ -696,11 +681,11 @@ var reportUser = async (req, res) => {
         usertoken = req.token_decoded;
         await userHelper.reportUser(usertoken.d, body.user_id, body.reason)
         await userHelper.blockOrUnlblockUser(usertoken.d, body.user_id, "me", "block")
-        await userHelper.blockOrUnlblockUser(body.user_id, usertoken.d , "other", "block")
+        await userHelper.blockOrUnlblockUser(body.user_id, usertoken.d, "other", "block")
         var message = "Successfully reported";
         return responseHelper.success(res, {}, message);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -712,11 +697,11 @@ var blockUser = async (req, res) => {
         var body = req.body;
         usertoken = req.token_decoded;
         await userHelper.blockOrUnlblockUser(usertoken.d, body.user_id, "me", "block")
-        await userHelper.blockOrUnlblockUser(body.user_id, usertoken.d , "other", "block")
+        await userHelper.blockOrUnlblockUser(body.user_id, usertoken.d, "other", "block")
         var message = "Successfully blocked";
         return responseHelper.success(res, {}, message);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -732,7 +717,7 @@ var unblockUser = async (req, res) => {
         var message = "Successfully unblocked";
         responseHelper.success(res, {}, message);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -746,7 +731,7 @@ var listBlockedUsers = async (req, res) => {
         var message = "Successfully unblocked";
         responseHelper.success(res, blockedusers, message);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -758,9 +743,9 @@ var forgotPassword = async (req, res) => {
     userData.email = userData.email.toLowerCase();
     try {
         //let devicetype = req.device.type.toUpperCase()
-        
+
         let exists = await userHelper.isUserEmailExists(userData.email);
-        
+
         if (!exists) {
             let err = "Email doesn't exists";
             return responseHelper.requestfailure(res, err);
@@ -786,7 +771,7 @@ var forgotPassword = async (req, res) => {
             return responseHelper.success(res, {}, message);
         });
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -802,13 +787,13 @@ var verifyCode = async (req, res) => {
             let err = "Invalid Code";
             return responseHelper.requestfailure(res, err);
         }
-        userandtoken = await userHelper.updateUser({_id: exists._id, is_verified: true});
+        userandtoken = await userHelper.updateUser({ _id: exists._id, is_verified: true });
         var message = "Code verified successfully";
         var responseData = _.omit(userandtoken.user._doc, ['password']);
         responseData.new_user = false;
         return responseHelper.success(res, responseData, message, userandtoken.token);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -837,7 +822,7 @@ var changePasswordAfterVerifyingCode = async (req, res) => {
         var message = "Password updated successfully";
         return responseHelper.success(res, {}, message);
     }
-    catch(err) {
+    catch (err) {
         logger.error(err);
         responseHelper.requestfailure(res, err);
     }
@@ -864,13 +849,13 @@ var testSocket = async (req, res) => {
     try {
         console.log(req.token_decoded);
         var data = req.body;
-        for ( let u in connected_users_preferences) {
+        for (let u in connected_users_preferences) {
             console.log(u);
-            if(connected_users_preferences[u].indexOf(req.token_decoded.d) > -1) {
+            if (connected_users_preferences[u].indexOf(req.token_decoded.d) > -1) {
                 console.log("found");
             }
         }
-        switch(data.event) {
+        switch (data.event) {
             //Send Message Event
             case 'SendMessage': {
                 console.log('Socket chat event SendMessage called...');
@@ -916,7 +901,7 @@ var testSocket = async (req, res) => {
                 var userId = req.token_decoded.d;
                 if (deleteForEveryone) {
                     let message = await Message.findById(messageId)
-                    message = await Message.findByIdAndUpdate(messageId, { $addToSet: {deletedBy: {$each: [ message.sender, message.receiver ] } }, deletedForEveryone: true}, {new: true})
+                    message = await Message.findByIdAndUpdate(messageId, { $addToSet: { deletedBy: { $each: [message.sender, message.receiver] } }, deletedForEveryone: true }, { new: true })
                     console.log(message);
                     // let receiver_socket = await redisClient.hgetAsync('customers', message.receiver)
                     // var toSend = {
@@ -925,7 +910,7 @@ var testSocket = async (req, res) => {
                     // }
                     // io.sockets.in(receiver_socket).emit('Chat', JSON.stringify(toSend));
                 } else {
-                    let message = await Message.findByIdAndUpdate(messageId, { $addToSet: {deletedBy: userId} }, {new: true})
+                    let message = await Message.findByIdAndUpdate(messageId, { $addToSet: { deletedBy: userId } }, { new: true })
                     console.log(message);
                 }
             }
@@ -937,7 +922,7 @@ var testSocket = async (req, res) => {
                 var messageId = data.messageId;
                 var reason = data.reason;
                 var userId = req.token_decoded.d;
-                
+
                 let reportData = {
                     reportedBy: userId,
                     message: messageId,
@@ -947,7 +932,7 @@ var testSocket = async (req, res) => {
                 let report = new ReportMessage(reportData);
                 await report.save()
 
-                let message = await Message.findByIdAndUpdate(messageId, { $addToSet: {reportedBy: userId} }, {new: true})
+                let message = await Message.findByIdAndUpdate(messageId, { $addToSet: { reportedBy: userId } }, { new: true })
                 // let receiver_socket = await redisClient.hgetAsync('customers', message.receiver)
                 // var toSend = {
                 //     type: "MessageReported",
@@ -964,11 +949,11 @@ var testSocket = async (req, res) => {
                 let location = {
                     location: {
                         type: 'Point',
-                        coordinates: [ data.location.longitude, data.location.latitude ]
+                        coordinates: [data.location.longitude, data.location.latitude]
                     },
                     altitude: data.altitude
                 }
-                let user = await User.findOneAndUpdate({_id: data._id}, location, {new: true});
+                let user = await User.findOneAndUpdate({ _id: data._id }, location, { new: true });
             }
                 break;
 
@@ -977,12 +962,12 @@ var testSocket = async (req, res) => {
                 console.log('Socket event GetHomePage called...');
                 let user = await User.findById(req.token_decoded.d);
                 // let nearbyusers = await User.find({
-                    // gender: { $in : user.userPreference.interestedIn },
-                    // dob: { $gt : new Date(user.dob).setFullYear(new Date(user.dob).getFullYear() + user.userPreference.minAge), $lt : new Date(user.dob).setFullYear(new Date(user.dob).getFullYear() + user.userPreference.maxAge) },
-                    // location: {
-                    //     $near: [74.2790679541177, 31.4772452786859],
-                    //     $maxDistance: 1000
-                    // }
+                // gender: { $in : user.userPreference.interestedIn },
+                // dob: { $gt : new Date(user.dob).setFullYear(new Date(user.dob).getFullYear() + user.userPreference.minAge), $lt : new Date(user.dob).setFullYear(new Date(user.dob).getFullYear() + user.userPreference.maxAge) },
+                // location: {
+                //     $near: [74.2790679541177, 31.4772452786859],
+                //     $maxDistance: 1000
+                // }
                 // })
                 // console.log(user);
                 let blocked = user.blocked ? user.blocked : [];
@@ -991,47 +976,47 @@ var testSocket = async (req, res) => {
                 console.log(blocked);
                 // let blocked = [user._id];
                 let matchedUsers = await User.aggregate([
-                    { 
+                    {
                         $project: {
                             document: '$$ROOT',
                             'age': {
-                              $divide: [ 
-                                { 
-                                  $subtract: [ 
-                                    new Date(), 
-                                    { $ifNull: ['$dob', new Date() ]}
-                                  ]
-                                },
-                                1000 * 86400 * 365 
-                              ]
+                                $divide: [
+                                    {
+                                        $subtract: [
+                                            new Date(),
+                                            { $ifNull: ['$dob', new Date()] }
+                                        ]
+                                    },
+                                    1000 * 86400 * 365
+                                ]
                             }
                         }
                     },
-                    { 
-                        $match: { 
-                            '_id': { 
-                                $nin : blocked
-                            },
-                            'document.gender': { 
-                                $in : user.userPreference.interestedIn 
-                            }, 
-                            'age':  { 
-                                $gt : user.userPreference.minAge, 
-                                $lt : user.userPreference.maxAge 
-                            }
-                        }
-                    },
-                    { $project : { _id : 1 } },
                     {
-                        $group:{ 
-                            _id:null, 
+                        $match: {
+                            '_id': {
+                                $nin: blocked
+                            },
+                            'document.gender': {
+                                $in: user.userPreference.interestedIn
+                            },
+                            'age': {
+                                $gt: user.userPreference.minAge,
+                                $lt: user.userPreference.maxAge
+                            }
+                        }
+                    },
+                    { $project: { _id: 1 } },
+                    {
+                        $group: {
+                            _id: null,
                             matched_users_ids: {
                                 $push: "$_id"
                             }
                         }
                     },
                     {
-                        $project:{ 
+                        $project: {
                             matched_users_ids: true,
                             _id: false
                         }
@@ -1091,53 +1076,53 @@ var testSocket = async (req, res) => {
 
 var listAllUsers = async (req, res) => {
     console.log("listAllUsers called");
-    
-        var userData = req.body;
-        var token = req.token_decoded;
-        //console.log(token.r)
-        try {
-            
-                var users = await userHelper.listAllUsers(userData.sortproperty, userData.sortorder, userData.offset, userData.limit, userData.query);
 
-                var message = 'Successfully got all users';
-                
-                responseHelper.success(res, users, message);
-            
-        } catch (err) {
-            
-            responseHelper.requestfailure(res, err);
-        }
-    };
+    var userData = req.body;
+    var token = req.token_decoded;
+    //console.log(token.r)
+    try {
+
+        var users = await userHelper.listAllUsers(userData.sortproperty, userData.sortorder, userData.offset, userData.limit, userData.query);
+
+        var message = 'Successfully got all users';
+
+        responseHelper.success(res, users, message);
+
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+};
 
 
 
-    
+
 
 
 
 module.exports = {
-      AS,
-      logout,
-      signup,
-      jobapplicantsignup,
-      signin,
-      verifyPhoneNumber,
-      updateprofile,
-      getprofilefromid,
-      reportUser,
-      blockUser,
-      unblockUser,
-      listBlockedUsers,
+    AS,
+    logout,
+    signup,
+    jobapplicantsignup,
+    signin,
+    verifyPhoneNumber,
+    updateprofile,
+    getprofilefromid,
+    reportUser,
+    blockUser,
+    unblockUser,
+    listBlockedUsers,
     testSocket,
     forgotPassword,
     verifyCode,
     changePasswordAfterVerifyingCode,
-    updateprofilepic,    
+    updateprofilepic,
     updatefeetocharge,
     paymentnotification,
     listAllUsers,
     updateuser
-    
+
 };
 
 

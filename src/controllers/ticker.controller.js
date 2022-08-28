@@ -22,6 +22,8 @@ const fs = require('fs');
 
 const tickerHelper = require('../helpers/ticker.helper')
 
+const Ticker = mongoose.model('tickers')
+
 //helper functions
 logger = require("../helpers/logger")
 
@@ -154,6 +156,139 @@ var createTicker = async (req, res) => {
     
 } //end function
 
+var updateTicker = async (req, res) => {
+    console.log('createTicker')
+    var logoimg
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "logoimg") {
+                cb(null, './public/uploads/logoimages')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "logoimg") {
+                logoimg = Date.now() + '-' + file.originalname
+                cb(null, logoimg)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 1
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            console.log("ext " + ext)
+            
+            let extentions = ['.png', '.svg']
+          if (!extentions.includes(ext)){
+               
+               errorMessage = "Only PNG, and SVG Files allowed"
+               isErr = true
+               
+         }
+         cb(null, true)
+        }
+    }).fields(
+        [
+            {
+                name: 'logoimg',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "logoimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                var message = "Only 1 image can be uploaded";
+
+                return res.status(500).json(message)
+
+            } else if (err.field == "logoimg" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 1MB";
+                
+                isErr = true
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            
+               responseHelper.requestfailure(res, errorMessage)
+        }else
+
+        {userData = JSON.parse(req.body.request);
+
+
+        //userData.logoFile = '/uploads/logoimages/' + logoimg
+
+        try {
+            if(logoimg !== undefined){
+                userData.logoFile = '/uploads/logoimages/' +logoimg;
+            }
+            
+            userData.lastModifiedBy = req.token_decoded.d
+
+            let existingTicker = await Ticker.findById(userData.tickerid)
+
+            if(logoimg !== undefined && existingTicker.logoFile !== '') {
+                const imgpath = './public/' + existingTicker.logoFile;
+                    try {
+                    fs.unlinkSync(imgpath);
+                    } catch(err) {
+                        console.log('Error Deleting old, probably already removed');
+                        return responseHelper.requestfailure(res, err);
+                    }
+                }
+    
+           
+                var result = await tickerHelper.updateTicker(userData)
+                var message = "Ticker Updated successfully"
+                return responseHelper.success(res, result, message)
+            
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public/uploads/logoimages/' + logoimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
+        }
+
+    })
+    
+} //end function
+
 
 var getTickersWithFullDetails = async (req, res) => {
     console.log("getTickersWithFullDetails called")
@@ -191,7 +326,7 @@ var getTickersList = async (req, res) => {
     }
 }
 
-var updateTicker = async (req, res) => {
+/* var updateTicker = async (req, res) => {
     console.log("request received for updateTicker")
 
     var tickerData = req.body
@@ -210,7 +345,7 @@ var updateTicker = async (req, res) => {
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }
-}
+} */
 
 var removeTicker = async (req, res) => {
     console.log("removeTicker called")

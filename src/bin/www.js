@@ -20,16 +20,14 @@ var mongoose = require("mongoose");
 var AC = mongoose.model("AC");
 
 
-var serverPort = process.env.SERVER_PORT ;
+//var serverPort = process.env.SERVER_PORT ;
 
 
 //commented below is the port setting for deployment on heroku
-//app.set('port', process.env.PORT || 8080);
-//var serverPort = app.get('port')
+app.set('port', process.env.PORT || 8080);
+var serverPort = app.get('port')
 
-app.get('/', (req, res) => {
-    res.send("Hello World")
-})
+
 
 app.set('views', path.join(__dirname, '../views'));
 
@@ -38,7 +36,9 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 app.use(express.static(path.join(__dirname, '../../public')));
-
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../public/index.html"))
+})
 //app.use(bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, '../public/uploads')}));
 app.use(cors());
 
@@ -128,6 +128,10 @@ app.use(function (err, req, res, next) {
         error: {code: err.code, msg: err.message}
     });
 });
+
+app.get('/', (req, res) => {
+    res.send("Hello World")
+})
 
 server.listen(serverPort);
 

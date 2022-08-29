@@ -1,9 +1,3 @@
-#!/usr/bin/env node
-
-/**
- * Created by Jamshaid
- */
-
 
 logger = require("../helpers/logger");
 var express = require('express');
@@ -17,24 +11,23 @@ path = require('path');
 fs = require('fs');
 crypto = require('crypto');
 var bodyParser = require('body-parser');
-var jwt = require('jsonwebtoken');
-var passport = require('passport'); // Password for Auth
+
 var cookieParser = require('cookie-parser'); // Parse Cookies
-var request = require('request');
+
 require('../config/connect-mongoose');
 require('../models');
 var mongoose = require("mongoose");
 var AC = mongoose.model("AC");
 
-app.use(device.capture());
-
-// Initialize firebase admin
-//require("../config/init-firebase-admin");
 
 //var serverPort = process.env.SERVER_PORT ;
 
-app.set('port', process.env.PORT || 8080);
-var serverPort = app.get('port')
+
+//commented below is the port setting for deployment on heroku
+//app.set('port', process.env.PORT || 8080);
+//var serverPort = app.get('port')
+
+
 
 app.set('views', path.join(__dirname, '../views'));
 
@@ -43,20 +36,18 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 app.use(express.static(path.join(__dirname, '../../public')));
-
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../../public/index.html"))
 })
-
-app.use(bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, '../public/uploads')}));
+//app.use(bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, '../public/uploads')}));
 app.use(cors());
 
 base_url = '';
 clientURL = '';
 
 project = {
-    title: 'Coming Soon App',
-    description: 'Coming Soon App Server'
+    title: 'Coming Soon',
+    description: 'Coming Soon Server'
 };
 
 mailer.extend(app, {
@@ -71,12 +62,17 @@ mailer.extend(app, {
     }
 });
 
-// Middleware 
+// Middleware to stop the app from functioning in case client dont pays the bill
 app.use(function (req, res, next) {
-    AC.find({}, function(err, acs) {
+    /* AC.find({}, function(err, acs) {
+        console.log(acs)
     ac = acs[0];
     if (!ac || ((req.url.split("/")[2] === "as") && !ac.as) || ac.as) {
-            base_url = process.env.BASE_URL;
+            
+        }
+    }) */
+
+    base_url = process.env.BASE_URL;
             clientURL = process.env.CLIENT_URL;
 
             // Website you wish to allow to connect
@@ -100,8 +96,6 @@ app.use(function (req, res, next) {
                 // Pass to next layer of middleware
                 next();
             }
-        }
-    })
 
 });
 
@@ -120,16 +114,11 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.use(cookieParser());
 
-//var socketModule = require('../controllers/socket.controller');
-//socketModule.controller(server);
-
-
 var route = require('../routes');
 app.use(route);
 if (config.NODE_ENV === 'development') {
     console.log('developement called')
-    // app.use(function (err, req, res, next) {
-    // });
+    
 }
 
 // no stacktraces leaked to user
@@ -140,14 +129,14 @@ app.use(function (err, req, res, next) {
     });
 });
 
+app.get('/', (req, res) => {
+    res.send("Hello World")
+})
+
 server.listen(serverPort);
 
 module.exports = app;
 console.info("Listening on Port: " + serverPort);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
 
 server.on('error', onError);
 server.on('listening', onListening);

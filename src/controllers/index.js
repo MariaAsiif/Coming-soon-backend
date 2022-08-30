@@ -16,5 +16,6 @@ module.exports = {
   feedbacks: require('./feedback.controller'),
   permissions: require('./permission.controller'),
   roles: require('./roles.controller'),
-  verifications: require('./verification.controller')
+  verifications: require('./verification.controller'),
+  services: require('./services.controller')
 };

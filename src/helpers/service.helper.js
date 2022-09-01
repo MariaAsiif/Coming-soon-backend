@@ -98,7 +98,8 @@ module.exports = {
         console.log("findServiceById HelperFunction is called");
         
         const service = await Service.findOne(query.critarion)
-        
+        .populate('individualServiceProvider', query.individualServiceProvider)
+        .populate('businessServiceProvider', query.businessServiceProvider)
         .populate('addedby', query.addedby)
         
         .populate('lastModifiedBy', query.lastModifiedBy)

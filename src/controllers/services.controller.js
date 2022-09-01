@@ -33411,7 +33411,7 @@ var populateDBWithDoctorsPrvs = async (req, res) => {
                 },
                 category: sp.Category,
                 isIndividual: true,
-                businessServiceProvider: docbj._id
+                individualServiceProvider: docbj._id
             }
 
             var result = await serviceHelper.createService(newSP)
@@ -33725,7 +33725,7 @@ var populateDBWithLawyersPrvs = async (req, res) => {
                 },
                 category: sp.Category,
                 isIndividual: true,
-                businessServiceProvider: docbj._id
+                individualServiceProvider: docbj._id
             }
 
             var result = await serviceHelper.createService(newSP)

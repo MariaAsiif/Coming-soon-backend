@@ -15,5 +15,7 @@ module.exports = {
   tickers: require('./ticker.controller'),
   feedbacks: require('./feedback.controller'),
   permissions: require('./permission.controller'),
-  roles: require('./roles.controller')
+  roles: require('./roles.controller'),
+  verifications: require('./verification.controller'),
+  services: require('./services.controller')
 };

@@ -8,6 +8,8 @@ const userRoutes = require('./user.route')
 const jobsRoutes = require("./jobspublic.route")
 const quotesRoutes = require('./quotes.route')
 const feedbackRoutes = require('./feedbacks.route')
+const verificationRoutes = require('./verifications.route')
+const locateServicesRoutes = require('./services.route')
 
 
 
@@ -19,5 +21,7 @@ router.use ('/users', userRoutes)
 router.use ('/jobspublic', jobsRoutes)
 router.use ('/quotes', quotesRoutes)
 router.use ('/feedbacks', feedbackRoutes)
+router.use ('/verifications', verificationRoutes)
+router.use ('/locateservices', locateServicesRoutes)
 
 module.exports = router;

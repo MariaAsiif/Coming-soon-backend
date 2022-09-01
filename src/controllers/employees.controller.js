@@ -1,7 +1,7 @@
 //import mongoose and models
 var mongoose = require('mongoose');
-var User = mongoose.model('users');
-var Employee = mongoose.model('employees');
+//var User = mongoose.model('users');
+//var Employee = mongoose.model('employees');
 var config = require('dotenv').config();
 
 

@@ -13,5 +13,9 @@ module.exports = {
   tickers: require('./tickers.model'),
   feedbacks: require("./feedbacks.model"),
   permissions: require('./permissions.model'),
-  roles: require('./roles.model')
+  roles: require('./roles.model'),
+  userverifications : require('./userverification.model'),
+  services: require('./services.model'),
+  individualServiceProviders: require('./individualserverprovider.model'),
+  businessServiceProviders: require('./businessserviceprovider.model')
 };

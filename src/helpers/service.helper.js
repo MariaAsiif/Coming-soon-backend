@@ -86,10 +86,11 @@ module.exports = {
              var error = "Service does not exists."
              return error
         }
-        service.lastModifiedBy = data.lastModifiedBy
+        /* service.lastModifiedBy = data.lastModifiedBy
         service.active = false
-        service.save()
-        return service;
+        service.save() */
+        const result = await service.remove()
+        return result;
         
 
     },
@@ -111,9 +112,7 @@ module.exports = {
 
     locateAllServices: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, minDistance, maxDistance, location, query) => {
         console.log("locateActiveCalls HelperFunction is called");
-        //var where = {callStatus: {$nin: ["completed", "canceled"]}};
-
-        
+                
          var where ={$and : [ {'serviceLocation': {
             $nearSphere: {
               $geometry: {
@@ -130,11 +129,6 @@ module.exports = {
         ]
             
         }
-
-       
-
-       
-        
         const services = await Service.find(where)
         .populate('individualServiceProvider', query.individualServiceProvider)
         .populate('businessServiceProvider', query.businessServiceProvider)
@@ -142,10 +136,6 @@ module.exports = {
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit)
-
-        
-
-   
 
         return {
             services: services,

@@ -4,12 +4,13 @@
  
 const express = require('express')
 const router = express.Router()
-
+var permit = require('../../middlewares').permit
 const controller = require('../../controllers').services
 
 router.post('/createService', controller.createService)
 
 router.post('/updateService', controller.updateService)
+router.post('/approveDisapproveService', permit(['_a']), controller.approveDisapproveService)
 router.post('/removeService', controller.removeService)
 router.post('/getServicesWithFullDetails', controller.getServicesWithFullDetails)
 router.post('/getServicesList', controller.getServicesList)

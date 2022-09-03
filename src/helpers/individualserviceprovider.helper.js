@@ -84,10 +84,8 @@ module.exports = {
              var error = "IndvidualServiceProvider does not exists."
              return error
         }
-        individualserviceprovider.lastModifiedBy = data.lastModifiedBy
-        individualserviceprovider.active = false
-        individualserviceprovider.save()
-        return individualserviceprovider;
+        const result = await individualserviceprovider.remove()
+        return result;
         
 
     },

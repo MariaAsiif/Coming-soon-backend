@@ -85,10 +85,11 @@ module.exports = {
              var error = "BusinessServiceProvider does not exists."
              return error
         }
-        businessserviceprovider.lastModifiedBy = data.lastModifiedBy
+        /* businessserviceprovider.lastModifiedBy = data.lastModifiedBy
         businessserviceprovider.active = false
-        businessserviceprovider.save()
-        return businessserviceprovider;
+        businessserviceprovider.save() */
+        const result = await businessserviceprovider.remove()
+        return result
         
 
     },

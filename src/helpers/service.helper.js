@@ -86,10 +86,11 @@ module.exports = {
              var error = "Service does not exists."
              return error
         }
-        service.lastModifiedBy = data.lastModifiedBy
+        /* service.lastModifiedBy = data.lastModifiedBy
         service.active = false
-        service.save()
-        return service;
+        service.save() */
+        const result = await service.remove()
+        return result;
         
 
     },

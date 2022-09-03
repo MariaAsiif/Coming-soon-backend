@@ -1,6 +1,34 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+
+contentSchema = new Schema({
+  heading: {
+    type: String
+  },
+  points: [{
+    pointType: {
+      type: String,
+      enum: ['bullet', 'paragraph', 'link']
+    },
+    pointText: {
+      type: String
+    },
+    linkUrl: {
+      type: String
+    },
+    isLink: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  
+},
+{
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
+})
+
+
 var businessServiceProviderSchema = new Schema({
   email: {
     type: String
@@ -13,9 +41,7 @@ var businessServiceProviderSchema = new Schema({
     type: String,
     required: true
   },
-  content: {
-    type: String
-  },
+  content: [contentSchema],
   address: {
     type: String
   },

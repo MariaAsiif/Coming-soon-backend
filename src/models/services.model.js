@@ -33,6 +33,11 @@ var servicesSchema = new Schema({
     required: true,
     default: false
   },
+  isApproved: {
+    type: Boolean,
+    
+    default: false
+  },
   category: {
     type: String,
     required: true

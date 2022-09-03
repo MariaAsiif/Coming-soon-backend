@@ -1,17 +1,43 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+
+contentSchema = new Schema({
+  heading: {
+    type: String
+  },
+  points: [{
+    pointType: {
+      type: String,
+      enum: ['bullet', 'paragraph', 'link']
+    },
+    pointText: {
+      type: String
+    },
+    linkUrl: {
+      type: String
+    },
+    isLink: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  
+},
+{
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
+})
+
 var individualServiceProviderSchema = new Schema({
   title: {
     type: String,
     required: true
   },
+  content: [contentSchema],
   email: {
     type: String
   },
-  content: {
-    type: String
-  },
+
   gender: {
     type: String
   },
@@ -50,7 +76,7 @@ var individualServiceProviderSchema = new Schema({
     required: true,
     default: '/uploads/dp/default.png'
   },
-  
+
   qualifications: [{
     qualificationName: {
       type: String,
@@ -68,7 +94,8 @@ var individualServiceProviderSchema = new Schema({
     gradeType: {
       type: String
     }
-  }]
+  }],
+  
 })
 
 module.exports = mongoose.model('individualServiceProviders', individualServiceProviderSchema)

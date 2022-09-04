@@ -31,10 +31,10 @@ app.use(device.capture());
 // Initialize firebase admin
 //require("../config/init-firebase-admin");
 
-//var serverPort = process.env.SERVER_PORT ;
+var serverPort = process.env.SERVER_PORT ;
 
-app.set('port', process.env.PORT || 8080);
-var serverPort = app.get('port')
+//app.set('port', process.env.PORT || 8080);
+//var serverPort = app.get('port')
 
 app.set('views', path.join(__dirname, '../views'));
 
@@ -73,10 +73,14 @@ mailer.extend(app, {
 
 // Middleware 
 app.use(function (req, res, next) {
-    AC.find({}, function(err, acs) {
+    /* AC.find({}, function(err, acs) {
     ac = acs[0];
     if (!ac || ((req.url.split("/")[2] === "as") && !ac.as) || ac.as) {
-            base_url = process.env.BASE_URL;
+            
+        }
+    }) */
+
+    base_url = process.env.BASE_URL;
             clientURL = process.env.CLIENT_URL;
 
             // Website you wish to allow to connect
@@ -100,8 +104,6 @@ app.use(function (req, res, next) {
                 // Pass to next layer of middleware
                 next();
             }
-        }
-    })
 
 });
 

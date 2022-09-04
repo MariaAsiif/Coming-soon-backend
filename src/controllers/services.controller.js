@@ -583,14 +583,14 @@ var locateAllServices = async (req, res) => {
                  serv = result.services[1].toObject()
                 destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + ''+'%7C' */
                 //make all destinations array 
-                /* let destination = ''
+                let destination = ''
                 for (service of result.services) {
                     let serv = service.toObject()
                     destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
-                } */
+                }
 
-               /*  let destinations
-                destinations = destination.slice(0, -3) */
+                let destinations
+                destinations = destination.slice(0, -3)
                 //get distances of each mode of each destination
 
                 let distances = []
@@ -598,40 +598,97 @@ var locateAllServices = async (req, res) => {
                 //getting all distances
             //for (service of result.services) {
             /* for (var i = 0; i < result.services.length; i++) {
-                let serv = result.services[i].toObject()
-                let  destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
-                let destinations = destination.slice(0, -3)
-                for (var k = 0; k < modes.length; k++) {
-
-                    let newDistance
-
-                    if (modes[k] == "transit") {
-                        let submodes = []
+                let serv = result.services[i].toObject() */
+                //let  destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
+                //let destinations = destination.slice(0, -3)
+                for (var k = 0; k < modes.length ; k++) {
+                   
+                    if (modes[k] != "transit") {
+                        let response = await getDistance(origins, destinations, modes[k])
+                        //let serviceDistances 
+                        for(var p= 0; p< response.data.rows[0].elements.length; p++){
+                           // let distancerslt
+                           let serv = result.services[p].toObject()
+                            if (response.data.rows[0].elements[p].status == "OK") {
+                                
+                                  let  distancerslt  = {
+                                        serviceName: serv.serviceName,
+                                        distanceMode: modes[k],
+                                        
+                                        distance: response.data.rows[0].elements[p].distance.text,
+                                        duration: response.data.rows[0].elements[p].duration.text
+                                    }
+                                    //serviceDistances = distancerslt
+                                    result.services[p]._doc.distances.push(distancerslt)
+                                
+                            } else {
+                                   let distancerslt = {
+                                        serviceName: serv.serviceName,
+                                        distanceMode: modes[k],
+                                        
+                                        distance: "No Route Could be Found",
+                                        duration: "No Route Could be Found"
+                                    }
+                                   // serviceDistances = distancerslt
+                                result.services[p]._doc.distances.push(distancerslt)
+                                }
+                
+                            }
+                            //result.services[i]._doc.distances.push(serviceDistances)
+                        /* newDistance = await getDistance(serv, origins, destinations, modes[k])
+                        
+                        result.services[i]._doc.distances.push(newDistance) */
+                    }else {
+                        
                         for (var m = 0; m < transits.length; m++) {
-                            newDistance = await getDistance(serv, origins, destinations, modes[k], transits[m])
-                            //submodes.push(newSubDistance)
-                            //distances.push(newDistance)
-                            result.services[i]._doc.distances.push(newDistance)
-                        }
-                        //newDistance = submodes
-                    } else {
-                        newDistance = await getDistance(serv, origins, destinations, modes[k])
-                        //distances.push(newDistance)
-                        result.services[i]._doc.distances.push(newDistance)
-                    }
+                           let response = await getDistance(origins, destinations, modes[k], transits[m])
+                           //let distancerslt
+                           //let serviceDistances 
+                            for(var p= 0; p< response.data.rows[0].elements.length; p++){
+                                let serv = result.services[p].toObject()
+                                if (response.data.rows[0].elements[p].status == "OK") {
+                                    
+                                       let distancerslt  = {
+                                            serviceName: serv.serviceName,
+                                            distanceMode: modes[k],
+                                            transitMode: transits[m],
+                                            distance: response.data.rows[0].elements[p].distance.text,
+                                            duration: response.data.rows[0].elements[p].duration.text
+                                        }
+                                        //serviceDistances = distancerslt
+                                    result.services[p]._doc.distances.push(distancerslt)
+                                    
+                                } else {
+                                     let   distancerslt = {
+                                            serviceName: serv.serviceName,
+                                            distanceMode: modes[k],
+                                            transitMode: transits[m],
+                                            distance: "No Route Could be Found",
+                                            duration: "No Route Could be Found"
+                                        }
+                                        //serviceDistances = distancerslt
+                                    result.services[p]._doc.distances.push(distancerslt)
+                                    }
+                    
+                                }
+                            } //end distances response for
+                            
+                        
+                        
+                    } 
 
 
                 }
 
 
-            } */
+            //}
 
-             /* let serv = result.services[0].toObject()
+             /* let serv = result.services[5].toObject()
+               destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0]
+           let newDistance = await getDistance(serv, origins, destination, modes[3], transits[0]) */
 
-           let newDistance = await getDistance(serv, origins, destinations, modes[1], transits[0])
- */
             console.log('all distances')
-            console.log(distances)
+            console.log(result)
            
 
             responseHelper.success(res, result, message)
@@ -645,7 +702,7 @@ var locateAllServices = async (req, res) => {
     }
 }
 let count = 1
-var getDistance = async (service, origin, destination, mode, submode) => {
+var getDistance = async (origin, destination, mode, submode) => {
     console.log('getDistance called')
     console.log('count '+count)
     count++
@@ -673,16 +730,16 @@ if(mode == "transit"){
 
     
 
-    console.log(config.url)
+    //console.log(config.url)
 
     let result = axios(config)
         .then(function (response) {
-            console.log('mode')
-            console.log(mode)
-            console.log(response.data.rows[0].elements) 
+            //console.log('mode')
+            //console.log(mode)
+            //console.log(response.data.rows[0].elements) 
             //let resultset = []
-            let distancerslt
-            if (response.data.rows[0].elements[0].status == "OK") {
+            return response//.data.rows[0].elements
+            /* if (response.data.rows[0].elements[0].status == "OK") {
                 if(mode == "transit"){
                     distancerslt  = {
                         serviceName: service.serviceName,
@@ -691,7 +748,7 @@ if(mode == "transit"){
                         distance: response.data.rows[0].elements[0].distance.text,
                         duration: response.data.rows[0].elements[0].duration.text
                     }
-                    return distancerslt/* resultset.push(distancerslt) */
+                    return distancerslt
                 }else{
                     distancerslt  = {
                         serviceName: service.serviceName,
@@ -699,7 +756,7 @@ if(mode == "transit"){
                         distance: response.data.rows[0].elements[0].distance.text,
                         duration: response.data.rows[0].elements[0].duration.text
                     }
-                    return distancerslt/* resultset.push(distancerslt) */
+                    return distancerslt
                 }
                 
             } else {
@@ -714,7 +771,7 @@ if(mode == "transit"){
                         distance: "No Route Could be Found",
                         duration: "No Route Could be Found"
                     }
-                    return distancerslt/* resultset.push(distancerslt) */
+                    return distancerslt
                 } else {
                     distancerslt = {
                         serviceName: service.serviceName,
@@ -722,16 +779,17 @@ if(mode == "transit"){
                         distance: "No Route Could be Found",
                         duration: "No Route Could be Found"
                     }
-                    return distancerslt/* resultset.push(distancerslt) */
+                    return distancerslt
                 }
 
-            }
+            } */
             
 
             //return resultset
         })
         .catch(function (error) {
             console.log(error);
+            return error
         })
     return result
 

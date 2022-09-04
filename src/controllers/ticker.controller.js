@@ -64,7 +64,7 @@ var createTicker = async (req, res) => {
             let ext = path.extname(file.originalname);
             console.log("ext " + ext)
             
-            let extentions = ['.png', '.svg']
+            let extentions = ['.png', '.svg', '.PNG']
           if (!extentions.includes(ext)){
                
                errorMessage = "Only PNG, and SVG Files allowed"
@@ -194,7 +194,7 @@ var updateTicker = async (req, res) => {
             let ext = path.extname(file.originalname);
             console.log("ext " + ext)
             
-            let extentions = ['.png', '.svg']
+            let extentions = ['.png', '.svg', '.PNG']
           if (!extentions.includes(ext)){
                
                errorMessage = "Only PNG, and SVG Files allowed"
@@ -408,6 +408,23 @@ var findTickerById = async (req, res) => {
     }
 }
 
+var getTickersWithFullDetailsPublic = async (req, res) => {
+    console.log("getTickersWithFullDetailsPublic called")
+    var tickerData = req.body
+
+
+    try {
+
+        var result = await tickerHelper.getTickersWithFullDetails(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, result, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
 
 
 
@@ -419,7 +436,8 @@ module.exports = {
     getTickersList,
     updateTicker,
     removeTicker,
-    findTickerById
+    findTickerById,
+    getTickersWithFullDetailsPublic
 
 }
 

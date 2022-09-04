@@ -7,8 +7,7 @@ const router = express.Router()
 
 const controller = require('../../controllers').tickers
 
-
-router.post('/getTickersWithFullDetailsPublic', controller.getTickersWithFullDetails)
+router.post('/getTickersWithFullDetailsPublic', controller.getTickersWithFullDetailsPublic)
 
 
 

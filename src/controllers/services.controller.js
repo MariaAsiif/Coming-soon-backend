@@ -597,7 +597,7 @@ var locateAllServices = async (req, res) => {
             
                 //getting all distances
             //for (service of result.services) {
-            for (var i = 0; i < result.services.length; i++) {
+            /* for (var i = 0; i < result.services.length; i++) {
                 let serv = result.services[i].toObject()
                 let  destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
                 let destinations = destination.slice(0, -3)
@@ -624,7 +624,7 @@ var locateAllServices = async (req, res) => {
                 }
 
 
-            }
+            } */
 
              /* let serv = result.services[0].toObject()
 

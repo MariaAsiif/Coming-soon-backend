@@ -16,7 +16,6 @@ var authorizedRoutes = require("./authorized");
 var unAuthorizedRoutes = require("./unauthorized");
 
 router.use((req, res, next) => {
-  console.log("++++++++++++++++++++")
   if (req.method === "OPTIONS") {
     res.status(200).send();
   } else {

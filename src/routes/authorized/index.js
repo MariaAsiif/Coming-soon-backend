@@ -27,8 +27,10 @@ router.use ('/interviews', interviewRoutes)
 router.use ('/zoommeetings', zoomMeetingRoutes)
 router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
+
 router.use ('/departmens', departmentRoutes)
 router.use ('/quotes', quotesRoutes)
+
 router.use ('/tickers', tickerRoutes)
 router.use ('/feedbacks', feedbackRoutes)
 router.use ('/permissions', permissionRoutes)

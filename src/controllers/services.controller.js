@@ -24,7 +24,9 @@ const businessServiceProviderHelper = require('../helpers/businessserviceprovide
 const individualserverproviderHelper = require('../helpers/individualserviceprovider.helper')
 const IndvidualServiceProvider = mongoose.model('individualServiceProviders')
 
-const DistanceMatrix = require('node-distance-matrix')
+/* const DistanceMatrix = require('node-distance-matrix') */
+var distance = require('google-distance-matrix')
+var axios = require('axios')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -257,7 +259,7 @@ var createService = async (req, res) => {
     try {
         var serviceData = req.body
         //var role = req.token_decoded.r
-        serviceData.addedby = req.token_decoded.d
+        ///serviceData.addedby = req.token_decoded.d
         let serviceProvider
         let bspobj
         if(serviceData.isIndividual){
@@ -389,7 +391,7 @@ var updateService = async (req, res) => {
     console.log("request received for updateService")
 
     var serviceData = req.body
-    var role = req.token_decoded.r
+    
     try {
         serviceData.lastModifiedBy = req.token_decoded.d
 
@@ -555,77 +557,82 @@ var locateAllServices = async (req, res) => {
             responseHelper.success(res, result, message);
 
         } else {
-            var distance = require('google-distance-matrix')
+            
             let modes = ['driving', 'walking', 'bicycling', 'transit']
             let transits = ['bus', 'subway', 'train', 'tram', 'rail']
-            distance.key(process.env.G_API)
-           
-            //distance.transit_mode('bus')
-            distance.units('metric')
+            
             //distance.transit_mode('rail')
 
-            let origins = ['' + userData.location.lat + ', ' + userData.location.lng + '']
+            //let origins = ['' + userData.location.lat + ', ' + userData.location.lng + '']
+            let origins = '' + userData.location.lat + '%2C' + userData.location.lng + ''
+
+            
+
+            /* let serv = result.services[0].toObject()
+                let destination = ['' + serv.serviceLocation.coordinates[1] + ', ' + serv.serviceLocation.coordinates[0] + ''] */
+
+                //destinations.push(destination)
+
+                //let newDistance = await  getDistance(result.services[0], origins, destination, modes[3], transits[4])
+
+                //console.log('newDistance')
+                //console.log(newDistance)
+                /* let serv = result.services[0].toObject()
+                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + ''+'%7C'
+
+                 serv = result.services[1].toObject()
+                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + ''+'%7C' */
+                //make all destinations array 
+                /* let destination = ''
+                for (service of result.services) {
+                    let serv = service.toObject()
+                    destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
+                } */
+
+               /*  let destinations
+                destinations = destination.slice(0, -3) */
+                //get distances of each mode of each destination
+
+                let distances = []
+            
+                //getting all distances
+            //for (service of result.services) {
+            for (var i = 0; i < result.services.length; i++) {
+                let serv = result.services[i].toObject()
+                let  destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
+                let destinations = destination.slice(0, -3)
+                for (var k = 0; k < modes.length; k++) {
+
+                    let newDistance
+
+                    if (modes[k] == "transit") {
+                        let submodes = []
+                        for (var m = 0; m < transits.length; m++) {
+                            newDistance = await getDistance(serv, origins, destinations, modes[k], transits[m])
+                            //submodes.push(newSubDistance)
+                            //distances.push(newDistance)
+                            result.services[i]._doc.distances.push(newDistance)
+                        }
+                        //newDistance = submodes
+                    } else {
+                        newDistance = await getDistance(serv, origins, destinations, modes[k])
+                        //distances.push(newDistance)
+                        result.services[i]._doc.distances.push(newDistance)
+                    }
 
 
-            let destinations = []
+                }
 
-            for (service of result.services) {
-                let serv = service.toObject()
-                let destination = '' + serv.serviceLocation.coordinates[1] + ', ' + serv.serviceLocation.coordinates[0] + ''
-
-                destinations.push(destination)
 
             }
-            let resultset = []
 
+             /* let serv = result.services[0].toObject()
 
-            for(var k = 0; k < modes.length; k++){
-                distance.mode(modes[k])
-                /* if(modes[k] == "transit"){
-                    for(var m = 0; m< transits.length; k++){
-
-                    } //inner for
-                } //end if */
-
-                 //callback
-            } //end outer for
-
-
-
-            /* distance.matrix(origins, destinations, function (err, distances) {
-                if (err) {
-                    return console.log(err);
-                }
-                if (!distances) {
-                    return console.log('no distances');
-                }
-                if (distances.status == 'OK') {
-                    for (var i = 0; i < origins.length; i++) {
-                        for (var j = 0; j < destinations.length; j++) {
-                            var origin = distances.origin_addresses[i];
-                            var destination = distances.destination_addresses[j];
-                            if (distances.rows[0].elements[j].status == 'OK') {
-                                
-                                result.services[j]._doc.distances = [{
-                                    distanceMode: "driving",
-                                    distance: distances.rows[i].elements[j].distance.text,
-                                    duration: distances.rows[i].elements[j].duration.text
-                                }]
-                                
-                            } else {
-                                console.log(destination + ' is not reachable by land from ' + origin);
-
-                            }
-                        }
-                    }
-                    
-
-                    console.log('ok')
-                    console.log(result)
-                    responseHelper.success(res, result, message)
-
-                }
-            })  *///callback
+           let newDistance = await getDistance(serv, origins, destinations, modes[1], transits[0])
+ */
+            console.log('all distances')
+            console.log(distances)
+           
 
             responseHelper.success(res, result, message)
 
@@ -637,49 +644,98 @@ var locateAllServices = async (req, res) => {
         responseHelper.requestfailure(res, err);
     }
 }
+let count = 1
+var getDistance = async (service, origin, destination, mode, submode) => {
+    console.log('getDistance called')
+    console.log('count '+count)
+    count++
+    //console.log(service)
+    /*console.log(origin)
+    console.log(destination)
+    console.log(mode) &transit_mode=${submode}
+    console.log(submode) */
 
-var  getDistance = async () => {
+/* let newurl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101%2C-73.89188969999998&destinations=40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626&mode=transit&transit_mode=bus&key=${process.env.G_API}` */
 
-    distance.matrix(origins, destinations, function (err, distances) {
-        if (err) {
-            return console.log(err);
-        }
-        if (!distances) {
-            return console.log('no distances');
-        }
-        if (distances.status == 'OK') {
-            for (var i = 0; i < origins.length; i++) {
-                for (var j = 0; j < destinations.length; j++) {
-                    var origin = distances.origin_addresses[i];
-                    var destination = distances.destination_addresses[j];
-                    if (distances.rows[0].elements[j].status == 'OK') {
-                        
-                        result.services[j]._doc.distances = [{
-                            distanceMode: modes[k],
-                            distance: distances.rows[i].elements[j].distance.text,
-                            duration: distances.rows[i].elements[j].duration.text
-                        }]
-                        
-                    } else {
-                        //console.log(destination + ' is not reachable by land from ' + origin);
+let currentUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=${mode}&key=${process.env.G_API}`
 
-                        result.services[j]._doc.distances = [{
-                            distanceMode: modes[k],
-                            distance: `Destination is not reachable by ${modes[k]}`,
-                            duration: 'Not applicable'
-                        }]
+if(mode == "transit"){
+    //config.url = config.url+`&transit_mode=${submode}` 
 
+    currentUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=${mode}&transit_mode=${submode}&key=${process.env.G_API}`
+}
+    var config = {
+        method: 'get',
+       /*  url: `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=${mode}&key=${process.env.G_API}`, */
+       url: currentUrl,
+        headers: {}
+    };
+
+    
+
+    console.log(config.url)
+
+    let result = axios(config)
+        .then(function (response) {
+            console.log('mode')
+            console.log(mode)
+            console.log(response.data.rows[0].elements) 
+            //let resultset = []
+            let distancerslt
+            if (response.data.rows[0].elements[0].status == "OK") {
+                if(mode == "transit"){
+                    distancerslt  = {
+                        serviceName: service.serviceName,
+                        distanceMode: mode,
+                        transitMode: submode,
+                        distance: response.data.rows[0].elements[0].distance.text,
+                        duration: response.data.rows[0].elements[0].duration.text
                     }
+                    return distancerslt/* resultset.push(distancerslt) */
+                }else{
+                    distancerslt  = {
+                        serviceName: service.serviceName,
+                        distanceMode: mode,
+                        distance: response.data.rows[0].elements[0].distance.text,
+                        duration: response.data.rows[0].elements[0].duration.text
+                    }
+                    return distancerslt/* resultset.push(distancerslt) */
                 }
+                
+            } else {
+
+                
+
+                if (mode == "transit") {
+                    distancerslt = {
+                        serviceName: service.serviceName,
+                        distanceMode: mode,
+                        transitMode: submode,
+                        distance: "No Route Could be Found",
+                        duration: "No Route Could be Found"
+                    }
+                    return distancerslt/* resultset.push(distancerslt) */
+                } else {
+                    distancerslt = {
+                        serviceName: service.serviceName,
+                        distanceMode: mode,
+                        distance: "No Route Could be Found",
+                        duration: "No Route Could be Found"
+                    }
+                    return distancerslt/* resultset.push(distancerslt) */
+                }
+
             }
             
 
-            console.log('ok')
-            console.log(result)
-            responseHelper.success(res, result, message)
+            //return resultset
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    return result
 
-        }
-    })
+
 
 } //end function
 

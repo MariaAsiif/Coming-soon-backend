@@ -10,6 +10,7 @@ const quotesRoutes = require('./quotes.route')
 const feedbackRoutes = require('./feedbacks.route')
 const verificationRoutes = require('./verifications.route')
 const locateServicesRoutes = require('./services.route')
+const tickerRoutes = require('./tickers.route')
 
 
 
@@ -23,5 +24,6 @@ router.use ('/quotes', quotesRoutes)
 router.use ('/feedbacks', feedbackRoutes)
 router.use ('/verifications', verificationRoutes)
 router.use ('/locateservices', locateServicesRoutes)
+router.use ('/tickers', tickerRoutes)
 
 module.exports = router;

@@ -49,7 +49,8 @@ var servicesSchema = new Schema({
   businessServiceProvider: {
     type: String,
     ref: 'businessServiceProviders'
-  }
+  },
+  distances: []
 });
 
 servicesSchema.index({ "serviceLocation": "2dsphere" })

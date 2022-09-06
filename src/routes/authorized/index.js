@@ -17,6 +17,8 @@ const feedbackRoutes = require('./feedbacks.route')
 const permissionRoutes = require('./permissions.route')
 const rolesRoutes = require('./roles.route')
 const locateServicesRoutes = require('./services.route')
+const phoneBookRoutes = require('./phonebook.route')
+const termsRoutes = require('./termsconditions.route')
 
 
 //call appropriate routes
@@ -36,5 +38,7 @@ router.use ('/feedbacks', feedbackRoutes)
 router.use ('/permissions', permissionRoutes)
 router.use ('/roles', rolesRoutes)
 router.use ('/locateservices', locateServicesRoutes)
+router.use ('/phonebooks', phoneBookRoutes)
+router.use ('/terms', termsRoutes)
 
 module.exports = router

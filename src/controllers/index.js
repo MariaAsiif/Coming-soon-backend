@@ -17,5 +17,7 @@ module.exports = {
   permissions: require('./permission.controller'),
   roles: require('./roles.controller'),
   verifications: require('./verification.controller'),
-  services: require('./services.controller')
+  services: require('./services.controller'),
+  phonebooks: require('./phonebook.controller'),
+  termsconditions: require('./termsconditions.controller')
 };

@@ -17,5 +17,7 @@ module.exports = {
   userverifications : require('./userverification.model'),
   services: require('./services.model'),
   individualServiceProviders: require('./individualserverprovider.model'),
-  businessServiceProviders: require('./businessserviceprovider.model')
+  businessServiceProviders: require('./businessserviceprovider.model'),
+  businessPhoneBooks: require('./businessphonebook.model'),
+  termsconditions: require('./termsconditions.model')
 };

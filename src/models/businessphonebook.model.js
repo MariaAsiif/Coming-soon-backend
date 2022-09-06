@@ -1,14 +1,18 @@
 var mongoose = require('mongoose');
 const {employees} = require("./index");
 var Schema = mongoose.Schema;
-var ticker = new Schema({
-        tickerText: {
+var businessPhoneBook = new Schema({
+        businessPhoneBookText: {
             type: String,
             required: true
         },
         logoFile: {
             type: String
         },
+        tickers: [{
+            type: String,
+            ref: 'tickers'
+        }],
         addedby: {
             type: String,
             ref: 'users'
@@ -18,21 +22,16 @@ var ticker = new Schema({
             type: String,
             ref: 'users'
         },
-        startDate: {
-            type: Date
-        },
-        expiryDate: {
-            type: Date
-        },
+        
         active: {
             type: Boolean,
             default: true
         }
     },
     {
-        timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},
+        timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'},
         usePushEach: true
     }
 );
 
-module.exports = mongoose.model('tickers', ticker);
+module.exports = mongoose.model('businessPhoneBooks', businessPhoneBook);

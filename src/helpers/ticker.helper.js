@@ -18,14 +18,14 @@ logger = require("./logger");
 module.exports = {
 
     createTicker: async (data) => {
-        console.log("createTicker HelperFunction is called");
+        console.log("createTicker Helper Function is called");
         const ticker = new Ticker(data)
         await ticker.save()
         return ticker
         
     },
     getTickersWithFullDetails: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, query) => {
-        console.log("getTickers Model Function called")
+        console.log("getTickersWithFullDetails Helper Function called")
 
         const tickers = await Ticker.find(query.critarion)
        
@@ -47,8 +47,28 @@ module.exports = {
         
     },
 
+    getActiveTickers: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, query) => {
+        console.log("getActiveTickers Helper Function called")
+        let where = {active: true}
+        const tickers = await Ticker.find(where)
+       
+        .sort({ [sortProperty]: sortOrder })
+        .skip(offset)
+        .limit(limit);
+              
+        const tickerssize = tickers.length
+
+        return {
+            tickers: tickers,
+            count: tickerssize,
+            offset: offset,
+            limit: limit
+        };
+        
+    },
+
     getTickersList: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, query) => {
-        console.log("getTickers Model Function called")
+        console.log("getTickersList Helper Function called")
 
         const tickers = await Ticker.find(query.critarion).select(query.fields/* '_id TickerName' */)
         

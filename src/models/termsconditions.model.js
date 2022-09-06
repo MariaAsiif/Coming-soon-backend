@@ -1,12 +1,13 @@
 var mongoose = require('mongoose');
 const {employees} = require("./index");
 var Schema = mongoose.Schema;
-var ticker = new Schema({
-        tickerText: {
+var termsconditionSchema = new Schema({
+        description: {
             type: String,
             required: true
         },
-        logoFile: {
+       
+        termsDate: {
             type: String
         },
         addedby: {
@@ -18,21 +19,15 @@ var ticker = new Schema({
             type: String,
             ref: 'users'
         },
-        startDate: {
-            type: Date
-        },
-        expiryDate: {
-            type: Date
-        },
         active: {
             type: Boolean,
             default: true
         }
     },
     {
-        timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},
+        timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'},
         usePushEach: true
     }
 );
 
-module.exports = mongoose.model('tickers', ticker);
+module.exports = mongoose.model('termsconditions', termsconditionSchema);

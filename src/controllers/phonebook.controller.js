@@ -20,9 +20,9 @@ var async = require('async')
 var multer = require('multer');
 const fs = require('fs');
 const moment = require('moment')
-const tickerHelper = require('../helpers/ticker.helper')
 
-const Ticker = mongoose.model('tickers')
+const phonebookHelper = require('../helpers/businessphonebook.helper')
+
 const PhoneBook = mongoose.model('businessPhoneBooks')
 
 //helper functions
@@ -35,8 +35,8 @@ const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
 
-/* var createTicker = async (req, res) => {
-    console.log('createTicker')
+var createPhoneBook = async (req, res) => {
+    console.log('createPhoneBook')
     var logoimg
     let isErr = false
     let errorMessage = ''
@@ -63,7 +63,7 @@ var pageSize = parseInt(config.PAGE_SIZE)
         fileFilter: (req, file, cb) => {
             
             let ext = path.extname(file.originalname);
-            console.log("ext " + ext)
+            //console.log("ext " + ext)
             
             let extentions = ['.png', '.svg', '.PNG']
           if (!extentions.includes(ext)){
@@ -115,18 +115,16 @@ var pageSize = parseInt(config.PAGE_SIZE)
         if(isErr){
 
             try {
-                fs.unlinkSync('./public//uploads/logoimages/' + logoimg);
+                fs.unlinkSync('./public/uploads/logoimages/' + logoimg);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
             }
             
                responseHelper.requestfailure(res, errorMessage)
-        }else
-
-        {userData = JSON.parse(req.body.request);
-
-
+        }else{
+            
+            userData = JSON.parse(req.body.request)
 
         try {
             if(logoimg !== undefined){
@@ -136,18 +134,18 @@ var pageSize = parseInt(config.PAGE_SIZE)
             userData.addedby = req.token_decoded.d
     
             if (role == '_a') {
-                var result = await tickerHelper.createTicker(userData)
-                var message = "Ticker created successfully"
+                var result = await phonebookHelper.createPhoneBook(userData)
+                var message = "PhoneBook created successfully"
                 return responseHelper.success(res, result, message)
             } else {
-                let err = "Unauthorized to create Ticker"
+                let err = "Unauthorized to create PhoneBook"
                 return responseHelper.requestfailure(res, err)
             }
     
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public//uploads/logoimages/' + logoimg);
+                fs.unlinkSync('./public/uploads/logoimages/' + logoimg);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
@@ -163,10 +161,10 @@ var pageSize = parseInt(config.PAGE_SIZE)
 
     })
     
-} //end function */
+} //end function
 
-/* var updateTicker = async (req, res) => {
-    console.log('createTicker')
+var updatePhoneBook = async (req, res) => {
+    console.log('createPhoneBook')
     var logoimg
     let isErr = false
     let errorMessage = ''
@@ -259,21 +257,21 @@ var pageSize = parseInt(config.PAGE_SIZE)
             
             userData.lastModifiedBy = req.token_decoded.d
 
-            let existingTicker = await Ticker.findById(userData.tickerid)
+            let existingPhoneBook = await PhoneBook.findById(userData.phonebookid)
 
-            if(logoimg !== undefined && existingTicker.logoFile !== '') {
-                const imgpath = './public/' + existingTicker.logoFile;
+            if(logoimg !== undefined && existingPhoneBook.logoFile !== '') {
+                const imgpath = './public/' + existingPhoneBook.logoFile;
                     try {
                     fs.unlinkSync(imgpath);
                     } catch(err) {
-                        console.log('Error Deleting old, probably already removed');
+                        console.log('Error Deleting old file, probably already removed');
                         return responseHelper.requestfailure(res, err);
                     }
                 }
     
            
-                var result = await tickerHelper.updateTicker(userData)
-                var message = "Ticker Updated successfully"
+                var result = await phonebookHelper.updatePhoneBook(userData)
+                var message = "PhoneBook Updated successfully"
                 return responseHelper.success(res, result, message)
             
     
@@ -296,45 +294,19 @@ var pageSize = parseInt(config.PAGE_SIZE)
 
     })
     
-} //end function */
-
-var createTicker = async (req, res) => {
-    console.log('createDepartment')
-    try {
-        var tickerData = req.body
-        
-        tickerData.addedby = req.token_decoded.d
-
-        
-        
-            var result = await tickerHelper.createTicker(tickerData)
-
-            let phonebook = await PhoneBook.findById(tickerData.phonebookid)
-
-            phonebook.tickers.push(result._id)
-
-            await phonebook.save()
-
-            var message = "Ticker created successfully"
-            return responseHelper.success(res, result, message)
-        
-
-    } catch (err) {
-        logger.error(err)
-        responseHelper.requestfailure(res, err)
-    }
 } //end function
 
-var getTickersWithFullDetails = async (req, res) => {
-    console.log("getTickersWithFullDetails controller Function called")
-    var tickerData = req.body
+
+var getPhoneBooksWithFullDetails = async (req, res) => {
+    console.log("getPhoneBooksWithFullDetails controller Function called")
+    var phonebookData = req.body
 
 
     try {
 
         
 
-        var result = await tickerHelper.getTickersWithFullDetails(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+        var result = await phonebookHelper.getPhoneBooksWithFullDetails(phonebookData.sortproperty, phonebookData.sortorder, phonebookData.offset, phonebookData.limit, phonebookData.query)
 
         var message = 'Successfully loaded'
 
@@ -345,14 +317,14 @@ var getTickersWithFullDetails = async (req, res) => {
     }
 }
 
-var getTickersList = async (req, res) => {
-    console.log("getTickersList called")
-    var tickerData = req.body
+var getPhoneBooksList = async (req, res) => {
+    console.log("getPhoneBooksList called")
+    var phonebookData = req.body
 
 
     try {
 
-        var result = await tickerHelper.getTickersList(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+        var result = await phonebookHelper.getPhoneBooksList(phonebookData.sortproperty, phonebookData.sortorder, phonebookData.offset, phonebookData.limit, phonebookData.query)
 
         var message = 'Successfully loaded'
 
@@ -363,41 +335,25 @@ var getTickersList = async (req, res) => {
     }
 }
 
- var updateTicker = async (req, res) => {
-    console.log("request received for updateTicker")
 
-    var tickerData = req.body
-    
-    try {
-        tickerData.lastModifiedBy = req.token_decoded.d
-        
-            var result = await tickerHelper.updateTicker(tickerData)
-            var message = 'Ticker Updated successfully'
-        
-        responseHelper.success(res, result, message)
-    } catch (err) {
-        responseHelper.requestfailure(res, err)
-    }
-} 
-
-var removeTicker = async (req, res) => {
-    console.log("removeTicker called")
+var removePhoneBook = async (req, res) => {
+    console.log("removePhoneBook called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var tickerData = req.body
-            tickerData.lastModifiedBy = req.token_decoded.d
-            var result = await tickerHelper.removeTicker(tickerData)
+            var phonebookData = req.body
+            phonebookData.lastModifiedBy = req.token_decoded.d
+            var result = await phonebookHelper.removePhoneBook(phonebookData)
 
-            var message = "Ticker removed successfully"
+            var message = "PhoneBook removed successfully"
 
-            if (result == "Ticker does not exists.") {
-                message = "Ticker does not exists."
+            if (result == "PhoneBook does not exists.") {
+                message = "PhoneBook does not exists."
             }
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can remove a Ticker"
+            var error = "Only Admin can remove a PhoneBook"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -407,25 +363,25 @@ var removeTicker = async (req, res) => {
 
 }
 
-var findTickerById = async (req, res) => {
-    console.log("findTickerById called")
+var findPhoneBookById = async (req, res) => {
+    console.log("findPhoneBookById called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var tickerData = req.body
+            var phonebookData = req.body
 
-            var result = await tickerHelper.findTickerById(tickerData)
+            var result = await phonebookHelper.findPhoneBookById(phonebookData)
             console.log(result)
-            var message = "Ticker find successfully"
+            var message = "PhoneBook find successfully"
             if (result == null) {
-                message = "Ticker does not exists."
+                message = "PhoneBook does not exists."
             }
 
 
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can find a Ticker"
+            var error = "Only Admin can find a PhoneBook"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -433,35 +389,14 @@ var findTickerById = async (req, res) => {
     }
 }
 
-var getTickersWithFullDetailsPublic = async (req, res) => {
-    console.log("getTickersWithFullDetailsPublic controller called")
-    var tickerData = req.body
+var getPhoneBooksWithFullDetailsPublic = async (req, res) => {
+    console.log("getPhoneBooksWithFullDetailsPublic controller called")
+    var phonebookData = req.body
 
 
     try {
 
-        var activeTickers = await tickerHelper.getActiveTickers(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
-
-        /* activeTickers.tickers.map(async(item) => {
-            console.log(item._doc)
-            if(moment(item.expiryDate).isBefore()){
-              item.active = false
-              await item.save()
-            } else {
-              
-            }
-          }) */
-
-          for(var ticker of activeTickers.tickers){
-            if(moment(ticker.expiryDate).isBefore()){
-                ticker.active = false
-                await ticker.save()
-              } else {
-                
-              }
-          }
-
-        var result = await tickerHelper.getTickersWithFullDetails(tickerData.sortproperty, tickerData.sortorder, tickerData.offset, tickerData.limit, tickerData.query)
+        var result = await phonebookHelper.getPhoneBooksWithFullDetails(phonebookData.sortproperty, phonebookData.sortorder, phonebookData.offset, phonebookData.limit, phonebookData.query)
 
         var message = 'Successfully loaded'
 
@@ -477,13 +412,13 @@ var getTickersWithFullDetailsPublic = async (req, res) => {
 
 
 module.exports = {
-    createTicker,
-    getTickersWithFullDetails,
-    getTickersList,
-    updateTicker,
-    removeTicker,
-    findTickerById,
-    getTickersWithFullDetailsPublic
+    createPhoneBook,
+    getPhoneBooksWithFullDetails,
+    getPhoneBooksList,
+    updatePhoneBook,
+    removePhoneBook,
+    findPhoneBookById,
+    getPhoneBooksWithFullDetailsPublic
 
 }
 

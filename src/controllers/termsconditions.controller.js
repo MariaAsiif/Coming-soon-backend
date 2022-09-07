@@ -36,7 +36,7 @@ var createTerms = async (req, res) => {
     try {
         var termsData = req.body
         var role = req.token_decoded.r
-        termsData.addedby = req.token_decoded.d
+        //termsData.addedby = req.token_decoded.d
 
         
             var result = await termsHelper.createTerms(termsData)

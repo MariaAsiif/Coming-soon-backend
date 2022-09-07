@@ -103,7 +103,7 @@ module.exports = {
         console.log("findRoleById HelperFunction is called");
         
         const role = await Role.findOne(query.critarion)
-        
+        .populate('permissions', query.permissions)
         .populate('addedby', query.addedby)
         
         .populate('lastModifiedBy', query.lastModifiedBy)

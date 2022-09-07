@@ -31,10 +31,10 @@ app.use(device.capture());
 // Initialize firebase admin
 //require("../config/init-firebase-admin");
 
-var serverPort = process.env.SERVER_PORT ;
+//var serverPort = process.env.SERVER_PORT ;
 
-//app.set('port', process.env.PORT || 8080);
-//var serverPort = app.get('port')
+app.set('port', process.env.PORT || 8080);
+var serverPort = app.get('port')
 
 app.set('views', path.join(__dirname, '../views'));
 

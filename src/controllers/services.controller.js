@@ -517,7 +517,7 @@ var removeService = async (req, res) => {
 var findServiceById = async (req, res) => {
     console.log("findServiceById called")
     try {
-        var role = req.token_decoded.r
+        //var role = req.token_decoded.r
 
         
             var serviceData = req.body

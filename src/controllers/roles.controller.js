@@ -136,7 +136,7 @@ var findRoleById = async (req, res) => {
     console.log("findRoleById called")
     try {
 
-       let permissions = [
+       /* let permissions = [
             {
                 _id: "630a48996e12e642dcc8438f",
                 permissionName: "department-create",
@@ -187,13 +187,10 @@ var findRoleById = async (req, res) => {
             }]
         }
 
-        let modules =[]
-
-        /* modules = permissions.filter(permission => !modules.includes(permission.moduleName)) */
-
+        let modules = []
         permissions.map(permission => {
-            if(!modules.includes(permission.moduleName))
-            modules.push(permission.moduleName)
+            if (!modules.includes(permission.moduleName))
+                modules.push(permission.moduleName)
         })
 
         let singlePermission = []
@@ -202,39 +199,33 @@ var findRoleById = async (req, res) => {
                 moduleName: module,
                 permissions: []
             }
-
-              permissions.map(permission => {
-                    
-
-                    if (permission.moduleName == module) {
-                        
-                        moduleBased.permissions.push(permission.permissionName)
+            permissions.map(permission => {
+                if (permission.moduleName == module) {
+                    moduleBased.permissions.push(permission.permissionName)
                 }
             })
-
             singlePermission.push(moduleBased)
-
-        }
+        } */
 
         //console.log(permissions)
-        console.log(singlePermission)
+        /* console.log(singlePermission)
                
         
 
         let modulerPermissions = {
             permissionName : permission.permissionName
-        }
-           /*  var roleData = req.body
+        } */
+            var roleData = req.body
 
             var result = await rolesHelper.findRoleById(roleData)
             console.log(result)
             var message = "Role find successfully"
             if (result == null) {
                 message = "Role does not exists."
-            } */
+            }
 
 
-            return responseHelper.success(res, {}, 'message')
+            return responseHelper.success(res, result, message)
         
     } catch (err) {
         responseHelper.requestfailure(res, err)

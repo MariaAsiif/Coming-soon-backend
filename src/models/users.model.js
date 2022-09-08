@@ -51,6 +51,10 @@ usersSchema = new Schema({
         enum: constants.roles,
         default: constants.roles[0]
     },
+    rolePrivileges: {
+        type: String,
+        ref: 'roles'
+    },
     country: {
         type: String,
         default: ''

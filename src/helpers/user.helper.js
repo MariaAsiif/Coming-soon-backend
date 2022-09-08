@@ -14,6 +14,7 @@ const _ = require('lodash');
 //bluebird for promises
 const promise = require('bluebird');
 const {result} = require('lodash');
+const { permissions } = require('../controllers');
 
 //helper functions
 logger = require("../helpers/logger");
@@ -165,7 +166,14 @@ module.exports = {
                 user = _.omit(user, ['first_name', 'first_family_name', 'second_family_name', 'third_family_name', 'role', 'password', 'email', '_id', 'platform']);
                 return User.findOneAndUpdate({_id: userfound._id}, mongoDotNotation.flatten(JSON.parse(JSON.stringify(user))), {new: true})
 
-                    //.populate('currentCourseClassEnrolled')
+                    .populate({
+                        path: 'rolePrivileges',
+                        model: 'roles',
+                        populate: {
+                            path: 'permissions',
+                            model: 'permissions'
+                        }
+                    })
                     .then(async (updateduser) => {
                         if (user.fcm_tokens) {
                             console.log("removing fcm tokens from all other users.");
@@ -261,6 +269,21 @@ module.exports = {
 
     updateuser: async (data) => {
         console.log("Update User HelperFunction is called");
+        if('first_name' in data){
+            data.first_name = data.first_name.toUpperCase()
+        } 
+
+        if('first_family_name' in data){
+            data.first_family_name = data.first_family_name.toUpperCase()
+        } 
+
+        if('second_family_name' in data){
+            data.second_family_name = data.second_family_name.toUpperCase()
+        } 
+
+        if('third_family_name' in data){
+            data.third_family_name = data.third_family_name.toUpperCase()
+        } 
 
         const result = await User.findOneAndUpdate({_id: data._id}, data, {new: true})
 

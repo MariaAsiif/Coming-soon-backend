@@ -135,20 +135,106 @@ var removeRole = async (req, res) => {
 var findRoleById = async (req, res) => {
     console.log("findRoleById called")
     try {
-        var role = req.token_decoded.r
 
+       let permissions = [
+            {
+                _id: "630a48996e12e642dcc8438f",
+                permissionName: "department-create",
+                moduleName: "Departments"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "department-update",
+                moduleName: "Departments"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "department-view",
+                moduleName: "Departments"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "department-delete",
+                moduleName: "Departments"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "quote-create",
+                moduleName: "Quotes"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "quote-update",
+                moduleName: "Quotes"
+            },
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "quote-view",
+                moduleName: "Quotes"
+            }
+            ,
+            {
+                _id: "630a489f6e12e642dcc84390",
+                permissionName: "quote-delete",
+                moduleName: "Quotes"
+            }
+        ]
+
+        let example = {
+            moduleName: "departments",
+            permissions: [{
+                permissionName: "create"
+            }]
+        }
+
+        let modules =[]
+
+        /* modules = permissions.filter(permission => !modules.includes(permission.moduleName)) */
+
+        permissions.map(permission => {
+            if(!modules.includes(permission.moduleName))
+            modules.push(permission.moduleName)
+        })
+
+        let singlePermission = []
+        for (let module of modules) {
+            let moduleBased = {
+                moduleName: module,
+                permissions: []
+            }
+
+              permissions.map(permission => {
+                    
+
+                    if (permission.moduleName == module) {
+                        
+                        moduleBased.permissions.push(permission.permissionName)
+                }
+            })
+
+            singlePermission.push(moduleBased)
+
+        }
+
+        //console.log(permissions)
+        console.log(singlePermission)
+               
         
-            var roleData = req.body
+
+        let modulerPermissions = {
+            permissionName : permission.permissionName
+        }
+           /*  var roleData = req.body
 
             var result = await rolesHelper.findRoleById(roleData)
             console.log(result)
             var message = "Role find successfully"
             if (result == null) {
                 message = "Role does not exists."
-            }
+            } */
 
 
-            return responseHelper.success(res, result, message)
+            return responseHelper.success(res, {}, 'message')
         
     } catch (err) {
         responseHelper.requestfailure(res, err)

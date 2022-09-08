@@ -123,6 +123,7 @@ module.exports = {
             _id: 1,
             email: 1,
             password: 1,
+            approved:1,
             active: 1,
             role: 1,
             is_verified: 1
@@ -248,8 +249,8 @@ module.exports = {
     listAllUsers: async (sortProperty, sortOrder = 1, offset = 0, limit = 1000000, query) => {
         console.log("listAllUsers HelperFunction is called");
 
-        const users = await User.find(query)
-            .populate('currentbranch')
+        const users = await User.find(query.critarion)
+            //.populate('currentbranch')
             //.populate('currentCourseClassEnrolled')
 
             .sort({[sortProperty]: sortOrder})
@@ -293,14 +294,29 @@ module.exports = {
 
 
     removeUser: async (userid) => {
-        console.log("removeUser HelperFunction is called");
-
-        const user = await User.findById(userid);
+        console.log("removeUser HelperFunction is called")
+        const user = await User.findById(userid)
         console.log(user);
-        const result = await user.remove();
-        return result;
+        const result = await user.remove()
+        return result
+    },
 
-
+    approveDisapproveUser: async (data) => {
+        console.log("removeUser HelperFunction is called")
+        const user = await User.findById(data.userid)
+        let result
+        if(data.approved){
+            user.approved = true
+            user.active = true
+            result = await user.save()
+        } else {
+            user.approved = false
+            user.active = false
+            result = await user.save()
+        }
+        
+        
+        return result
     },
 
 };

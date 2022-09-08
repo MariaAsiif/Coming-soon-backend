@@ -271,12 +271,22 @@ var signin = async (req, res) => {
             let exists = await userHelper.isUserEmailExists(userData.email);
 
             if (exists) {
+                console.log('exists')
+                console.log(exists._doc)
                 if (exists.role == "subscriber") {
                     let err = "User not allowed to signin";
                     return responseHelper.requestfailure(res, err);
                 }
                 if (!exists.is_verified) {
                     return responseHelper.requestfailure(res, 'Please verify your email address')
+                }
+
+                if (exists.approved !== true) {
+                    return responseHelper.requestfailure(res, 'Your account is not approved')
+                }
+
+                if (!exists.active) {
+                    return responseHelper.requestfailure(res, 'Your account is not approved/active')
                 }
 
                 if (!userData.password) {
@@ -442,6 +452,8 @@ var jobapplicantsignup = async (req, res) => {
 
                     let randomize = require('randomatic');
                     userData.verification_code = randomize('0', 4, {});
+                    userData.approved = false
+                    userData.active = false
                     let newUser = new User(userData);
                     await newUser.save();
                     newUser.setPassword(password);
@@ -508,6 +520,25 @@ var updateuser = async (req, res) => {
         var userData = req.body;
 
         var result = await userHelper.updateuser(userData)
+
+        var message = "User Updated successfully";
+        return responseHelper.success(res, result, message);
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+
+
+
+}; //end 
+
+var approveDisapproveUser = async (req, res) => {
+    console.log("request received for approveDisapproveUser User");
+
+    try {
+        var userData = req.body;
+
+        var result = await userHelper.approveDisapproveUser(userData)
 
         var message = "User Updated successfully";
         return responseHelper.success(res, result, message);
@@ -1121,7 +1152,8 @@ module.exports = {
     updatefeetocharge,
     paymentnotification,
     listAllUsers,
-    updateuser
+    updateuser,
+    approveDisapproveUser
 
 };
 

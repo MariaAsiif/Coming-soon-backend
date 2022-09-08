@@ -19,6 +19,7 @@ router.post('/updateprofilepic', controller.updateprofilepic)
 
 router.post('/listAllUsers', controller.listAllUsers)
 router.post('/updateuser', controller.updateuser)
+router.post('/approveDisapproveUser', controller.approveDisapproveUser)
 
 router.post("/logout", controller.logout)
 

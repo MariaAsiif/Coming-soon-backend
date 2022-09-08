@@ -95,6 +95,10 @@ usersSchema = new Schema({
         type: Boolean,
         defualt: false
     },
+    active: {
+        type: Boolean,
+        defualt: false
+    },
     location: {
         type: {
             type: String, // Don't do `{ location: { type: String } }`

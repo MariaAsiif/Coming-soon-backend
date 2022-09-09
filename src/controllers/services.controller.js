@@ -557,139 +557,104 @@ var locateAllServices = async (req, res) => {
             responseHelper.success(res, result, message);
 
         } else {
-            
-            let modes = ['driving', 'walking', 'bicycling', 'transit']
-            let transits = ['bus', 'subway', 'train', 'tram', 'rail']
-            
-            //distance.transit_mode('rail')
 
-            //let origins = ['' + userData.location.lat + ', ' + userData.location.lng + '']
+            /* let modes = ['driving', 'walking', 'bicycling', 'transit']
+            let transits = ['bus', 'subway', 'train', 'tram', 'rail']
+
+
             let origins = '' + userData.location.lat + '%2C' + userData.location.lng + ''
 
-            
 
-            /* let serv = result.services[0].toObject()
-                let destination = ['' + serv.serviceLocation.coordinates[1] + ', ' + serv.serviceLocation.coordinates[0] + ''] */
 
-                //destinations.push(destination)
 
-                //let newDistance = await  getDistance(result.services[0], origins, destination, modes[3], transits[4])
+            //make all destinations array 
+            let destination = ''
+            for (service of result.services) {
+                let serv = service.toObject()
+                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
+            }
 
-                //console.log('newDistance')
-                //console.log(newDistance)
-                /* let serv = result.services[0].toObject()
-                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + ''+'%7C'
+            let destinations
+            destinations = destination.slice(0, -3)
+            //get distances of each mode of each destination
 
-                 serv = result.services[1].toObject()
-                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + ''+'%7C' */
-                //make all destinations array 
-                let destination = ''
-                for (service of result.services) {
-                    let serv = service.toObject()
-                    destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
-                }
+            let distances = []
 
-                let destinations
-                destinations = destination.slice(0, -3)
-                //get distances of each mode of each destination
+            //getting all distances
 
-                let distances = []
-            
-                //getting all distances
-            //for (service of result.services) {
-            /* for (var i = 0; i < result.services.length; i++) {
-                let serv = result.services[i].toObject() */
-                //let  destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
-                //let destinations = destination.slice(0, -3)
-                for (var k = 0; k < modes.length ; k++) {
-                   
-                    if (modes[k] != "transit") {
-                        let response = await getDistance(origins, destinations, modes[k])
-                        //let serviceDistances 
-                        for(var p= 0; p< response.data.rows[0].elements.length; p++){
-                           // let distancerslt
-                           let serv = result.services[p].toObject()
-                            if (response.data.rows[0].elements[p].status == "OK") {
-                                
-                                  let  distancerslt  = {
-                                        serviceName: serv.serviceName,
-                                        distanceMode: modes[k],
-                                        
-                                        distance: response.data.rows[0].elements[p].distance.text,
-                                        duration: response.data.rows[0].elements[p].duration.text
-                                    }
-                                    //serviceDistances = distancerslt
-                                    result.services[p]._doc.distances.push(distancerslt)
-                                
-                            } else {
-                                   let distancerslt = {
-                                        serviceName: serv.serviceName,
-                                        distanceMode: modes[k],
-                                        
-                                        distance: "No Route Could be Found",
-                                        duration: "No Route Could be Found"
-                                    }
-                                   // serviceDistances = distancerslt
-                                result.services[p]._doc.distances.push(distancerslt)
-                                }
-                
+            for (var k = 0; k < modes.length; k++) {
+
+                if (modes[k] != "transit") {
+                    let response = await getDistance(origins, destinations, modes[k])
+
+                    for (var p = 0; p < response.data.rows[0].elements.length; p++) {
+
+                        let serv = result.services[p].toObject()
+                        if (response.data.rows[0].elements[p].status == "OK") {
+
+                            let distancerslt = {
+                                serviceName: serv.serviceName,
+                                distanceMode: modes[k],
+
+                                distance: response.data.rows[0].elements[p].distance.text,
+                                duration: response.data.rows[0].elements[p].duration.text
                             }
-                            //result.services[i]._doc.distances.push(serviceDistances)
-                        /* newDistance = await getDistance(serv, origins, destinations, modes[k])
-                        
-                        result.services[i]._doc.distances.push(newDistance) */
-                    }else {
-                        
-                        for (var m = 0; m < transits.length; m++) {
-                           let response = await getDistance(origins, destinations, modes[k], transits[m])
-                           //let distancerslt
-                           //let serviceDistances 
-                            for(var p= 0; p< response.data.rows[0].elements.length; p++){
-                                let serv = result.services[p].toObject()
-                                if (response.data.rows[0].elements[p].status == "OK") {
-                                    
-                                       let distancerslt  = {
-                                            serviceName: serv.serviceName,
-                                            distanceMode: modes[k],
-                                            transitMode: transits[m],
-                                            distance: response.data.rows[0].elements[p].distance.text,
-                                            duration: response.data.rows[0].elements[p].duration.text
-                                        }
-                                        //serviceDistances = distancerslt
-                                    result.services[p]._doc.distances.push(distancerslt)
-                                    
-                                } else {
-                                     let   distancerslt = {
-                                            serviceName: serv.serviceName,
-                                            distanceMode: modes[k],
-                                            transitMode: transits[m],
-                                            distance: "No Route Could be Found",
-                                            duration: "No Route Could be Found"
-                                        }
-                                        //serviceDistances = distancerslt
-                                    result.services[p]._doc.distances.push(distancerslt)
-                                    }
-                    
+
+                            result.services[p]._doc.distances.push(distancerslt)
+
+                        } else {
+                            let distancerslt = {
+                                serviceName: serv.serviceName,
+                                distanceMode: modes[k],
+
+                                distance: "No Route Could be Found",
+                                duration: "No Route Could be Found"
+                            }
+
+                            result.services[p]._doc.distances.push(distancerslt)
+                        }
+
+                    }
+
+                } else {
+
+                    for (var m = 0; m < transits.length; m++) {
+                        let response = await getDistance(origins, destinations, modes[k], transits[m])
+
+                        for (var p = 0; p < response.data.rows[0].elements.length; p++) {
+                            let serv = result.services[p].toObject()
+                            if (response.data.rows[0].elements[p].status == "OK") {
+
+                                let distancerslt = {
+                                    serviceName: serv.serviceName,
+                                    distanceMode: modes[k],
+                                    transitMode: transits[m],
+                                    distance: response.data.rows[0].elements[p].distance.text,
+                                    duration: response.data.rows[0].elements[p].duration.text
                                 }
-                            } //end distances response for
-                            
-                        
-                        
-                    } 
 
+                                result.services[p]._doc.distances.push(distancerslt)
 
+                            } else {
+                                let distancerslt = {
+                                    serviceName: serv.serviceName,
+                                    distanceMode: modes[k],
+                                    transitMode: transits[m],
+                                    distance: "No Route Could be Found",
+                                    duration: "No Route Could be Found"
+                                }
+
+                                result.services[p]._doc.distances.push(distancerslt)
+                            }
+
+                        }
+                    } //end distances response for
                 }
+            } //end for loop of modes
+
+ */
 
 
-            //}
-
-             /* let serv = result.services[5].toObject()
-               destination = '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0]
-           let newDistance = await getDistance(serv, origins, destination, modes[3], transits[0]) */
-
-            console.log('all distances')
-            console.log(result)
-           
 
             responseHelper.success(res, result, message)
 

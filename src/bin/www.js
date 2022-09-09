@@ -32,8 +32,6 @@ app.use(device.capture());
 //require("../config/init-firebase-admin");
 
 //var serverPort = process.env.SERVER_PORT ;
-
-
 app.set('port', process.env.PORT || 8080);
 var serverPort = app.get('port')
 

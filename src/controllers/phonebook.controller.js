@@ -24,6 +24,7 @@ const moment = require('moment')
 const phonebookHelper = require('../helpers/businessphonebook.helper')
 
 const PhoneBook = mongoose.model('businessPhoneBooks')
+const Tickers = mongoose.model('tickers')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -271,6 +272,16 @@ var updatePhoneBook = async (req, res) => {
     
            
                 var result = await phonebookHelper.updatePhoneBook(userData)
+
+                let existingTickers = existingPhoneBook.tickers
+
+                for(let id of existingTickers){
+                    let existingTicker = await Tickers.findById(id)
+                    existingTicker.logoFile = '/uploads/logoimages/' +logoimg
+                    await existingTicker.save()
+                }
+
+
                 var message = "PhoneBook Updated successfully"
                 return responseHelper.success(res, result, message)
             

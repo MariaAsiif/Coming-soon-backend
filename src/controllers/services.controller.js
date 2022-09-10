@@ -37,49 +37,115 @@ responseHelper = require("../helpers/response.helper")
 const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
-
+let wwbusinesses = require('../hardCodedData/worldwidebusiness')
 var populateDBWithSrvsPrvs = async (req, res) => {
 
     console.log("populateDBWithSrvsPrvs called")
     try {
         let allcatg = [];
-         let serviceproviders = []
-          
-          /* for(sp of serviceproviders){
-            if(!allcatg.includes(sp.City)){
-            allcatg.push(sp.City)}
-          } */
-          
-           for(sp of serviceproviders){
+        //let serviceproviders = []
+        let offset = 0
+        let limit = 1
+        for(var i= 0; i <3453; i++){
+            console.log('Iteration at start: ' + i)
+            
+            //if(i == 4){limit = 2}
+            
+
+            let serviceproviders = wwbusinesses.getHunderd(offset, limit)
+
+            /* console.log('service name: ' + serviceproviders.Business)
+            console.log('Latitude: ' + serviceproviders.Latitude)
+            console.log('Longitude: ' + serviceproviders.Longitude)
+ */
+            for (var j = 0; j < serviceproviders.length; j++) {
+
+                let spcord = []
+                if (serviceproviders[j].Longitude == "") {
+                    spcord.push(0)
+                } else {
+                    spcord.push(parseFloat(serviceproviders[j].Longitude))
+                }
+    
+                if (serviceproviders[j].Latitude == "") {
+                    spcord.push(0)
+                } else {
+                    spcord.push(parseFloat(serviceproviders[j].Latitude))
+                }
+    
+    
+                let bsnsSP = {
+                    businessName: serviceproviders[j].Business,
+                    category: serviceproviders[j].Category,
+                    //content: sp.Content,
+                    address: serviceproviders[j].Address,
+                    contactNumber: serviceproviders[j].ContactNo,
+                    website: serviceproviders[j].Website,
+                    email: serviceproviders[j].Email,
+                    linkAddress: serviceproviders[j].LinkAddress,
+                    socialLink: serviceproviders[j].SocialLink
+                }
+                
+                let bspobj = await businessServiceProviderHelper.createBusinessServiceProvider(bsnsSP)
+    
+                let newSP = {
+                    serviceName: serviceproviders[j].Business,
+                    serviceCountry: serviceproviders[j].Country,
+                    serviceCity: serviceproviders[j].City,
+                    serviceLocation: {
+                        type: "Point",
+                        coordinates: spcord
+                    },
+                    category: serviceproviders[j].Category,
+                    businessServiceProvider: bspobj._id
+                }
+    
+                await serviceHelper.createService(newSP)
+    
+    
+            } //end for of 
+
+            offset = limit
+            limit += 1
+            console.log('Iteration at end: ' + i)
+            console.log(serviceproviders)
+            console.log('offset in main' + offset)
+        }
+
+        //console.log(fh.length)
+        /* for(sp of serviceproviders){
+          if(!allcatg.includes(sp.City)){
+          allcatg.push(sp.City)}
+        } */
+
+        /* for (sp of serviceproviders) {
 
             let spcord = []
-            if(sp.Longitude == null) {
+            if (sp.Longitude == null) {
                 spcord.push(0)
             } else {
                 spcord.push(parseFloat(sp.Longitude))
             }
 
-            if(sp.Latitude == null) {
+            if (sp.Latitude == null) {
                 spcord.push(0)
             } else {
                 spcord.push(parseFloat(sp.Latitude))
             }
+
+
+            let bsnsSP = {
+                businessName: sp.Business,
+                category: sp.Category,
+                //content: sp.Content,
+                address: sp.Address,
+                contactNumber: sp.ContactNo,
+                website: sp.Website,
+                email: sp.Email,
+                linkAddress: sp.LinkAddress,
+                socialLink: sp.SocialLink
+            }
             
-
-                let bsnsSP = {
-                    businessName: sp.Business,
-                    category: sp.Category,
-                    content: sp.Content,
-                    address: sp.Address,
-                    contactNumber: sp.ContactNo,
-                    website: sp.Website,
-                    email: sp.Email,
-                    linkAddress: sp.LinkAddress,
-                    socialLink: sp.SocialLink
-                }
-            
-
-
             let bspobj = await businessServiceProviderHelper.createBusinessServiceProvider(bsnsSP)
 
             let newSP = {
@@ -88,23 +154,23 @@ var populateDBWithSrvsPrvs = async (req, res) => {
                 serviceCity: sp.City,
                 serviceLocation: {
                     type: "Point",
-                    coordinates: spcord                    
+                    coordinates: spcord
                 },
                 category: sp.Category,
                 businessServiceProvider: bspobj._id
             }
 
             var result = await serviceHelper.createService(newSP)
-            
 
-          } //end for of 
 
-          //console.log(spcord)
-          var message = "Service created successfully"
-          return responseHelper.success(res, allcatg, message)
-    
+        } //end for of  */
+
+        //console.log(spcord)
+        var message = "Service created successfully"
+        return responseHelper.success(res, allcatg, message)
+
     }
-    catch{}
+    catch { }
 } //end function
 
 var populateDBWithDoctorsPrvs = async (req, res) => {

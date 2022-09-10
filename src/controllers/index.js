@@ -19,5 +19,6 @@ module.exports = {
   verifications: require('./verification.controller'),
   services: require('./services.controller'),
   phonebooks: require('./phonebook.controller'),
-  termsconditions: require('./termsconditions.controller')
+  termsconditions: require('./termsconditions.controller'),
+  servicecategories: require('./servicecategory.controller')
 };

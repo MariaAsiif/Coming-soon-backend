@@ -19,5 +19,6 @@ module.exports = {
   individualServiceProviders: require('./individualserverprovider.model'),
   businessServiceProviders: require('./businessserviceprovider.model'),
   businessPhoneBooks: require('./businessphonebook.model'),
-  termsconditions: require('./termsconditions.model')
+  termsconditions: require('./termsconditions.model'),
+  serviceCategories: require('./servicecategories.model')
 };

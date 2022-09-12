@@ -20,6 +20,7 @@ const locateServicesRoutes = require('./services.route')
 const phoneBookRoutes = require('./phonebook.route')
 const termsRoutes = require('./termsconditions.route')
 const serviceCategoryRoutes = require('./servicecategories.route')
+const zohoRoutes = require('./zoho.route')
 
 
 //call appropriate routes
@@ -42,5 +43,7 @@ router.use ('/locateservices', locateServicesRoutes)
 router.use ('/phonebooks', phoneBookRoutes)
 router.use ('/terms', termsRoutes)
 router.use ('/servicecategories', serviceCategoryRoutes)
+router.use ('/zoho', zohoRoutes)
+
 
 module.exports = router

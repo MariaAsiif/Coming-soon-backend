@@ -547,6 +547,20 @@ var approveDisapproveUser = async (req, res) => {
         responseHelper.requestfailure(res, err);
     }
 
+}; //end 
+
+var activeUser = async (req, res) => {
+    console.log("request received for activeUser ");
+
+    try {
+        var userData = req.body;
+        var result = await userHelper.activeUser(userData)
+        var message = "User Updated successfully";
+        return responseHelper.success(res, result, message);
+    } catch (err) {
+        responseHelper.requestfailure(res, err);
+    }
+
 
 
 }; //end 
@@ -1125,6 +1139,22 @@ var listAllUsers = async (req, res) => {
     }
 };
 
+var activeUser = async (req, res) => {
+    console.log("request received for activeUser");
+
+    try {
+        var userData = req.body;
+        var result = await userHelper.activeUser(userData)
+        var message = "User Updated successfully";
+        return responseHelper.success(res, result, message);
+    } catch (err) {
+        responseHelper.requestfailure(res, err);
+    }
+
+
+
+}; //end 
+
 
 
 
@@ -1153,7 +1183,8 @@ module.exports = {
     paymentnotification,
     listAllUsers,
     updateuser,
-    approveDisapproveUser
+    approveDisapproveUser,
+    activeUser
 
 };
 

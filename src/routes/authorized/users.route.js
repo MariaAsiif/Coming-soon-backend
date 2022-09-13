@@ -20,9 +20,9 @@ router.post('/updateprofilepic', controller.updateprofilepic)
 router.post('/listAllUsers', controller.listAllUsers)
 router.post('/updateuser', controller.updateuser)
 router.post('/approveDisapproveUser', controller.approveDisapproveUser)
+router.post('/activeUser', controller.activeUser)
 
 router.post("/logout", controller.logout)
-
 
 //test
 router.post('/test-socket', controller.testSocket)

@@ -307,16 +307,33 @@ module.exports = {
         let result
         if(data.approved){
             user.approved = true
-            user.active = true
             result = await user.save()
         } else {
             user.approved = false
-            user.active = false
             result = await user.save()
         }
         
         
         return result
+    },
+
+    activeUser: async (data) => {
+        console.log("activeUser HelperFunction is called")
+       try {
+        const user = await User.findById(data.userid)
+        let result
+        if(data.active){
+            user.active = true
+            result = await user.save()
+        } else {
+            user.active = false
+            result = await user.save()
+        }
+        return result
+        
+       } catch (error) {
+         console.log(`Error Occurred =======`, error)
+       }
     },
 
 };

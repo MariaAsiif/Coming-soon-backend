@@ -11,7 +11,6 @@
   "author": "Jamshaid Sabir",
   "license": "ISC",
   "dependencies": {
-    "@zohocrm/nodejs-sdk-2.0": "^6.0.0",
     "async": "^2.6.0",
     "axios": "^0.27.2",
     "bluebird": "^3.5.1",
@@ -46,7 +45,7 @@
     "sticky-session": "^1.1.2",
     "twilio": "^3.80.1",
     "underscore": "*",
-    "zoho": "^1.0.0"
+    "zoho-books": "^1.1.0"
   },
   "devDependencies": {
     "grunt": "^1.0.3",

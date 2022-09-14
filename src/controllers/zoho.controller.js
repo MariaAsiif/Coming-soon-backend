@@ -75,8 +75,7 @@ var getZoho = async (origin, destination, mode, submode) => {
     console.log('getZoho called')
     
     let currentUrl = `https://books.zoho.com/api/v3/invoices?organization_id=789644281`
-   let auth = "Authorization: Zoho-oauthtoken 1000.dc4aaabfaab84141f8388e5d2fbd403d.d12b1e8a9b0a6ea94af9bd28301be5b6"
-
+   
 
 
 

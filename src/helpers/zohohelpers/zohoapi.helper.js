@@ -2,8 +2,8 @@
 const _ = require('lodash');
 let authHeader = require('./auth-header').authHeader
 var axios = require('axios')
-
-const responseHelper = require('../../helpers/response.helper')
+const { writeFile } = require( 'fs/promises')
+let generateGrantToken = require('../../helpers/zohohelpers/zohotokens').generateGrantToken
 
 var getZoho = async (module) => {
     console.log('getZoho called')
@@ -22,19 +22,30 @@ var getZoho = async (module) => {
 
     let result = axios(config)
         .then(function (response) {
-            console.log('success') 
-      //console.log(response.data) 
+            console.log('getZoho success') 
+      console.log(response.data) 
            
             return response.data
             
         })
-        .catch(function (error) {
-            console.log('failure')
-            console.log(error)
-            return JSON.stringify(error)
-            //return responseHelper.success(req, error, '')
+        .catch(async function (error) {
+            console.log('getZoho failure')
+            //console.log(error)
+            console.log(error.response.status)
+            if(error.response.status == 400 || error.response.status == 401){
+                console.log('get new token')
 
-            //return responseHelper.makeJson(error)
+                let newToken = await generateGrantToken()
+console.log('after generate token' + newToken.access_token)
+                let file = '../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt'
+        
+        let newre = await writeFile(file, newToken.access_token, 'utf8')
+console.log('after write file')
+              return await getZoho(module)
+               console.log('after again zoho get')
+            }
+           // return JSON.stringify(error)
+            
         })
     return result
 

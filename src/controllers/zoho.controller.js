@@ -67,20 +67,20 @@ var createZoho = async (req, res) => {
 //var result = await getZoho()
 
 
-let gtz = await getZoho(req, 'invoices')
+let gtz = await getZoho('invoices')
 //console.log('gtz '+gtz)
 //console.log('status '+  )
-gtz = JSON.parse(gtz)
- if(gtz.status == 400){
-    console.log('get new token')
+//gtz = JSON.parse(gtz)
+ /* if(gtz.status == 400){
+    console.log('get new token in controller')
      /* let result = await generateGrantToken()
     process.env.ZOHO_SELF_CLIENT_ACCESS_TOKEN = result.access_token
     let newgtz = await getZoho(req, 'invoices')
-    gtz = JSON.parse(newgtz) */
+    gtz = JSON.parse(newgtz) 
 
 
     
-} 
+}  */
             /* var result = await quoteHelper.createQuote(quoteData) */
             var message = "Zoho accessed successfully"
             return responseHelper.success(res, gtz, message)

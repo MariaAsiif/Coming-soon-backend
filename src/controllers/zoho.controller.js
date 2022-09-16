@@ -35,7 +35,13 @@ var pageSize = parseInt(config.PAGE_SIZE)
 //var Zoho = require('zoho')
 //const zoho = require('@effco/zoho-crm')
 var axios = require('axios')
-const ZohoBooks = require('zoho-books')
+//const ZohoBooks = require('zoho-books')
+
+let generateGrantToken = require('../helpers/zohohelpers/zohotokens').generateGrantToken
+let getZoho = require('../helpers/zohohelpers/zohoapi.helper').getZoho
+
+//const fs = require('fs')
+const { readFile, writeFile } = require( 'fs/promises')
 
 var createZoho = async (req, res) => {
     console.log('Create Zoho Called')
@@ -58,11 +64,26 @@ var createZoho = async (req, res) => {
         }).catch(err => console.log(err))
 
           console.log("Later") */
-var result = await getZoho()
+//var result = await getZoho()
 
+
+let gtz = await getZoho(req, 'invoices')
+//console.log('gtz '+gtz)
+//console.log('status '+  )
+gtz = JSON.parse(gtz)
+ if(gtz.status == 400){
+    console.log('get new token')
+     /* let result = await generateGrantToken()
+    process.env.ZOHO_SELF_CLIENT_ACCESS_TOKEN = result.access_token
+    let newgtz = await getZoho(req, 'invoices')
+    gtz = JSON.parse(newgtz) */
+
+
+    
+} 
             /* var result = await quoteHelper.createQuote(quoteData) */
             var message = "Zoho accessed successfully"
-            return responseHelper.success(res, result, message)
+            return responseHelper.success(res, gtz, message)
         
 
     } catch (err) {
@@ -71,7 +92,8 @@ var result = await getZoho()
     }
 } //end function
 
-var getZoho = async (origin, destination, mode, submode) => {
+
+var getZohoLocal = async (origin, destination, mode, submode) => {
     console.log('getZoho called')
     
     let currentUrl = `https://books.zoho.com/api/v3/invoices?organization_id=789644281`
@@ -109,7 +131,57 @@ var getZoho = async (origin, destination, mode, submode) => {
 } //end function
 
 
+var createZohoNew = async (req, res) => {
+    console.log('Create Zoho Called')
+    try {
+        //var quoteData = req.body
+        
 
+        /* fs.readFile('../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt', (err, inputD) => {
+            if (err) throw err;
+               console.log(inputD.toString());
+         })
+
+         fs.writeFile('../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt', 'Simply Easy Learning!', function(err) {
+            console.log("Data written successfully!");
+            console.log("Let's read newly written data");
+         
+            // Read the newly written file and print all of its content on the console
+            fs.readFile('../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt', function (err, data) {
+               console.log("Asynchronous read: " + data.toString());
+            });
+         }); */
+
+        let result = await readFile('../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt', 'utf8')
+
+        console.log('first read')
+        console.log(result)
+
+
+        let file = '../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt'
+        let newdata = '1000.5f7ae6f29edf9b251a9409d49b748976.aa55603e9d469a03cdb38fb809de4557'
+        let newre = await writeFile(file, newdata, 'utf8')
+
+        console.log('first write')
+        console.log(newre)
+
+        let secresult = await readFile('../Coming-soon-backend/src/config/zohoconfigs/accesstoken.txt', 'utf8')
+
+        console.log('2nd read')
+        console.log(secresult)
+                  
+
+
+
+        var message = "Zoho accessed successfully"
+        return responseHelper.success(res, {}, message)
+        
+
+    } catch (err) {
+        logger.error(err)
+        responseHelper.requestfailure(res, err)
+    }
+} //end function
 
 
 

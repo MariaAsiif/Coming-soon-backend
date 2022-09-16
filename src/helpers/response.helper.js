@@ -1,8 +1,19 @@
 
 const _ = require('lodash');
 
-let success = (response, data, message, token) => {
+let makeJson = err => {
 
+    let error = {
+        err :err}
+
+        let result = {}
+
+        return result.json(error)
+}
+
+let success = (response, data, message, token) => {
+//console.log('success')
+//console.log(response.status())
     let successResponse = {
         status: 'Success',
         message: message
@@ -79,5 +90,6 @@ module.exports = {
     success: success,
     badRequest,
     systemfailure: systemfailure,
-    requestfailure: requestfailure
+    requestfailure: requestfailure,
+    makeJson
 };

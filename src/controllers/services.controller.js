@@ -1066,38 +1066,68 @@ var locateAllServices = async (req, res) => {
 
         } else {
 
-            /* let modes = ['driving', 'walking', 'bicycling', 'transit']
+            let modes = ['driving', 'walking', 'bicycling', 'transit']
             let transits = ['bus', 'subway', 'train', 'tram', 'rail']
 
 
             let origins = '' + userData.location.lat + '%2C' + userData.location.lng + ''
 
+            //extractung subsets of services. each of lenght 25 or lesser
+            let size = 25
+  
+            let motherArrayOfServices = []
+            do {
+                //console.log('existing length ' +result.services.length +' array'+result.services)
+                if (result.services.length >= size) 
+                {
+                    let newarray = result.services.splice(0, size)
+                    motherArrayOfServices.push(newarray)
+                } else if(result.services.length <= size){
+                    let newarray = result.services.splice(0, size)
+                    motherArrayOfServices.push(newarray)
+                }
+            } while (result.services.length != 0)
+
+            //console.log(motherArrayOfServices)
 
 
 
             //make all destinations array 
-            let destination = ''
-            for (service of result.services) {
-                let serv = service.toObject()
-                destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
-            }
+            let allDestinations = []
+            
+            for (setOfServices of motherArrayOfServices) {
+                let destination = ''
+                for (service of setOfServices) {
+                    let serv = service.toObject()
+                    destination += '' + serv.serviceLocation.coordinates[1] + '%2C' + serv.serviceLocation.coordinates[0] + '%7C'
+                }
 
-            let destinations
-            destinations = destination.slice(0, -3)
+                let destinations = []
+                destinations.push (destination.slice(0, -3))
+                allDestinations.push(destinations)
+            }
             //get distances of each mode of each destination
 
             let distances = []
 
             //getting all distances
 
+            console.log(allDestinations)
+
+
+            
+
+
+            
+        for (var x = 0; x < allDestinations.length; x++) {
             for (var k = 0; k < modes.length; k++) {
 
                 if (modes[k] != "transit") {
-                    let response = await getDistance(origins, destinations, modes[k])
+                    let response = await getDistance(origins, allDestinations[x], modes[k])
 
                     for (var p = 0; p < response.data.rows[0].elements.length; p++) {
 
-                        let serv = result.services[p].toObject()
+                        let serv = motherArrayOfServices[x][p].toObject()
                         if (response.data.rows[0].elements[p].status == "OK") {
 
                             let distancerslt = {
@@ -1108,7 +1138,7 @@ var locateAllServices = async (req, res) => {
                                 duration: response.data.rows[0].elements[p].duration.text
                             }
 
-                            result.services[p]._doc.distances.push(distancerslt)
+                            motherArrayOfServices[x][p]._doc.distances.push(distancerslt)
 
                         } else {
                             let distancerslt = {
@@ -1119,7 +1149,7 @@ var locateAllServices = async (req, res) => {
                                 duration: "No Route Could be Found"
                             }
 
-                            result.services[p]._doc.distances.push(distancerslt)
+                            motherArrayOfServices[x][p]._doc.distances.push(distancerslt)
                         }
 
                     }
@@ -1127,10 +1157,10 @@ var locateAllServices = async (req, res) => {
                 } else {
 
                     for (var m = 0; m < transits.length; m++) {
-                        let response = await getDistance(origins, destinations, modes[k], transits[m])
+                        let response = await getDistance(origins, allDestinations[x], modes[k], transits[m])
 
                         for (var p = 0; p < response.data.rows[0].elements.length; p++) {
-                            let serv = result.services[p].toObject()
+                            let serv = motherArrayOfServices[x][p].toObject()
                             if (response.data.rows[0].elements[p].status == "OK") {
 
                                 let distancerslt = {
@@ -1141,7 +1171,7 @@ var locateAllServices = async (req, res) => {
                                     duration: response.data.rows[0].elements[p].duration.text
                                 }
 
-                                result.services[p]._doc.distances.push(distancerslt)
+                                motherArrayOfServices[x][p]._doc.distances.push(distancerslt)
 
                             } else {
                                 let distancerslt = {
@@ -1152,15 +1182,16 @@ var locateAllServices = async (req, res) => {
                                     duration: "No Route Could be Found"
                                 }
 
-                                result.services[p]._doc.distances.push(distancerslt)
+                                motherArrayOfServices[x][p]._doc.distances.push(distancerslt)
                             }
 
                         }
                     } //end distances response for
                 }
             } //end for loop of modes
+        }//end alldestinations
 
- */
+result.services = motherArrayOfServices.flat()
 
 
 
@@ -1209,7 +1240,7 @@ if(mode == "transit"){
         .then(function (response) {
             //console.log('mode')
             //console.log(mode)
-            //console.log(response.data.rows[0].elements) 
+            //console.log(response) 
             //let resultset = []
             return response//.data.rows[0].elements
             /* if (response.data.rows[0].elements[0].status == "OK") {

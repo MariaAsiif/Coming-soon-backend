@@ -7,7 +7,7 @@ const router = express.Router()
 var permit = require('../../middlewares').permit
 const controller = require('../../controllers').zoho
 
-router.post('/createZoho', permit(['_a']), controller.createZoho)
+router.post('/callZoho', permit(['_a']), controller.callZoho)
 
 
 

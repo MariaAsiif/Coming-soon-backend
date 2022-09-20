@@ -43,12 +43,12 @@ let getZoho = require('../helpers/zohohelpers/zohoapi.helper').getZoho
 //const fs = require('fs')
 const { readFile, writeFile } = require( 'fs/promises')
 
-var createZoho = async (req, res) => {
+var callZoho = async (req, res) => {
     console.log('Create Zoho Called')
     try {
-        var quoteData = req.body
-        var role = req.token_decoded.r
-        quoteData.addedby = req.token_decoded.d
+        var zohoData = req.body
+        /* var role = req.token_decoded.r
+        zohoData.addedby = req.token_decoded.d */
 
         /* let zohoBooks = new ZohoBooks({
             authtoken: '1000.85cc95b812de2251e9c73c03ee29ddf1.b171afbd1cf1db0c968973171de5b8d1',
@@ -65,9 +65,78 @@ var createZoho = async (req, res) => {
 
           console.log("Later") */
 //var result = await getZoho()
+/* 
+let data = {
+    contact_name: "Bowman and Co",
+    company_name: "Bowman and Co",
+    website: "www.bowmanfurniture.com",
+    language_code: "string",
+    contact_type: "customer",
+    customer_sub_type: "business",
+    credit_limit: 1000,
+    
+    is_portal_enabled: true,
+    currency_id: 460000000000097,
+    payment_terms: 15,
+    payment_terms_label: "Net 15",
+    notes: "Payment option : Through check",
+    billing_address: {
+        attention: "Mr.John",
+        address: "4900 Hopyard Rd",
+        street2: "Suite 310",
+        state_code: "CA",
+        city: "Pleasanton",
+        state: "CA",
+        zip: 94588,
+        country: "USA",
+        fax: "+1-925-924-9600",
+        phone: "+1-925-921-9201"
+    },
+    shipping_address: {
+        attention: "Mr.John",
+        address: "4900 Hopyard Rd",
+        street2: "Suite 310",
+        state_code: "CA",
+        city: "Pleasanton",
+        state: "CA",
+        zip: 94588,
+        country: "U.S.A",
+        fax: "+1-925-924-9600",
+        phone: "+1-925-921-9201"
+    },
+    contact_persons: "Contact persons of a contact.",
+    
+    
+} */
+/*
+"is_taxable": true,  
+"custom_fields": [{ "label": "LABEL_NAME1", "value": "v1" }, { "label": "LABEL_NAME2", "value": "v2" }, { "label": "LABEL_NAME3", "value": "v3" }, { "label": "LABEL_NAME4", "value": "v4" }]
+ */
+  /*       let data = {
+            "contact_name": "Mike",
+            "company_name": "MC",
+            "billing_address": {
+                "zip": 82782,
+                "country": "India",
+                "address": "RK Road",
+                "city": "Chennai",
+                "mobile": 9383736353,
+                "state": "TAMILNADU"
+            },
+            "contact_persons": [{
+                "first_name": "MIKE",
+                "last_name": "J",
+                "salutation": "Mr",
+                "mobile": 93738373,
+                "email": "xxx@gmail.com"
+            }],
+        }
 
+let module = "contacts"
+let requestType = "read"
+let method = "get" */
 
-let gtz = await getZoho('invoices')
+let gtz = await getZoho(zohoData.module, zohoData.data, zohoData.requestType, zohoData.method, zohoData.page, zohoData.per_page, zohoData.applied_filter)
 //console.log('gtz '+gtz)
 //console.log('status '+  )
 //gtz = JSON.parse(gtz)
@@ -188,7 +257,7 @@ var createZohoNew = async (req, res) => {
 
 
 module.exports = {
-    createZoho,
+    callZoho,
     
 }
 

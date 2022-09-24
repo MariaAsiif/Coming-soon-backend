@@ -22,6 +22,9 @@ const termsRoutes = require('./termsconditions.route')
 const serviceCategoryRoutes = require('./servicecategories.route')
 const zohoRoutes = require('./zoho.route')
 const storeRoutes = require('./stores.route')
+const productCategoriesRoutes = require('./productCategories.route')
+const productsRoutes = require('./products.route')
+const variantsRoutes = require('./variants.route')
 
 
 //call appropriate routes
@@ -33,7 +36,7 @@ router.use ('/zoommeetings', zoomMeetingRoutes)
 router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
 
-router.use ('/departmens', departmentRoutes)
+router.use ('/departments', departmentRoutes)
 router.use ('/quotes', quotesRoutes)
 
 router.use ('/tickers', tickerRoutes)
@@ -46,6 +49,9 @@ router.use ('/terms', termsRoutes)
 router.use ('/servicecategories', serviceCategoryRoutes)
 router.use ('/zoho', zohoRoutes)
 router.use('/stores', storeRoutes)
+router.use('/productcategories', productCategoriesRoutes)
+router.use('/products', productsRoutes)
+router.use('/variants', variantsRoutes)
 
 
 module.exports = router

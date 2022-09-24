@@ -21,5 +21,8 @@ module.exports = {
   businessPhoneBooks: require('./businessphonebook.model'),
   termsconditions: require('./termsconditions.model'),
   serviceCategories: require('./servicecategories.model'),
-  stores: require('./store.model')
+  stores: require('./store.model'),
+  productCategories: require('./productcategories.model'),
+  products: require('./products.model'),
+  variants: require('./varians.model')
 };

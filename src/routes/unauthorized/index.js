@@ -14,6 +14,7 @@ const tickerRoutes = require('./tickers.route')
 const phonebookRoutes = require('./phonebooks.route')
 const termsRoutes = require('./termsconditions.route')
 const rolesRoutes = require('./roles.route')
+const productsRoutes = require('./products.route')
 
 
 //call appropriate routes
@@ -29,6 +30,7 @@ router.use ('/tickers', tickerRoutes)
 router.use ('/phonebooks', phonebookRoutes)
 router.use ('/terms', termsRoutes)
 router.use ('/roles', rolesRoutes)
+router.use('/productspublic', productsRoutes)
 
 
 module.exports = router;

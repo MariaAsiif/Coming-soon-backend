@@ -22,5 +22,8 @@ module.exports = {
   termsconditions: require('./termsconditions.controller'),
   servicecategories: require('./servicecategory.controller'),
   zoho: require('./zoho.controller'),
-  stores: require('./store.controller')
+  stores: require('./store.controller'),
+  productCategories: require('./productCategories.controller'),
+  products: require('./products.controller'),
+  variants: require('./variants.controller')
 };

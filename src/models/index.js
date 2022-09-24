@@ -20,5 +20,6 @@ module.exports = {
   businessServiceProviders: require('./businessserviceprovider.model'),
   businessPhoneBooks: require('./businessphonebook.model'),
   termsconditions: require('./termsconditions.model'),
-  serviceCategories: require('./servicecategories.model')
+  serviceCategories: require('./servicecategories.model'),
+  stores: require('./store.model')
 };

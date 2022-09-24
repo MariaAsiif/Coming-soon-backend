@@ -87,7 +87,7 @@ module.exports = {
         }
         quote.lastModifiedBy = data.lastModifiedBy
         quote.active = false
-        quote.save()
+       await quote.save()
         return quote;
         
 

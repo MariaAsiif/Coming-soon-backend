@@ -21,5 +21,6 @@ module.exports = {
   phonebooks: require('./phonebook.controller'),
   termsconditions: require('./termsconditions.controller'),
   servicecategories: require('./servicecategory.controller'),
-  zoho: require('./zoho.controller')
+  zoho: require('./zoho.controller'),
+  stores: require('./store.controller')
 };

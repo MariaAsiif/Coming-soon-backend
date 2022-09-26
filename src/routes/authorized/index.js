@@ -25,6 +25,9 @@ const storeRoutes = require('./stores.route')
 const productCategoriesRoutes = require('./productCategories.route')
 const productsRoutes = require('./products.route')
 const variantsRoutes = require('./variants.route')
+const productAttributesRoutes = require('./productAttributes.route')
+const cutomerRoutes = require('./customers.route')
+const ordersRoutes = require('./orders.route')
 
 
 //call appropriate routes
@@ -35,10 +38,8 @@ router.use ('/interviews', interviewRoutes)
 router.use ('/zoommeetings', zoomMeetingRoutes)
 router.use ('/recruitments', recruitmentRoutes)
 router.use ('/employees', employeeRoutes)
-
 router.use ('/departments', departmentRoutes)
 router.use ('/quotes', quotesRoutes)
-
 router.use ('/tickers', tickerRoutes)
 router.use ('/feedbacks', feedbackRoutes)
 router.use ('/permissions', permissionRoutes)
@@ -48,10 +49,14 @@ router.use ('/phonebooks', phoneBookRoutes)
 router.use ('/terms', termsRoutes)
 router.use ('/servicecategories', serviceCategoryRoutes)
 router.use ('/zoho', zohoRoutes)
+//Ecommerce
 router.use('/stores', storeRoutes)
 router.use('/productcategories', productCategoriesRoutes)
 router.use('/products', productsRoutes)
 router.use('/variants', variantsRoutes)
+router.use('/productattributes', productAttributesRoutes)
+router.use('/customers', cutomerRoutes)
+router.use('/orders', ordersRoutes)
 
 
 module.exports = router

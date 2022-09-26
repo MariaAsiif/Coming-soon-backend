@@ -24,5 +24,8 @@ module.exports = {
   stores: require('./store.model'),
   productCategories: require('./productcategories.model'),
   products: require('./products.model'),
-  variants: require('./varians.model')
+  variants: require('./varians.model'),
+  productAttributes: require('./productAttributes.model'),
+  customers: require('./customers.model'),
+  orders: require('./orders.model')
 };

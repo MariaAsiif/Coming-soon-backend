@@ -27,5 +27,6 @@ module.exports = {
   variants: require('./varians.model'),
   productAttributes: require('./productAttributes.model'),
   customers: require('./customers.model'),
-  orders: require('./orders.model')
+  orders: require('./orders.model'),
+  diseases: require('./diseases.model')
 };

@@ -28,6 +28,7 @@ const variantsRoutes = require('./variants.route')
 const productAttributesRoutes = require('./productAttributes.route')
 const cutomerRoutes = require('./customers.route')
 const ordersRoutes = require('./orders.route')
+const diseasesRoutes = require('./diseases.route')
 
 
 //call appropriate routes
@@ -58,5 +59,7 @@ router.use('/productattributes', productAttributesRoutes)
 router.use('/customers', cutomerRoutes)
 router.use('/orders', ordersRoutes)
 
+//Medical Consultation
+router.use('/diseases', diseasesRoutes)
 
 module.exports = router

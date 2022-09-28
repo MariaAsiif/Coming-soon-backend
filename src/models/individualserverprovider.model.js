@@ -73,10 +73,13 @@ var individualServiceProviderSchema = new Schema({
   },
   dpImageUrl: {
     type: String,
-    required: true,
+   
     default: '/uploads/dp/default.png'
   },
-
+  appointments: [{
+    type: String,
+    required: true
+  }],
   qualifications: [{
     qualificationName: {
       type: String,

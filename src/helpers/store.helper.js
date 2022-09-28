@@ -69,11 +69,7 @@ module.exports = {
     updateStore: async (data) => {
         console.log("updateStore HelperFunction is called");
         const result = await promise.all([Store.findOneAndUpdate({_id: data.storeid}, data, {new: true})])
-        //const result = await Store.findOneAndUpdate({_id: data.storeid}, data, {new: true})
-
-        console.log('result')
-        console.log(result[0])
-
+        
         return result; 
                 
     },

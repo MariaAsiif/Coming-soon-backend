@@ -69,6 +69,24 @@ var getLexiconsWithFullDetails = async (req, res) => {
     }
 }
 
+var getLexiconsWithFullDetailsPublic = async (req, res) => {
+    console.log("getLexiconsWithFullDetailsPublic called")
+    var lexiconData = req.body
+
+
+    try {
+
+        var result = await lexiconHelper.getLexiconsWithFullDetails(lexiconData.sortproperty, lexiconData.sortorder, lexiconData.offset, lexiconData.limit, lexiconData.query)
+
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, result, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 var getLexiconsList = async (req, res) => {
     console.log("getLexiconsList called")
     var lexiconData = req.body
@@ -163,7 +181,8 @@ module.exports = {
     getLexiconsList,
     updateLexicon,
     removeLexicon,
-    findLexiconById
+    findLexiconById,
+    getLexiconsWithFullDetailsPublic
 
 }
 

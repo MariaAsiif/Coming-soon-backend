@@ -4,12 +4,53 @@ var Schema = mongoose.Schema
 var customer = new Schema({
     dob: {
         type: Date
-      },
-      user: {
+    },
+    user: {
         type: String,
-        required: true,
         ref: 'users'
-      },
+    },
+    ssn: {
+        type: String
+    },
+    homeAddress: {
+        type: String
+    },
+    homePhone: {
+        type: String
+    },
+    workPhone: {
+        type: String
+    },
+    occupation: {
+        type: String
+    },
+    emergencyContantName: {
+        type: String
+    },
+    emergencyContactRelation: {
+        type: String
+    },
+    emergencyContactPhone: {
+        type: String
+    },
+    familyDoctorName: {
+        type: String
+    },
+    referringDoctorName: {
+        type: String
+    },
+    doctorAddress: {
+        type: String
+    },
+    doctorPhone: {
+        type: String
+    },
+    doctorFax: {
+        type: String
+    },
+    otherReferralSource: {
+        type: String
+    },
     active: {
         type: Boolean,
         default: true

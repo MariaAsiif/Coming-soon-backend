@@ -12,6 +12,7 @@ module.exports = {
   quotes: require('./quotes.model'),
   tickers: require('./tickers.model'),
   feedbacks: require("./feedbacks.model"),
+  lexicons: require('./lexicon.model'),
   permissions: require('./permissions.model'),
   roles: require('./roles.model'),
   userverifications : require('./userverification.model'),
@@ -30,5 +31,7 @@ module.exports = {
   orders: require('./orders.model'),
   diseases: require('./diseases.model'),
   symptoms: require('./symptoms.model'),
-  lexicons: require('./lexicon.model')
+  appointmentRequests: require('./appointmentRequest.model')
+  
+
 };

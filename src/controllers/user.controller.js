@@ -72,9 +72,9 @@ var getprofilefromid = (req, res) => {
 var signup = async (req, res) => {
     console.log("signup is called");
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    console.log('ip ' + ip)
+    
     const locationData = lookup(ip)
-    console.log(locationData)
+    
     try {
         var userData = req.body;
         userData.ipAddress = ip
@@ -257,7 +257,7 @@ var signin = async (req, res) => {
     console.log("signin is called");
     try {
         var userData = req.body;
-        console.log(userData);
+        
         if (userData._id) {
             let exists = await userHelper.isUserIdExists(userData._id);
             if (exists) {
@@ -271,8 +271,7 @@ var signin = async (req, res) => {
             let exists = await userHelper.isUserEmailExists(userData.email);
 
             if (exists) {
-                console.log('exists')
-                console.log(exists._doc)
+               
                 if (exists.role == "subscriber") {
                     let err = "User not allowed to signin";
                     return responseHelper.requestfailure(res, err);
@@ -281,7 +280,7 @@ var signin = async (req, res) => {
                     return responseHelper.requestfailure(res, 'Please verify your email address')
                 }
 
-                if (exists.approved !== true) {
+                if (exists.approved !== "approved") {
                     return responseHelper.requestfailure(res, 'Your account is not approved')
                 }
 

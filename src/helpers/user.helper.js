@@ -305,11 +305,11 @@ module.exports = {
         console.log("removeUser HelperFunction is called")
         const user = await User.findById(data.userid)
         let result
-        if(data.approved){
-            user.approved = true
+        if(data.approved == "approved"){
+            user.approved = "approved"
             result = await user.save()
-        } else {
-            user.approved = false
+        } else if(data.approved == "disapproved"){
+            user.approved = "disapproved"
             result = await user.save()
         }
         

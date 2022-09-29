@@ -92,8 +92,9 @@ usersSchema = new Schema({
         default: false,
     },
     approved: {
-        type: Boolean,
-        defualt: false
+        type: String,
+        defualt: "pending",
+        enum: ["pending", "approved", "disapproved"]
     },
     active: {
         type: Boolean,

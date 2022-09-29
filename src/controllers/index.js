@@ -30,5 +30,6 @@ module.exports = {
   customers: require('./customers.controller'),
   orders: require('./orders.controller'),
   diseases: require('./diseases.controller'),
-  symptoms: require('./symptoms.controller')
+  symptoms: require('./symptoms.controller'),
+  lexicons: require('./lexicon.controller')
 };

@@ -30,6 +30,7 @@ const cutomerRoutes = require('./customers.route')
 const ordersRoutes = require('./orders.route')
 const diseasesRoutes = require('./diseases.route')
 const symptomRoutes = require('./symptoms.route')
+const lexiconRoutes = require('./lexicon.route')
 
 
 //call appropriate routes
@@ -44,6 +45,7 @@ router.use ('/departments', departmentRoutes)
 router.use ('/quotes', quotesRoutes)
 router.use ('/tickers', tickerRoutes)
 router.use ('/feedbacks', feedbackRoutes)
+router.use ('/lexicons', lexiconRoutes)
 router.use ('/permissions', permissionRoutes)
 router.use ('/roles', rolesRoutes)
 router.use ('/locateservices', locateServicesRoutes)

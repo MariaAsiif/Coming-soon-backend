@@ -29,5 +29,6 @@ module.exports = {
   customers: require('./customers.model'),
   orders: require('./orders.model'),
   diseases: require('./diseases.model'),
-  symptoms: require('./symptoms.model')
+  symptoms: require('./symptoms.model'),
+  lexicons: require('./lexicon.model')
 };

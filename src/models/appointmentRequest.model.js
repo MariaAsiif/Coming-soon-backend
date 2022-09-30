@@ -12,10 +12,10 @@ var appointmentRequest = new Schema({
     },
     status: {
         type: String,
-       enum: ["cancelled",
-        "completed",
-        "pending",
-        "rejected"]
+        enum: ["cancelled",
+            "completed",
+            "pending",
+            "rejected"]
     },
     medicalHistory: [{
         medicalFiles: [{
@@ -94,17 +94,17 @@ var appointmentRequest = new Schema({
         maritalStatus: {
             type: String,
             enum: ["single",
-            "married",
-            "partner",
-            "widowed",
-            "divorced"]
+                "married",
+                "partner",
+                "widowed",
+                "divorced"]
         },
         sexualOrientation: {
             type: String,
             enum: ["hetrosexual",
-            "homosexual",
-            "bisexual",
-            "transsexual"]
+                "homosexual",
+                "bisexual",
+                "transsexual"]
         },
         everHurt: {
             type: Boolean,
@@ -164,8 +164,8 @@ var appointmentRequest = new Schema({
     consultationType: [{
         type: String,
         enum: ["audio",
-        "video",
-        "chat"]
+            "video",
+            "chat"]
     }],
     pictures: [{
         type: String

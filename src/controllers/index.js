@@ -14,6 +14,7 @@ module.exports = {
   quotes: require('./quote.controller'),
   tickers: require('./ticker.controller'),
   feedbacks: require('./feedback.controller'),
+  lexicons: require('./lexicon.controller'),
   permissions: require('./permission.controller'),
   roles: require('./roles.controller'),
   verifications: require('./verification.controller'),
@@ -31,5 +32,7 @@ module.exports = {
   orders: require('./orders.controller'),
   diseases: require('./diseases.controller'),
   symptoms: require('./symptoms.controller'),
-  lexicons: require('./lexicon.controller')
+  appointmentRequests: require('./appointmentRequest.controller'),
+  developmentNotes: require('./developmentNotes.controller')
+
 };

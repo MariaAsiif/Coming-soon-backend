@@ -22,6 +22,7 @@ const fs = require('fs');
 
 
 const appointmentRequestHelper = require('../helpers/appointmentRequests.helper')
+const customerHelper = require('../helpers/customers.helper')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -33,22 +34,22 @@ const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
 
-var createPublicFeedback = async (req, res) => {
-    console.log('createFeedback called')
-    var feedbackimg
+var createPublicAppointmentRequest = async (req, res) => {
+    console.log('createAppointmentRequest called')
+    var medicalfile
     let isErr = false
     let errorMessage = ''
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                cb(null, './public/uploads/feedbackimages')
+            if (file.fieldname === "medicalfile") {
+                cb(null, './public/uploads/medicalfiles')
             }
         },
         filename: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                feedbackimg = Date.now() + '-' + file.originalname
-                cb(null, feedbackimg)
+            if (file.fieldname === "medicalfile") {
+                medicalfile = Date.now() + '-' + file.originalname
+                cb(null, medicalfile)
             }
         }
     })
@@ -74,7 +75,7 @@ var createPublicFeedback = async (req, res) => {
     }).fields(
         [
             {
-                name: 'feedbackimg',
+                name: 'medicalfile',
                 maxCount: 1
             }
         ]
@@ -87,13 +88,13 @@ var createPublicFeedback = async (req, res) => {
         if (err instanceof multer.MulterError) {
 
 
-            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+            if (err.field == "medicalfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
                 errorMessage = "Only 1 image can be uploaded";
                 isErr = true
                 //return res.status(500).json(message)
 
-            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
+            } else if (err.field == "medicalfile" && err.code == "LIMIT_FILE_SIZE") {
 
                 errorMessage = "File Limit is 2 MB";
                 
@@ -118,7 +119,7 @@ var createPublicFeedback = async (req, res) => {
             }
             
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
               return  responseHelper.requestfailure(res, err);
 
@@ -129,13 +130,13 @@ var createPublicFeedback = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-       //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+       //userData.imageUrl = '/uploads/medicalfiles/' + medicalfile
 
         try {
-            if(feedbackimg !== undefined){
-                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            if(medicalfile !== undefined){
+                userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
             }
-            var result = await feedbackHelper.createFeedback(userData)
+            var result = await appointmentRequestHelper.createAppointmentRequest(userData)
 
             res.mailer.send('emails/feedback.html', {
                 user: userData.userName,
@@ -154,14 +155,14 @@ var createPublicFeedback = async (req, res) => {
 
 
 
-                var message = "Feedback created successfully"
+                var message = "AppointmentRequest created successfully"
                 return responseHelper.success(res, result, message)
             
     
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
                 return  responseHelper.requestfailure(res, err);
 
@@ -179,22 +180,33 @@ var createPublicFeedback = async (req, res) => {
     
 } //end function
 
-var createAdminFeedback = async (req, res) => {
-    console.log('createFeedback called')
-    var feedbackimg
+var createAppointmentRequest = async (req, res) => {
+    console.log('createAppointmentRequest called')
+    var medicalfile
+    var picturefiles = []
     let isErr = false
     let errorMessage = ''
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                cb(null, './public/uploads/feedbackimages')
+            console.log("storage called")
+            if (file.fieldname === "medicalfile") {
+                cb(null, './public/uploads/medicalfiles')
+            } else if (file.fieldname === "pictures") {
+                cb(null, './public/uploads/medicalfiles')
             }
         },
         filename: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                feedbackimg = Date.now() + '-' + file.originalname
-                cb(null, feedbackimg)
+            if (file.fieldname === "medicalfile") {
+                medicalfile = Date.now() + '-' + file.originalname
+                cb(null, medicalfile)
+            } else if(file.fieldname === "pictures") {
+                console.log("pictures")
+                console.log(file.originalname)
+                let filenew = Date.now() + '-' + file.originalname
+                console.log(filenew)
+                picturefiles.push(filenew )
+                cb(null, filenew)
             }
         }
     })
@@ -208,10 +220,10 @@ var createAdminFeedback = async (req, res) => {
             
             let ext = path.extname(file.originalname);
             
-          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif', '.pdf']
           if (!extentions.includes(ext)){
                
-               errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+               errorMessage = "Only PNG, JPG, JPEC, PDF and GIF Files allowed"
                isErr = true
                
          }
@@ -220,26 +232,30 @@ var createAdminFeedback = async (req, res) => {
     }).fields(
         [
             {
-                name: 'feedbackimg',
+                name: 'medicalfile',
                 maxCount: 1
+            },
+            {
+                name: 'pictures',
+                maxCount: 3
             }
         ]
     )
 
     upload(req, res, async function (err) {
         console.log("upload function called");
-        //console.log(err)
+        console.log(picturefiles)
 
         if (err instanceof multer.MulterError) {
 
 
-            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+            if (err.field == "medicalfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
                 errorMessage = "Only 1 image can be uploaded";
                 isErr = true
                 //return res.status(500).json(message)
 
-            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
+            } else if (err.field == "medicalfile" && err.code == "LIMIT_FILE_SIZE") {
 
                 errorMessage = "File Limit is 2 MB";
                 
@@ -263,7 +279,7 @@ var createAdminFeedback = async (req, res) => {
             }
             
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
               return  responseHelper.requestfailure(res, err);
 
@@ -274,41 +290,47 @@ var createAdminFeedback = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-        //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+        //userData.imageUrl = '/uploads/medicalfiles/' + medicalfile
 
         try {
-            if(feedbackimg !== undefined){
-                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            if(medicalfile !== undefined){
+                userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
             }
+
+            let pictures = []
+
+            if(picturefiles.length !== 0){
+                
+                picturefiles.map(pic => {
+                    userData. pictures.push('/uploads/medicalfiles/' +pic)
+                })
+
+                //userData.pictures = pictures
+            }
+
+            
             var adminid = req.token_decoded.d
             userData.addedby = adminid
-            var result = await feedbackHelper.createFeedback(userData)
 
-            res.mailer.send('emails/feedback.html', {
-                user: userData.userName,
-                feedback: userData.feedbackDescription,
-                customeremail: userData.userEmail,
-                title: 'Feedback',   //project.title
-                to: process.env.FEEDBACK_EMAIL, // REQUIRED. This can be a comma delimited string just like a normal email to field.
-                subject: 'Feedback', // REQUIRED.
-            }, function (err) {
-                if (err) {
-                    return console.error("Email could not sent: ", err)
-                }
-                /* var message = "Client's Feedback successfully sent to Admin";
-                return responseHelper.success(res, {}, message); */
-            })
+            
 
+            let {customerfields} = userData
+            customerfields.customerid = userData.customer
+            
 
+            await customerHelper.updateCustomer(customerfields)
 
-                var message = "Feedback created successfully"
-                return responseHelper.success(res, result, message)
+             result = await appointmentRequestHelper.createAppointmentRequest(userData)
+
+            
+                var message = "AppointmentRequest created successfully"
+                return responseHelper.success(res, {}, message)
             
     
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
@@ -326,15 +348,40 @@ var createAdminFeedback = async (req, res) => {
     
 } //end function
 
+var createTestAppointmentRequest = async (req, res) => {
+    console.log("createTestAppointmentRequest called")
+    try {
+        /* if(medicalfile !== undefined){
+            userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
+        } */
+        //var userData = JSON.parse(req.body.request)
+        console.log('userdata')
+        var appointmentData = req.body
+        console.log(appointmentData)
+        var adminid = req.token_decoded.d
+        appointmentData.addedby = adminid
 
-var getFeedbacksWithFullDetails = async (req, res) => {
-    console.log("getFeedbacksWithFullDetails called")
-    var feedbackData = req.body
+        //await customerHelper.updateCustomer
+        var result = await appointmentRequestHelper.createAppointmentRequest(appointmentData)
+
+        var message = 'Appointment Request Submitted Successfully'
+
+        responseHelper.success(res, result, message)
+    }catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+} //end function
+
+
+var getAppointmentRequestsWithFullDetails = async (req, res) => {
+    console.log("getAppointmentRequestsWithFullDetails called")
+    var appointmentData = req.body
 
 
     try {
 
-        var result = await feedbackHelper.getFeedbacksWithFullDetails(feedbackData.sortproperty, feedbackData.sortorder, feedbackData.offset, feedbackData.limit, feedbackData.query)
+        var result = await appointmentRequestHelper.getAppointmentRequestsWithFullDetails(appointmentData.sortproperty, appointmentData.sortorder, appointmentData.offset, appointmentData.limit, appointmentData.query)
 
         var message = 'Successfully loaded'
 
@@ -345,14 +392,14 @@ var getFeedbacksWithFullDetails = async (req, res) => {
     }
 }
 
-var getFeedbacksList = async (req, res) => {
-    console.log("getFeedbacksList called")
-    var feedbackData = req.body
+var getAppointmentRequestsList = async (req, res) => {
+    console.log("getAppointmentRequestsList called")
+    var appointmentData = req.body
 
 
     try {
 
-        var result = await feedbackHelper.getFeedbacksList(feedbackData.sortproperty, feedbackData.sortorder, feedbackData.offset, feedbackData.limit, feedbackData.query)
+        var result = await appointmentRequestHelper.getAppointmentRequestsList(appointmentData.sortproperty, appointmentData.sortorder, appointmentData.offset, appointmentData.limit, appointmentData.query)
 
         var message = 'Successfully loaded'
 
@@ -363,21 +410,21 @@ var getFeedbacksList = async (req, res) => {
     }
 }
 
-var updateFeedback = async (req, res) => {
-    var feedbackimg
+var updateAppointmentRequest = async (req, res) => {
+    var medicalfile
     let isErr = false
     let errorMessage = ''
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                cb(null, './public/uploads/feedbackimages')
+            if (file.fieldname === "medicalfile") {
+                cb(null, './public/uploads/medicalfiles')
             }
         },
         filename: (req, file, cb) => {
-            if (file.fieldname === "feedbackimg") {
-                feedbackimg = Date.now() + '-' + file.originalname
-                cb(null, feedbackimg)
+            if (file.fieldname === "medicalfile") {
+                medicalfile = Date.now() + '-' + file.originalname
+                cb(null, medicalfile)
             }
         }
     })
@@ -403,7 +450,7 @@ var updateFeedback = async (req, res) => {
     }).fields(
         [
             {
-                name: 'feedbackimg',
+                name: 'medicalfile',
                 maxCount: 1
             }
         ]
@@ -416,13 +463,13 @@ var updateFeedback = async (req, res) => {
         if (err instanceof multer.MulterError) {
 
 
-            if (err.field == "feedbackimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+            if (err.field == "medicalfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
                 errorMessage = "Only 1 image can be uploaded";
                 isErr = true
                 //return res.status(500).json(message)
 
-            } else if (err.field == "feedbackimg" && err.code == "LIMIT_FILE_SIZE") {
+            } else if (err.field == "medicalfile" && err.code == "LIMIT_FILE_SIZE") {
 
                 errorMessage = "File Limit is 2 MB";
                 
@@ -446,7 +493,7 @@ var updateFeedback = async (req, res) => {
             }
             
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
               return  responseHelper.requestfailure(res, err);
 
@@ -457,20 +504,20 @@ var updateFeedback = async (req, res) => {
         {userData = JSON.parse(req.body.request);
 
 
-        //userData.imageUrl = '/uploads/feedbackimages/' + feedbackimg
+        //userData.imageUrl = '/uploads/medicalfiles/' + medicalfile
 
         try {
 
-            if(feedbackimg !== undefined){
-                userData.imageUrl = '/uploads/feedbackimages/' +feedbackimg;
+            if(medicalfile !== undefined){
+                userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
             }
 
             var adminid = req.token_decoded.d
             userData.lastModifiedBy = adminid
 
-            let existingFB = await Feedback.findById(userData.feedbackid)
+            let existingFB = await AppointmentRequest.findById(userData.AppointmentRequestid)
 
-            if(feedbackimg !== undefined && existingFB.imageUrl !== '') {
+            if(medicalfile !== undefined && existingFB.imageUrl !== '') {
                 const imgpath = './public/' + existingFB.imageUrl;
                     try {
                     fs.unlinkSync(imgpath);
@@ -480,17 +527,17 @@ var updateFeedback = async (req, res) => {
                     }
                 }
 
-            var result = await feedbackHelper.updateFeedback(userData)
+            var result = await appointmentRequestHelper.updateAppointmentRequest(userData)
 
             
-                var message = "Feedback updated successfully"
+                var message = "AppointmentRequest updated successfully"
                 return responseHelper.success(res, result, message)
             
     
         } catch (err) {
 
             try {
-                fs.unlinkSync('./public/uploads/feedbackimages/' + feedbackimg);
+                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
             } catch (err) {
                 responseHelper.requestfailure(res, err);
 
@@ -507,18 +554,18 @@ var updateFeedback = async (req, res) => {
     })
   }
 /* 
-var updateFeedbackOld = async (req, res) => {
-    console.log("request received for updateFeedback")
+var updateAppointmentRequestOld = async (req, res) => {
+    console.log("request received for updateAppointmentRequest")
 
-    var feedbackData = req.body
+    var appointmentData = req.body
     var role = req.token_decoded.r
     try {
-        feedbackData.lastModifiedBy = req.token_decoded.d
+        appointmentData.lastModifiedBy = req.token_decoded.d
         if (role == '_a') {
-            var result = await feedbackHelper.updateFeedback(feedbackData)
-            var message = 'Feedback Updated successfully'
+            var result = await appointmentRequestHelper.updateAppointmentRequest(appointmentData)
+            var message = 'AppointmentRequest Updated successfully'
         } else {
-            let err = "Unauthorized to Update Feedback"
+            let err = "Unauthorized to Update AppointmentRequest"
             return responseHelper.requestfailure(res, err)
         }
 
@@ -528,24 +575,24 @@ var updateFeedbackOld = async (req, res) => {
     }
 }
  */
-var removeFeedback = async (req, res) => {
-    console.log("removeFeedback called")
+var removeAppointmentRequest = async (req, res) => {
+    console.log("removeAppointmentRequest called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var feedbackData = req.body
-            feedbackData.lastModifiedBy = req.token_decoded.d
-            var result = await feedbackHelper.removeFeedback(feedbackData)
+            var appointmentData = req.body
+            appointmentData.lastModifiedBy = req.token_decoded.d
+            var result = await appointmentRequestHelper.removeAppointmentRequest(appointmentData)
 
-            var message = "Feedback removed successfully"
+            var message = "AppointmentRequest removed successfully"
 
-            if (result == "Feedback does not exists.") {
-                message = "Feedback does not exists."
+            if (result == "AppointmentRequest does not exists.") {
+                message = "AppointmentRequest does not exists."
             }
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can remove a Feedback"
+            var error = "Only Admin can remove a AppointmentRequest"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -555,25 +602,25 @@ var removeFeedback = async (req, res) => {
 
 }
 
-var findFeedbackById = async (req, res) => {
-    console.log("findFeedbackById called")
+var findAppointmentRequestById = async (req, res) => {
+    console.log("findAppointmentRequestById called")
     try {
         var role = req.token_decoded.r
 
         if (role == "_a") {
-            var feedbackData = req.body
+            var appointmentData = req.body
 
-            var result = await feedbackHelper.findFeedbackById(feedbackData)
+            var result = await appointmentRequestHelper.findAppointmentRequestById(appointmentData)
             console.log(result)
-            var message = "Feedback find successfully"
+            var message = "AppointmentRequest find successfully"
             if (result == null) {
-                message = "Feedback does not exists."
+                message = "AppointmentRequest does not exists."
             }
 
 
             return responseHelper.success(res, result, message)
         } else {
-            var error = "Only Admin can find a Feedback"
+            var error = "Only Admin can find a AppointmentRequest"
             responseHelper.requestfailure(res, error)
         }
     } catch (err) {
@@ -587,13 +634,14 @@ var findFeedbackById = async (req, res) => {
 
 
 module.exports = {
-    createPublicFeedback,
-    createAdminFeedback,
-    getFeedbacksWithFullDetails,
-    getFeedbacksList,
-    updateFeedback,
-    removeFeedback,
-    findFeedbackById
+    createPublicAppointmentRequest,
+    createAppointmentRequest,
+    getAppointmentRequestsWithFullDetails,
+    getAppointmentRequestsList,
+    updateAppointmentRequest,
+    removeAppointmentRequest,
+    findAppointmentRequestById,
+    createTestAppointmentRequest
 
 }
 

@@ -27,12 +27,24 @@ module.exports = {
 
         const appointmentRequests = await AppointmentRequest.find(query.critarion)
        
-        .populate('addedby', query.addedby)
-        
+        .populate('addedby', query.addedby)        
         .populate('lastModifiedBy', query.lastModifiedBy)
+        
+        .populate({
+            path: 'customer',
+            select: query.customerfields,
+            populate: {
+                path: 'user',
+                model: 'users',
+                select: query.customeruserfields
+            }
+        })
+        .populate('medicalHistory.disease', query.medicalHistoryDiseaseFields)
+        .populate('familyDiseases.disease', query.medicalHistoryDiseaseFields)
+        .populate('symptoms', query.symptomsfields)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
-        .limit(limit);
+        .limit(limit)
               
         const appointmentRequestssize = appointmentRequests.length
 
@@ -48,11 +60,21 @@ module.exports = {
     getAppointmentRequestsList: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
         console.log("getAppointmentRequests Model Function called")
 
-        const appointmentRequests = await AppointmentRequest.find(query.critarion).select(query.fields/* '_id AppointmentRequestName' */)
-        
+        const appointmentRequests = await AppointmentRequest.find(query.critarion)
+        .select(query.fields)
+        .populate({
+            path: 'customer',
+            select: query.customerfields,
+            populate: {
+                path: 'user',
+                model: 'users',
+                select: query.customeruserfields
+            }
+        })
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
-        .limit(limit);
+        .limit(limit)
+        
               
         const appointmentRequestssize = appointmentRequests.length
 
@@ -96,9 +118,21 @@ module.exports = {
         
         const appointmentRequest = await AppointmentRequest.findOne(query.critarion)
         
-        .populate('addedby', query.addedby)
-        
+        .populate('addedby', query.addedby)        
         .populate('lastModifiedBy', query.lastModifiedBy)
+        
+        .populate({
+            path: 'customer',
+            select: query.customerfields,
+            populate: {
+                path: 'user',
+                model: 'users',
+                select: query.customeruserfields
+            }
+        })
+        .populate('medicalHistory.disease', query.medicalHistoryDiseaseFields)
+        .populate('familyDiseases.disease', query.medicalHistoryDiseaseFields)
+        .populate('symptoms', query.symptomsfields)
         
         return appointmentRequest;
         

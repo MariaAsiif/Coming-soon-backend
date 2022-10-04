@@ -70,10 +70,7 @@ module.exports = {
     updateCustomer: async (data) => {
         console.log("updateCustomer HelperFunction is called");
         const result = await promise.all([Customer.findOneAndUpdate({_id: data.customerid}, data, {new: true})])
-        //const result = await Customer.findOneAndUpdate({_id: data.customerid}, data, {new: true})
-
-        console.log('result')
-        console.log(result[0])
+        
 
         return result; 
                 

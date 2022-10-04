@@ -32,6 +32,7 @@ const diseasesRoutes = require('./diseases.route')
 const symptomRoutes = require('./symptoms.route')
 const lexiconRoutes = require('./lexicon.route')
 const developmentNoteRoutes = require('./developmentNotes.route')
+const appointmentRequestRoutes = require('./appointmentrequests.route')
 
 
 //call appropriate routes
@@ -67,5 +68,6 @@ router.use('/developmentnotes', developmentNoteRoutes)
 //Medical Consultation
 router.use('/diseases', diseasesRoutes)
 router.use('/symptoms', symptomRoutes)
+router.use('/appointmentrequests', appointmentRequestRoutes)
 
 module.exports = router

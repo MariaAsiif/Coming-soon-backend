@@ -33,6 +33,7 @@ module.exports = {
   diseases: require('./diseases.controller'),
   symptoms: require('./symptoms.controller'),
   appointmentRequests: require('./appointmentRequest.controller'),
-  developmentNotes: require('./developmentNotes.controller')
+  developmentNotes: require('./developmentNotes.controller'),
+  appointments: require('./appointments.controller')
 
 };

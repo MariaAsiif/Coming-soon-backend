@@ -7,6 +7,7 @@ var appointmentRequest = new Schema({
         required: true,
         ref: 'customers'
     },
+    
     reasonOfCurrentVisit: {
         type: String
     },
@@ -29,6 +30,26 @@ var appointmentRequest = new Schema({
         description: {
             type: String
         }
+    }],
+    pastConsultants: [{
+        doctorName: {
+            type: String
+        },
+        specialization: {
+            type: String
+        },
+        lastCheckupDate: {
+            type: Date
+        },
+        profileLink: {
+            type: String
+        },
+        drPrescription: {
+            type: String
+        },
+        medicalReports: [{
+            type: String
+        }]
     }],
     familyDiseases: [{
         disease: {
@@ -146,6 +167,9 @@ var appointmentRequest = new Schema({
         },
         timesOfMedicine: {
             type: String
+        },
+        prescriptionFile: {
+            type: String
         }
     }],
     symptoms: [{
@@ -153,8 +177,13 @@ var appointmentRequest = new Schema({
         ref: "symptoms"
     }],
     consultationType: [{
-        type: String,
-        enum: ["audio", "video", "chat"]
+        consultationFee: {
+            type: String
+        },
+        communication: {
+            type: String,
+            enum: ["audio", "video", "chat"]
+        }
     }],
     pictures: [{
         type: String

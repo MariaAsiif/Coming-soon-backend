@@ -180,33 +180,67 @@ var createPublicAppointmentRequest = async (req, res) => {
     
 } //end function
 
-var createAppointmentRequest = async (req, res) => {
+var createAppointmentRequestOld = async (req, res) => {
     console.log('createAppointmentRequest called')
     var medicalfile
     var picturefiles = []
+    var videofiles = []
     let isErr = false
     let errorMessage = ''
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
             console.log("storage called")
-            if (file.fieldname === "medicalfile") {
+            cb(null, './public/uploads/medicalfiles')
+            /* if (file.fieldname === "medicalfile") {
                 cb(null, './public/uploads/medicalfiles')
-            } else if (file.fieldname === "pictures") {
+            } else if (file.fieldname === "vidoes") {
                 cb(null, './public/uploads/medicalfiles')
-            }
+            }else if (file.fieldname === "prescription") {
+                cb(null, './public/uploads/medicalfiles')
+            } */
+
         },
         filename: (req, file, cb) => {
-            if (file.fieldname === "medicalfile") {
+           /*  if (file.fieldname === "medicalfile") {
                 medicalfile = Date.now() + '-' + file.originalname
                 cb(null, medicalfile)
-            } else if(file.fieldname === "pictures") {
+            } else if(file.fieldname === "videos") {
+                console.log("videos")
+                console.log(file.originalname)
+                let vidfile = Date.now() + '-' + file.originalname
+                console.log(vidfile)
+                videofiles.push(vidfile )
+                cb(null, vidfile)
+            }else if(file.fieldname === "pictures") {
                 console.log("pictures")
                 console.log(file.originalname)
-                let filenew = Date.now() + '-' + file.originalname
-                console.log(filenew)
-                picturefiles.push(filenew )
-                cb(null, filenew)
+                let picfile = Date.now() + '-' + file.originalname
+                console.log(picfile)
+                picturefiles.push(picfile )
+                cb(null, picfile)
+            } */
+            console.log('files')
+            
+            let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+            let ext = path.extname(file.originalname)
+            console.log(ext)
+            if (extentions.includes(ext)){
+                console.log("inside pictures")
+                let picfile = Date.now() + '-' + file.originalname
+                picturefiles.push(picfile )
+                cb(null, picfile)
+            } else if(ext == ".mp4"){
+                console.log("inside vdieos")
+                let vidfile = Date.now() + '-' + file.originalname
+                console.log(vidfile)
+                videofiles.push(vidfile )
+                cb(null, vidfile)
+            }
+            else if(ext == ".pdf"){
+                console.log("inside pdfs")
+                medicalfile = Date.now() + '-' + file.originalname
+                cb(null, medicalfile)
             }
         }
     })
@@ -214,16 +248,16 @@ var createAppointmentRequest = async (req, res) => {
     const upload = multer({
         storage: storage,
         limits: {
-            fileSize: 1024 * 1024 * 2
+            fileSize: 1024 * 1024 * 50
         },
         fileFilter: (req, file, cb) => {
             
             let ext = path.extname(file.originalname);
             
-          let extentions = ['.png', '.jpg', '.jpeg', '.gif', '.pdf']
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif', '.pdf', '.mp4']
           if (!extentions.includes(ext)){
                
-               errorMessage = "Only PNG, JPG, JPEC, PDF and GIF Files allowed"
+               errorMessage = "Only PNG, JPG, JPEC, PDF and GIF or MP4 Files allowed"
                isErr = true
                
          }
@@ -233,21 +267,27 @@ var createAppointmentRequest = async (req, res) => {
         [
             {
                 name: 'medicalfile',
-                maxCount: 1
+                maxCount: 7
+            }/* ,
+            {
+                name: 'videos',
+                maxCount: 3
             },
             {
                 name: 'pictures',
                 maxCount: 3
-            }
+            } */
         ]
     )
 
     upload(req, res, async function (err) {
         console.log("upload function called");
         console.log(picturefiles)
+        console.log(videofiles)
 
         if (err instanceof multer.MulterError) {
-
+            console.log("err")
+            console.log(err)
 
             if (err.field == "medicalfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
@@ -272,7 +312,7 @@ var createAppointmentRequest = async (req, res) => {
         }
         
         if(isErr){
-            if(errorMessage == "File Limit is 2 MB"){
+            if(errorMessage == "File Limit is 50 MB"){
                 return responseHelper.requestfailure(res, errorMessage)
             } else if(errorMessage == "Only 1 image can be uploaded"){
                 return responseHelper.requestfailure(res, errorMessage)
@@ -297,15 +337,20 @@ var createAppointmentRequest = async (req, res) => {
                 userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
             }
 
-            let pictures = []
+            
 
             if(picturefiles.length !== 0){
                 
                 picturefiles.map(pic => {
                     userData. pictures.push('/uploads/medicalfiles/' +pic)
                 })
+            }
 
-                //userData.pictures = pictures
+            if(videofiles.length !== 0){
+                
+                videofiles.map(vid => {
+                    userData. videos.push('/uploads/medicalfiles/' +vid)
+                })
             }
 
             
@@ -348,20 +393,21 @@ var createAppointmentRequest = async (req, res) => {
     
 } //end function
 
-var createTestAppointmentRequest = async (req, res) => {
-    console.log("createTestAppointmentRequest called")
+var createAppointmentRequest = async (req, res) => {
+    console.log("createAppointmentRequest called")
     try {
-        /* if(medicalfile !== undefined){
-            userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
-        } */
-        //var userData = JSON.parse(req.body.request)
-        console.log('userdata')
+        
+        //console.log('userdata')
         var appointmentData = req.body
-        console.log(appointmentData)
-        var adminid = req.token_decoded.d
-        appointmentData.addedby = adminid
+        //console.log(appointmentData)
+        var addedby = req.token_decoded.d
+        appointmentData.addedby = addedby
 
-        //await customerHelper.updateCustomer
+        let {customerfields} = appointmentData
+            customerfields.customerid = appointmentData.customer
+            
+
+            await customerHelper.updateCustomer(customerfields)
         var result = await appointmentRequestHelper.createAppointmentRequest(appointmentData)
 
         var message = 'Appointment Request Submitted Successfully'
@@ -410,177 +456,38 @@ var getAppointmentRequestsList = async (req, res) => {
     }
 }
 
+
 var updateAppointmentRequest = async (req, res) => {
-    var medicalfile
-    let isErr = false
-    let errorMessage = ''
-
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            if (file.fieldname === "medicalfile") {
-                cb(null, './public/uploads/medicalfiles')
-            }
-        },
-        filename: (req, file, cb) => {
-            if (file.fieldname === "medicalfile") {
-                medicalfile = Date.now() + '-' + file.originalname
-                cb(null, medicalfile)
-            }
-        }
-    })
-
-    const upload = multer({
-        storage: storage,
-        limits: {
-            fileSize: 1024 * 1024 * 2
-        },
-        fileFilter: (req, file, cb) => {
-            
-            let ext = path.extname(file.originalname);
-            
-          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
-          if (!extentions.includes(ext)){
-               
-               errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
-               isErr = true
-               
-         }
-         cb(null, true);
-        }
-    }).fields(
-        [
-            {
-                name: 'medicalfile',
-                maxCount: 1
-            }
-        ]
-    )
-
-    upload(req, res, async function (err) {
-        console.log("upload function called");
-        //console.log(err)
-
-        if (err instanceof multer.MulterError) {
-
-
-            if (err.field == "medicalfile" && err.code == "LIMIT_UNEXPECTED_FILE") {
-
-                errorMessage = "Only 1 image can be uploaded";
-                isErr = true
-                //return res.status(500).json(message)
-
-            } else if (err.field == "medicalfile" && err.code == "LIMIT_FILE_SIZE") {
-
-                errorMessage = "File Limit is 2 MB";
-                
-                isErr = true
-                
-            }
-
-
-
-        } else if (err) {
-            console.log('erro')
-            console.log(err)
-            return res.status(500).json(err)
-        }
-        
-        if(isErr){
-            if(errorMessage == "File Limit is 2 MB"){
-                return responseHelper.requestfailure(res, errorMessage)
-            } else if(errorMessage == "Only 1 image can be uploaded"){
-                return responseHelper.requestfailure(res, errorMessage)
-            }
-            
-            try {
-                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
-            } catch (err) {
-              return  responseHelper.requestfailure(res, err);
-
-            }
-            return responseHelper.requestfailure(res, errorMessage)
-        }else
-
-        {userData = JSON.parse(req.body.request);
-
-
-        //userData.imageUrl = '/uploads/medicalfiles/' + medicalfile
-
-        try {
-
-            if(medicalfile !== undefined){
-                userData.imageUrl = '/uploads/medicalfiles/' +medicalfile;
-            }
-
-            var adminid = req.token_decoded.d
-            userData.lastModifiedBy = adminid
-
-            let existingFB = await AppointmentRequest.findById(userData.AppointmentRequestid)
-
-            if(medicalfile !== undefined && existingFB.imageUrl !== '') {
-                const imgpath = './public/' + existingFB.imageUrl;
-                    try {
-                    fs.unlinkSync(imgpath);
-                    } catch(err) {
-                        console.log('Error Deleting old, probably already removed');
-                        return responseHelper.requestfailure(res, err);
-                    }
-                }
-
-            var result = await appointmentRequestHelper.updateAppointmentRequest(userData)
-
-            
-                var message = "AppointmentRequest updated successfully"
-                return responseHelper.success(res, result, message)
-            
-    
-        } catch (err) {
-
-            try {
-                fs.unlinkSync('./public/uploads/medicalfiles/' + medicalfile);
-            } catch (err) {
-                responseHelper.requestfailure(res, err);
-
-            }
-
-            logger.error(err)
-            responseHelper.requestfailure(res, err)
-        }
-
-
-
-        }
-
-    })
-  }
-/* 
-var updateAppointmentRequestOld = async (req, res) => {
     console.log("request received for updateAppointmentRequest")
 
     var appointmentData = req.body
-    var role = req.token_decoded.r
+   
     try {
-        appointmentData.lastModifiedBy = req.token_decoded.d
-        if (role == '_a') {
+        
+
+        let {customerfields} = appointmentData
+            customerfields.customerid = appointmentData.customer
+            customerfields.lastModifiedBy = req.token_decoded.d
+            appointmentData.lastModifiedBy = req.token_decoded.d
+
+            await customerHelper.updateCustomer(customerfields)
+       
             var result = await appointmentRequestHelper.updateAppointmentRequest(appointmentData)
             var message = 'AppointmentRequest Updated successfully'
-        } else {
-            let err = "Unauthorized to Update AppointmentRequest"
-            return responseHelper.requestfailure(res, err)
-        }
+        
 
         responseHelper.success(res, result, message)
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }
 }
- */
+
 var removeAppointmentRequest = async (req, res) => {
     console.log("removeAppointmentRequest called")
     try {
         var role = req.token_decoded.r
 
-        if (role == "_a") {
+        
             var appointmentData = req.body
             appointmentData.lastModifiedBy = req.token_decoded.d
             var result = await appointmentRequestHelper.removeAppointmentRequest(appointmentData)
@@ -591,10 +498,7 @@ var removeAppointmentRequest = async (req, res) => {
                 message = "AppointmentRequest does not exists."
             }
             return responseHelper.success(res, result, message)
-        } else {
-            var error = "Only Admin can remove a AppointmentRequest"
-            responseHelper.requestfailure(res, error)
-        }
+       
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }
@@ -628,6 +532,391 @@ var findAppointmentRequestById = async (req, res) => {
     }
 }
 
+var uploadMedicalImages = async (req, res) => {
+    console.log('uploadMedicalImages called')
+    var picturefiles = []
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "pictures") {
+                cb(null, './public/uploads/medicalfiles')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "pictures") {
+                
+                let picfile = Date.now() + '-' + file.originalname
+                
+                picturefiles.push(picfile)
+                cb(null, picfile)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: (req, file, cb) => {
+
+            let ext = path.extname(file.originalname);
+
+            let extentions = ['.png', '.jpg', '.jpeg', '.gif', '.pdf']
+            if (!extentions.includes(ext)) {
+
+                errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+                isErr = true
+
+            }
+            cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'pictures',
+                maxCount: 3
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "pictures" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                errorMessage = "Only 3 images can be uploaded";
+                isErr = true
+                
+            } else if (err.field == "pictures" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 5 MB";
+                isErr = true
+
+            }
+
+        } else if (err) {
+            
+            return res.status(500).json(err)
+        }
+
+        if (isErr) {
+
+            if (errorMessage == "File Limit is 5 MB") {
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if (errorMessage == "Only 3 images can be uploaded") {
+                return responseHelper.requestfailure(res, errorMessage)
+            }
+
+            try {
+                picturefiles.map(pic => {
+                    fs.unlinkSync('./public/uploads/medicalfiles/' + pic)
+                })
+
+            } catch (err) {
+                return responseHelper.requestfailure(res, err)
+            }
+            return responseHelper.requestfailure(res, errorMessage)
+        } else {
+
+            try {
+                let picurls = []
+                if (picturefiles.length !== 0) {
+
+                    picturefiles.map(pic => {
+                        picurls.push('/uploads/medicalfiles/' + pic)
+                    })
+                }
+                var message = "Pictures Uploaded Successfully"
+                return responseHelper.success(res, picurls, message)
+
+
+            } catch (err) {
+
+                try {
+                    //fs.unlinkSync('./public/uploads/medicalfiles/' + pictures)
+                    picturefiles.map(pic => {
+                        fs.unlinkSync('./public/uploads/medicalfiles/' + pic)
+                    })
+                } catch (err) {
+                    return responseHelper.requestfailure(res, err);
+
+                }
+
+                logger.error(err)
+                return responseHelper.requestfailure(res, err)
+            }
+
+
+
+        }
+
+    })
+
+} //end function
+
+var uploadMedicalVideos = async (req, res) => {
+    console.log('uploadMedicalVideos called')
+    var videofiles = []
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "videos") {
+                cb(null, './public/uploads/medicalvideofiles')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "videos") {
+                
+                let vidfile = Date.now() + '-' + file.originalname
+                
+                videofiles.push(vidfile)
+                cb(null, vidfile)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 50
+        },
+        fileFilter: (req, file, cb) => {
+
+            let ext = path.extname(file.originalname);
+
+            let extentions = ['.mp4']
+            if (!extentions.includes(ext)) {
+
+                errorMessage = "Only MP4 Files allowed"
+                isErr = true
+
+            }
+            cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'videos',
+                maxCount: 2
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "videos" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                errorMessage = "Only 2 Videos can be uploaded";
+                isErr = true
+                
+            } else if (err.field == "videos" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 50 MB";
+                isErr = true
+
+            }
+
+        } else if (err) {
+            
+            return res.status(500).json(err)
+        }
+
+        if (isErr) {
+
+            if (errorMessage == "File Limit is 50 MB") {
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if (errorMessage == "Only 2 Videos can be uploaded") {
+                return responseHelper.requestfailure(res, errorMessage)
+            }
+
+            try {
+                videofiles.map(vid => {
+                    fs.unlinkSync('./public/uploads/medicalvideofiles/' + vid)
+                })
+
+            } catch (err) {
+                return responseHelper.requestfailure(res, err)
+            }
+            return responseHelper.requestfailure(res, errorMessage)
+        } else {
+
+            try {
+                let vidurls = []
+                if (videofiles.length !== 0) {
+
+                    videofiles.map(vid => {
+                        vidurls.push('/uploads/medicalvideofiles/' + vid)
+                    })
+                }
+                var message = "videos Uploaded Successfully"
+                return responseHelper.success(res, vidurls, message)
+
+
+            } catch (err) {
+
+                try {
+                    
+                    videofiles.map(vid => {
+                        fs.unlinkSync('./public/uploads/medicalvideofiles/' + vid)
+                    })
+                } catch (err) {
+                    return responseHelper.requestfailure(res, err);
+
+                }
+
+                logger.error(err)
+                return responseHelper.requestfailure(res, err)
+            }
+
+
+
+        }
+
+    })
+
+} //end function
+
+var uploadMedicinePrescription = async (req, res) => {
+    console.log('uploadMedicalImages called')
+    var prescfile
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "prescription") {
+                cb(null, './public/uploads/medicalfiles')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "prescription") {
+                
+                let picfile = Date.now() + '-' + file.originalname
+                
+                prescfile = picfile
+                cb(null, picfile)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: (req, file, cb) => {
+
+            let ext = path.extname(file.originalname);
+
+            let extentions = ['.png', '.jpg', '.jpeg', '.gif', '.pdf']
+            if (!extentions.includes(ext)) {
+
+                errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+                isErr = true
+
+            }
+            cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'prescription',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "prescription" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                errorMessage = "Only 1 file can be uploaded";
+                isErr = true
+                
+            } else if (err.field == "prescription" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 5 MB";
+                isErr = true
+
+            }
+
+        } else if (err) {
+            
+            return res.status(500).json(err)
+        }
+
+        if (isErr) {
+
+            if (errorMessage == "File Limit is 5 MB") {
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if (errorMessage == "Only 1 file can be uploaded") {
+                return responseHelper.requestfailure(res, errorMessage)
+            }
+
+            try {
+                fs.unlinkSync('./public/uploads/medicalfiles/' + prescfile)
+
+            } catch (err) {
+                return responseHelper.requestfailure(res, err)
+            }
+            return responseHelper.requestfailure(res, errorMessage)
+        } else {
+
+            try {
+                let prscurls 
+                if (prescfile !== undefined) {
+                    prscurls = '/uploads/medicalfiles/' + prescfile
+                    var message = "Prescription Uploaded Successfully"
+                return responseHelper.success(res, prscurls, message)
+                    
+                } else {
+                    var message = "Prescription File Not Attached"
+                return responseHelper.requestfailure(res, message)
+                }
+                
+
+
+            } catch (err) {
+
+                try {
+                    fs.unlinkSync('./public/uploads/medicalfiles/' + prescfile)
+                } catch (err) {
+                    return responseHelper.requestfailure(res, err);
+
+                }
+
+                logger.error(err)
+                return responseHelper.requestfailure(res, err)
+            }
+
+
+
+        }
+
+    })
+
+} //end function
+
+
 
 
 
@@ -641,7 +930,10 @@ module.exports = {
     updateAppointmentRequest,
     removeAppointmentRequest,
     findAppointmentRequestById,
-    createTestAppointmentRequest
+    //createTestAppointmentRequest,
+    uploadMedicalImages,
+    uploadMedicalVideos,
+    uploadMedicinePrescription
 
 }
 

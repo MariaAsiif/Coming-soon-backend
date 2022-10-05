@@ -105,7 +105,7 @@ module.exports = {
              var error = "AppointmentRequest does not exists."
              return error
         }
-        appointmentRequest.lastModifiedBy = data.lastModifiedBy
+        
         appointmentRequest.active = false
         await appointmentRequest.save()
         return appointmentRequest;

@@ -14,6 +14,9 @@ router.post('/updateAppointmentRequest', permit(['_a']), controller.updateAppoin
 router.post('/removeAppointmentRequest', permit(['_a']), controller.removeAppointmentRequest)
 router.post('/getAppointmentRequestsList', permit(['_a']), controller.getAppointmentRequestsList)
 router.post('/findAppointmentRequestById', permit(['_a']), controller.findAppointmentRequestById)
+router.post('/uploadMedicalImages', permit(['_a', '_cst']), controller.uploadMedicalImages)
+router.post('/uploadMedicalVideos', permit(['_a', '_cst']), controller.uploadMedicalVideos)
+router.post('/uploadMedicinePrescription', permit(['_a', '_cst']), controller.uploadMedicinePrescription)
 
 
 module.exports = router

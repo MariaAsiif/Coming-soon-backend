@@ -152,12 +152,44 @@ module.exports = {
                 path: 'familyDiseases.disease',
                 model: 'diseases',
                 select: query.diseasefields
+            },{
+                path: 'zoomMeeting',
+                model: 'zoommeetings',
+                //select: query.diseasefields
             }]
         })
         .populate('doctor', query.doctorfields)
         
         return appointment;
         
+
+    },
+
+    getDoctorsEarnings: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
+        console.log("getAppointments Model Function called")
+
+        const appointments = await Appointment.find(query.critarion)
+
+            
+            
+            .populate({
+                path: 'appointmentRequest',
+                select: "consultationType",
+                
+            })
+            
+            .sort({ [sortProperty]: sortOrder })
+            .skip(offset)
+            .limit(limit);
+
+        const appointmentssize = appointments.length
+
+        return {
+            appointments: appointments,
+            count: appointmentssize,
+            offset: offset,
+            limit: limit
+        };
 
     },
 

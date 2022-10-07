@@ -185,6 +185,10 @@ var appointmentRequest = new Schema({
             enum: ["audio", "video", "chat"]
         }
     }],
+    zoomMeeting: {
+        type:String,
+        ref: 'zoommeetings'
+      },
     pictures: [{
         type: String
     }],

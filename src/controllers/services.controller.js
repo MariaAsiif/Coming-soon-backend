@@ -1301,6 +1301,35 @@ if(mode == "transit"){
 
 } //end function
 
+var getDoctorsList = async (req, res) => {
+    console.log("getServicesList called")
+    var serviceData = req.body
+
+
+    try {
+
+        var result = await serviceHelper.getServicesList(serviceData.sortproperty, serviceData.sortorder, serviceData.offset, serviceData.limit, serviceData.query)
+
+         
+         let alldoctors = result.services.map(service => {
+            let srv = service.toObject()
+            
+            let {individualServiceProvider} = srv
+            return individualServiceProvider
+           
+        })
+
+        result.services = alldoctors
+
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, result, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 
 
 
@@ -1317,7 +1346,8 @@ module.exports = {
     updateService,
     removeService,
     findServiceById,
-    approveDisapproveService
+    approveDisapproveService,
+    getDoctorsList
 
 }
 

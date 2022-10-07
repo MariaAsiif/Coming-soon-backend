@@ -26,6 +26,7 @@ const axios = require('axios')
 responseHelper = require("../helpers/response.helper");
 const zoomauth = require('../middlewares/zoomauth')
 const Interview = mongoose.model('interviews')
+//const AppointmentRequest = mongoose.model('appointmentRequests')
 
 const zoomHelper = require('../helpers/zoommeeting.helper')
 //const notificationtexts = require("../hardCodedData").notificationtexts;
@@ -86,6 +87,41 @@ var createZoomMeeting = async (req, res) => {
 
         var message = "New Meeting created successfully"
         return responseHelper.success(res, result, message)
+
+
+
+    } catch (error) {
+        logger.error(err)
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+var createZoomMeetingForDoct = async (req, res) => {
+    try {
+        var token = zoomauth.zoomtoken
+        const email = zoomauth.hostemail
+        const options = req.body
+        //const appointmentmeetingid = options.appointmentmeetingid
+
+        const headers = {
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'User-Agent': 'Zoom-api-Jwt-Request',
+                'content-type': 'application/json'
+            }
+        }
+        const zoomresult = await axios.post("https://api.zoom.us/v2/users/" + email + "/meetings", options, headers)
+
+        const result = await zoomHelper.createZoomMeeting(zoomresult.data)
+
+        /* let appmetng = await AppointmentRequest.findById(appointmentmeetingid)
+
+        appmetng.zoomMeeting = result._id
+
+        await appmetng.save() */
+
+        var message = "New Meeting created successfully"
+        return responseHelper.success(res, result._id, message)
 
 
 
@@ -210,7 +246,8 @@ module.exports = {
     createZoomMeeting,
     getZoomMeetings,
     updateZoomMeeting,
-    removeZoomMeeting
+    removeZoomMeeting,
+    createZoomMeetingForDoct
 };
 
 

@@ -10,6 +10,7 @@ const controller = require('../../controllers').appointments
 
 router.post('/createAppointment', permit(['_a', '_doc']), controller.createAppointment)
 router.post('/getAppointmentsWithFullDetails', permit(['_a', '_doc']), controller.getAppointmentsWithFullDetails)
+router.post('/getDoctorsEarnings', permit(['_a', '_doc']), controller.getDoctorsEarnings)
 router.post('/updateAppointment', permit(['_a', '_doc']), controller.updateAppointment)
 router.post('/removeAppointment', permit(['_a', '_doc']), controller.removeAppointment)
 router.post('/getAppointmentsList', permit(['_a', '_doc']), controller.getAppointmentsList)

@@ -19,5 +19,7 @@ router.post('/populateDBWithSrvsPrvs', controller.populateDBWithSrvsPrvs)
 router.post('/populateDBWithDoctorsPrvs', controller.populateDBWithDoctorsPrvs)
 router.post('/populateDBWithLawyersPrvs', controller.populateDBWithLawyersPrvs)
 
+router.post('/getDoctorsList', controller.getDoctorsList)
+
 
 module.exports = router

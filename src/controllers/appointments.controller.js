@@ -150,6 +150,41 @@ var findAppointmentById = async (req, res) => {
     }
 }
 
+var getDoctorsEarnings = async (req, res) => {
+    console.log("getDoctorsEarnings called")
+    var appointmentData = req.body
+
+
+    try {
+
+        var result = await appointmentHelper.getDoctorsEarnings(appointmentData.sortproperty, appointmentData.sortorder, appointmentData.offset, appointmentData.limit, appointmentData.query)
+
+        
+        let total = 0
+        result.appointments.map(appointment => {
+            let apnt = appointment.toObject()
+            console.log('apnt')
+            
+            let {appointmentRequest} = apnt
+            
+            let {consultationType} = appointmentRequest
+
+            console.log(consultationType)
+            
+            total += parseInt(consultationType[0].consultationFee)
+        })
+
+        result.earnings = total
+
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, result, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 
 
 
@@ -161,7 +196,8 @@ module.exports = {
     getAppointmentsList,
     updateAppointment,
     removeAppointment,
-    findAppointmentById
+    findAppointmentById,
+    getDoctorsEarnings
 
 }
 

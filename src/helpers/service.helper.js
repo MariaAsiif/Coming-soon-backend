@@ -53,16 +53,17 @@ module.exports = {
         console.log("getServices Model Function called")
 
         const services = await Service.find(query.critarion).select(query.fields/* '_id ServiceName' */)
-        
+        .populate('individualServiceProvider', query.individualServiceProvider)
+        .populate('businessServiceProvider', query.businessServiceProvider)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);
               
-        const catgsize = services.length
+        const servicessize = services.length
 
         return {
             services: services,
-            count: catgsize,
+            count: servicessize,
             offset: offset,
             limit: limit
         };

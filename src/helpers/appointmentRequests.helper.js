@@ -29,6 +29,7 @@ module.exports = {
        
         .populate('addedby', query.addedby)        
         .populate('lastModifiedBy', query.lastModifiedBy)
+        .populate('zoomMeeting')
         
         .populate({
             path: 'customer',

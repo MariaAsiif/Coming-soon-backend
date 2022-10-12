@@ -37,7 +37,10 @@ var individualServiceProviderSchema = new Schema({
   email: {
     type: String
   },
-
+  availableForJob: {
+    type: Boolean,
+    default: true
+  },
   gender: {
     type: String
   },

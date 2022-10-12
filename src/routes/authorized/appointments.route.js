@@ -15,6 +15,7 @@ router.post('/updateAppointment', permit(['_a', '_doc']), controller.updateAppoi
 router.post('/removeAppointment', permit(['_a', '_doc']), controller.removeAppointment)
 router.post('/getAppointmentsList', permit(['_a', '_doc']), controller.getAppointmentsList)
 router.post('/findAppointmentById', permit(['_a', '_doc']), controller.findAppointmentById)
+router.post('/getCustomersAppointments', permit(['_a', '_doc']), controller.getCustomersAppointments)
 
 
 module.exports = router

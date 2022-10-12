@@ -185,6 +185,23 @@ var getDoctorsEarnings = async (req, res) => {
     }
 }
 
+var getCustomersAppointments = async (req, res) => {
+    console.log("getCustomersAppointments called")
+    var appointmentData = req.body
+
+    try {
+
+        var result = await appointmentHelper.getCustomersAppointments(appointmentData.sortproperty, appointmentData.sortorder, appointmentData.offset, appointmentData.limit, appointmentData.query)
+
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, result, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 
 
 
@@ -197,7 +214,8 @@ module.exports = {
     updateAppointment,
     removeAppointment,
     findAppointmentById,
-    getDoctorsEarnings
+    getDoctorsEarnings,
+    getCustomersAppointments
 
 }
 

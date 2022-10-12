@@ -193,6 +193,56 @@ module.exports = {
 
     },
 
+    getCustomersAppointments: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
+        console.log("getAppointments Model Function called")
+
+        const appointments = await Appointment.find(query.critarion)
+
+            /* .populate('addedby', query.addedby)
+
+            .populate('lastModifiedBy', query.lastModifiedBy)
+            .populate({
+                path: 'customer',
+                select: query.customerfields,
+                populate: {
+                    path: 'user',
+                    model: 'users',
+                    select: query.customeruserfields
+                }
+            })
+            .populate({
+                path: 'appointmentRequest',
+                //select: query.customerfields,
+                populate: [{
+                    path: 'medicalHistory.disease',
+                    model: 'diseases',
+                    select: query.diseasefields
+                }, {
+                    path: 'symptoms',
+                    model: 'symptoms',
+                    select: query.symptomsfields
+                }, {
+                    path: 'familyDiseases.disease',
+                    model: 'diseases',
+                    select: query.diseasefields
+                }]
+            })
+            .populate('doctor', query.doctorfields) */
+            .sort({ [sortProperty]: sortOrder })
+            .skip(offset)
+            .limit(limit);
+
+        const appointmentssize = appointments.length
+
+        return {
+            appointments: appointments,
+            count: appointmentssize,
+            offset: offset,
+            limit: limit
+        };
+
+    },
+
     
 
 };

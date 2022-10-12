@@ -19,7 +19,9 @@ const promise = require('bluebird')
 var async = require('async')
 
 const appointmentHelper = require('../helpers/appointments.helper')
-
+const doctorReservationHelper = require('../helpers/doctorReservations.helper')
+const Appointment = mongoose.model('appointments')
+const DoctorReservation = mongoose.model('doctorReservations')
 //helper functions
 logger = require("../helpers/logger")
 
@@ -36,8 +38,50 @@ var createAppointment = async (req, res) => {
         var appointmentData = req.body
         appointmentData.addedby = req.token_decoded.d
 
+        let { startTime, endTime } = appointmentData
+
+        let stDate = new Date(startTime)
+        let enDate = new Date(endTime)
+
+        let istDate = stDate.toISOString()
+        let iendDate = enDate.toISOString()
+
+        let reservationobj = {}
+
+        reservationobj.startTime = istDate
+        reservationobj.endTime = iendDate
+        reservationobj.reservationStatus = "reserved"
+        reservationobj.doctor = appointmentData.doctor
+        reservationobj.addedby = req.token_decoded.d
+
+
+        var reservation = await doctorReservationHelper.createDoctorReservation(reservationobj)
+
+        appointmentData.doctorsReservation = reservation._id
         
-            var result = await appointmentHelper.createAppointment(appointmentData)
+        var newappointment = await appointmentHelper.createAppointment(appointmentData) 
+
+        const doctorReservation = await DoctorReservation.findOne({_id: reservation._id})
+        doctorReservation.appointment = newappointment._id
+
+        await doctorReservation.save()
+
+        var result
+
+        
+        if (appointmentData.previousAppointment == undefined) {
+            console.log("no previous appointment")
+            const appointment = await Appointment.findOne({ _id: newappointment._id })
+            appointment.previousAppointment = appointment._id
+            result = await appointment.save()
+
+        } else {
+            console.log("else part called")
+            result = newappointment
+        }
+        
+
+
             var message = "Appointment created successfully"
             return responseHelper.success(res, result, message)
         
@@ -202,6 +246,44 @@ var getCustomersAppointments = async (req, res) => {
     }
 }
 
+var startAppointment = async (req, res) => {
+    console.log("request received for startAppointment")
+
+    var appointmentData = req.body
+    var role = req.token_decoded.r
+    try {
+        appointmentData.lastModifiedBy = req.token_decoded.d
+        
+            var appointment = await appointmentHelper.updateAppointment(appointmentData)
+            var reservation = await doctorReservationHelper.updateDoctorReservation(appointmentData)
+            var message = 'Appointment Started successfully'
+        
+
+        responseHelper.success(res, {}, message)
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+var addNotes = async (req, res) => {
+    console.log("request received for startAppointment")
+
+    var appointmentData = req.body
+    var role = req.token_decoded.r
+    try {
+        appointmentData.lastModifiedBy = req.token_decoded.d
+        
+            var appointment = await appointmentHelper.updateAppointment(appointmentData)
+            var reservation = await doctorReservationHelper.updateDoctorReservation(appointmentData)
+            var message = 'Appointment Started successfully'
+        
+
+        responseHelper.success(res, {}, message)
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 
 
 
@@ -215,7 +297,8 @@ module.exports = {
     removeAppointment,
     findAppointmentById,
     getDoctorsEarnings,
-    getCustomersAppointments
+    getCustomersAppointments,
+    startAppointment
 
 }
 

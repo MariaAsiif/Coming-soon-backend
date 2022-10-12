@@ -127,7 +127,7 @@ module.exports = {
         .populate('addedby', query.addedby)
         
         .populate('lastModifiedBy', query.lastModifiedBy)
-
+        .populate('doctorsReservation')
         .populate({
             path: 'customer',
             select: query.customerfields,
@@ -198,9 +198,10 @@ module.exports = {
 
         const appointments = await Appointment.find(query.critarion)
 
-            /* .populate('addedby', query.addedby)
+            .populate('addedby', query.addedby)
 
             .populate('lastModifiedBy', query.lastModifiedBy)
+            .populate('doctorsReservation')
             .populate({
                 path: 'customer',
                 select: query.customerfields,
@@ -227,7 +228,7 @@ module.exports = {
                     select: query.diseasefields
                 }]
             })
-            .populate('doctor', query.doctorfields) */
+            .populate('doctor', query.doctorfields)
             .sort({ [sortProperty]: sortOrder })
             .skip(offset)
             .limit(limit);

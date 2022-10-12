@@ -8,13 +8,17 @@ var doctorReservation = new Schema({
     endTime: {
         type: Date
     },
-    status:{
+    reservationStatus:{
         type: String,
         enum: ['reserved', "ongoing", "completed"]
     },
     doctor: {
         type: String,
         ref: 'individualServiceProviders'
+    },
+    appointment: {
+        type: String,
+        ref: 'appointments'
     },
     active: {
         type: Boolean,

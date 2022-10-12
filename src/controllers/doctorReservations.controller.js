@@ -208,7 +208,9 @@ var findFreeDoctors = async (req, res) => {
 
             })
         } else {
-            availabledoctors.push(alldoctors)
+            //availabledoctors.push(alldoctors)
+
+            availabledoctors.push(alldoctors.filter(avlbldoctor => avlbldoctor.availableForJob))
         }
         let resultset = {
             doctors: availabledoctors[0],

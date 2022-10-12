@@ -18,9 +18,6 @@ const promise = require('bluebird')
 //async for async tasks
 var async = require('async')
 
-
-
-
 const storeHelper = require('../helpers/store.helper')
 
 //helper functions

@@ -6,7 +6,7 @@ var appointment = new Schema({
         type: String,
         ref: 'customers'
     },
-    status: {
+    appointmentStatus: {
         type: String,
         enum: ["scheduled", "pending", "ongoing", "newPatient", "cancelled", "completed"]
     },
@@ -20,6 +20,29 @@ var appointment = new Schema({
     doctor: {
         type: String,
         ref: 'individualServiceProviders'
+    },
+    doctorsReservation: {
+        type: String,
+        ref: 'doctorReservations'
+    },
+    medicinePrescriptions: [{
+        type: String,
+        ref: "medicinePrescriptions"
+    }],
+    testsPrescription: [{
+        type: String,
+        ref: "testsPrescriptions"
+    }],
+    nextCheckUpDate: {
+        type: Date
+    },
+    doctorNotes: [{
+        type: String,
+        ref: "doctorNotes"
+    }],
+    previousAppointment: {
+        type: String,
+        ref: 'appointments'
     },
     active: {
         type: Boolean,

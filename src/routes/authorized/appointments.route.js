@@ -17,6 +17,8 @@ router.post('/getAppointmentsList', permit(['_a', '_doc']), controller.getAppoin
 router.post('/findAppointmentById', permit(['_a', '_doc']), controller.findAppointmentById)
 router.post('/getCustomersAppointments', permit(['_a', '_doc']), controller.getCustomersAppointments)
 router.post('/startAppointment', permit(['_a', '_doc', '_cust']), controller.startAppointment)
+router.post('/completeAppointment', permit(['_a', '_doc', '_cust']), controller.completeAppointment)
+router.post('/sendMedicalCard', permit(['_a', '_doc', '_cust']), controller.sendMedicalCard)
 
 
 module.exports = router

@@ -37,7 +37,8 @@ module.exports = {
   doctorReservations: require('./doctorReservations.model'),
   doctorNotes: require('./doctorNotes.model'),
   medicinePrescriptions: require('./medicinePrescriptions.model'),
-  testPrescriptions: require('./testPrescriptions.model')
+  testPrescriptions: require('./testPrescriptions.model'),
+  medicalCards: require('./medicalCards.model')
   
 
 }

@@ -39,6 +39,10 @@ usersSchema = new Schema({
     password: {
         type: String
     },
+    profile_picture_url: {
+        type: String,
+        default: '/uploads/dp/default.png'
+    },
     ipAddress: {
         type: String
     },

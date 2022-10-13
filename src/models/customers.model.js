@@ -51,6 +51,10 @@ var customer = new Schema({
     otherReferralSource: {
         type: String
     },
+    medicalCards: [{
+        type: String,
+        ref: 'medicalCards'
+    }],
     active: {
         type: Boolean,
         default: true

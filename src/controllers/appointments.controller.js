@@ -20,8 +20,12 @@ var async = require('async')
 
 const appointmentHelper = require('../helpers/appointments.helper')
 const doctorReservationHelper = require('../helpers/doctorReservations.helper')
+const appointmentRequestHelper = require('../helpers/appointmentRequests.helper')
 const Appointment = mongoose.model('appointments')
 const DoctorReservation = mongoose.model('doctorReservations')
+const Customer = mongoose.model('customers')
+const MedicalCard = mongoose.model('medicalCards')
+
 //helper functions
 logger = require("../helpers/logger")
 
@@ -256,6 +260,7 @@ var startAppointment = async (req, res) => {
         
             var appointment = await appointmentHelper.updateAppointment(appointmentData)
             var reservation = await doctorReservationHelper.updateDoctorReservation(appointmentData)
+            var apntrq = await appointmentRequestHelper.updateAppointmentRequest(appointmentData)
             var message = 'Appointment Started successfully'
         
 
@@ -265,20 +270,79 @@ var startAppointment = async (req, res) => {
     }
 }
 
-var addNotes = async (req, res) => {
-    console.log("request received for startAppointment")
+var completeAppointment = async (req, res) => {
+    console.log("request received for completeAppointment")
 
     var appointmentData = req.body
-    var role = req.token_decoded.r
+    
     try {
         appointmentData.lastModifiedBy = req.token_decoded.d
         
-            var appointment = await appointmentHelper.updateAppointment(appointmentData)
-            var reservation = await doctorReservationHelper.updateDoctorReservation(appointmentData)
-            var message = 'Appointment Started successfully'
+        var appointment = await appointmentHelper.updateAppointment(appointmentData)
+        var reservation = await doctorReservationHelper.updateDoctorReservation(appointmentData)
+        var apntrq = await appointmentRequestHelper.updateAppointmentRequest(appointmentData)
+            var message = 'Appointment Completed successfully'
         
 
         responseHelper.success(res, {}, message)
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+var sendMedicalCard = async (req, res) => {
+    console.log("request received for completeAppointment")
+
+    var appointmentData = req.body
+
+    try {
+        //appointmentData.lastModifiedBy = req.token_decoded.d
+
+        let existingcustomer = await Customer.findById(appointmentData.customer)
+            .populate('user', '_id email first_name profile_picture_url')
+
+        //console.log(existingcustomer)
+
+        let stDate = new Date()
+        let istDate = stDate.toISOString()
+
+        let medicalCardData = {
+            dateOfIssuance: istDate,
+            validTillDate: appointmentData.validTillDate
+        }
+
+        let mc = new MedicalCard(medicalCardData)
+
+        await mc.save()
+        existingcustomer.medicalCards.push(mc._id)
+
+        await existingcustomer.save()
+
+        const dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' }
+        
+    const issuancedate = new Date(istDate).toLocaleDateString('en-EN', dateOptions)
+    
+    const validitydate = new Date(appointmentData.validTillDate).toLocaleDateString('en-EN', dateOptions)
+    const customerDOB = new Date(existingcustomer.dob).toLocaleDateString('en-EN', dateOptions)
+        res.mailer.send('emails/medicalcard.html', {
+            customerimage: existingcustomer.user.profile_picture_url,
+            customername: existingcustomer.user.first_name,
+            dob: customerDOB.split('/').join('-'),
+            issuanceDate: issuancedate.split('/').join('-'),
+            validityDate:validitydate.split('/').join('-'),
+            title: "Medical Card",
+            to: "jamshaidsabir411980@gmail.com",//existingcustomer.user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+            subject: 'Medical Card', // REQUIRED.
+        }, async (err) => {
+            if (err) {
+                return console.error("Email could not sent: ", err)
+            }
+        })
+
+        var message = 'Medical Card sent successfully'
+
+
+        responseHelper.success(res, existingcustomer, message)
     } catch (err) {
         responseHelper.requestfailure(res, err)
     }
@@ -298,7 +362,9 @@ module.exports = {
     findAppointmentById,
     getDoctorsEarnings,
     getCustomersAppointments,
-    startAppointment
+    startAppointment,
+    completeAppointment,
+    sendMedicalCard
 
 }
 

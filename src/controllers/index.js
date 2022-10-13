@@ -36,6 +36,8 @@ module.exports = {
   developmentNotes: require('./developmentNotes.controller'),
   appointments: require('./appointments.controller'),
   doctorsReservations: require('./doctorReservations.controller'),
-  doctorNotes: require('./doctorNote.controller')
+  doctorNotes: require('./doctorNote.controller'),
+  medicinePrescriptions: require('./medicinePrescriptions.controller'),
+  testPrescriptions: require('./testPrescriptions.controller')
 
-};
+}

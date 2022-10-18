@@ -17,7 +17,7 @@ const promise = require('bluebird')
 
 //async for async tasks
 var async = require('async')
-
+var multer = require('multer')
 const storeHelper = require('../helpers/store.helper')
 
 //helper functions
@@ -30,7 +30,7 @@ const constants = require("../hardCodedData").constants
 
 var pageSize = parseInt(config.PAGE_SIZE)
 
-var createStore = async (req, res) => {
+var createStoreOld = async (req, res) => {
     console.log('createStore')
     try {
         var storeData = req.body
@@ -47,6 +47,137 @@ var createStore = async (req, res) => {
         logger.error(err)
         responseHelper.requestfailure(res, err)
     }
+} //end function
+
+var createStore = async (req, res) => {
+    console.log('createPhoneBook')
+    var storeimg
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "storeimg") {
+                cb(null, './public/uploads/storeimages')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "storeimg") {
+                storeimg = Date.now() + '-' + file.originalname
+                cb(null, storeimg)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            //console.log("ext " + ext)
+            
+            let extentions = ['.png', '.jpg', '.gif']
+          if (!extentions.includes(ext)){
+               console.log("extension not supported")
+               errorMessage = "Only PNG, JPG and GIF Files allowed"
+               
+               return res.status(500).json(errorMessage)
+               
+         }
+         cb(null, true)
+        }
+    }).fields(
+        [
+            {
+                name: 'storeimg',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "storeimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+                console.log("only 1 file err")
+                var message = "Only 1 image can be uploaded";
+
+                return res.status(500).json(message)
+
+            } else if (err.field == "storeimg" && err.code == "LIMIT_FILE_SIZE") {
+                console.log("file size err")
+                errorMessage = "File Limit is 5 MB";
+                
+                return res.status(500).json(errorMessage)
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            console.log("is err tru")
+            try {
+                fs.unlinkSync('./public/uploads/storeimages/' + storeimg);
+            } catch (err) {
+                console.log("this is the point")
+               return responseHelper.requestfailure(res, err);
+
+            }
+            
+               responseHelper.requestfailure(res, errorMessage)
+        }else{
+            
+            userData = JSON.parse(req.body.request)
+
+        try {
+            if(storeimg !== undefined){
+                userData.businessImage = '/uploads/storeimages/' +storeimg;
+            } else {
+                let message = "Store Image not found"
+                return responseHelper.requestfailure(res, message, err)
+            }
+            
+            userData.addedby = req.token_decoded.d
+    
+            
+            var result = await storeHelper.createStore(userData)
+            var message = "Store created successfully"
+                return responseHelper.success(res, result, message)
+            
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public/uploads/storeimages/' + storeimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
+        }
+
+    })
+    
 } //end function
 
 
@@ -150,6 +281,8 @@ var findStoreById = async (req, res) => {
         responseHelper.requestfailure(res, err)
     }
 }
+
+
 
 
 

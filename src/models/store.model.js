@@ -4,7 +4,7 @@ var Schema = mongoose.Schema
 var store = new Schema({
     storeName: {
         type: String
-    }, 
+    },
     storeOwner: {
         type: String,
         ref: 'users'
@@ -20,7 +20,25 @@ var store = new Schema({
     },
     storeEndDate: {
         type: Date
-    }, 
+    },
+    registrationNo: {
+        type: String
+    },
+    businessImage: {
+        type: String
+    },
+    vendorDetails: {
+        type: String
+    },
+    vendorName: {
+        type: String
+    },
+    dob: {
+        type: String
+    },
+    contactNo: {
+        type: String
+    },
     active: {
         type: Boolean,
         default: true
@@ -35,10 +53,10 @@ var store = new Schema({
         ref: 'users'
     }
 },
-{
-    timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'},
-    usePushEach: true
-}
+    {
+        timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' },
+        usePushEach: true
+    }
 )
 
 

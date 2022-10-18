@@ -17,7 +17,7 @@ const promise = require('bluebird')
 
 //async for async tasks
 var async = require('async')
-var multer = require('multer');
+var multer = require('multer')
 const fs = require('fs');
 const moment = require('moment')
 

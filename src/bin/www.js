@@ -31,11 +31,11 @@ app.use(device.capture());
 // Initialize firebase admin
 //require("../config/init-firebase-admin");
 
-var serverPort = process.env.SERVER_PORT ; // local run
+//var serverPort = process.env.SERVER_PORT ; // local run
 
 
-//app.set('port', process.env.PORT || 8080); //live 
-//var serverPort = app.get('port') // live
+app.set('port', process.env.PORT || 8080); //live 
+var serverPort = app.get('port') // live
 
 app.set('views', path.join(__dirname, '../views'));
 
@@ -123,6 +123,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.use(cookieParser());
 
+//this below 2 lines have to be uncommented for chat app
 //var socketModule = require('../controllers/socket.controller');
 //socketModule.controller(server);
 

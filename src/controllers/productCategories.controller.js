@@ -36,6 +36,7 @@ var createCategory = async (req, res) => {
   console.log('createCategory')
   try {
     var categoryData = req.body
+    categoryData.addedby = req.token_decoded.d
 
     var result = await productCategoryHelper.createCategory(categoryData)
     var message = "Product Category created successfully"
@@ -76,8 +77,8 @@ var updateCategory = async (req, res) => {
   console.log("request received for updateCategory");
 
   var categoryData = req.body;
-  var role = req.token_decoded.r
   try {
+    categoryData.lastModifiedBy = req.token_decoded.d
 
     var updatedcatg = await productCategoryHelper.updatecategory(categoryData);
     var message = 'Product Updated successfully';

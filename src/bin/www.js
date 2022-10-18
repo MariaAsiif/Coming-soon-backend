@@ -35,7 +35,7 @@ app.use(device.capture());
 
 
 app.set('port', process.env.PORT || 8080); //live 
-var serverPort = app.get('port') // live
+var serverPort = app.get('port') // live */
 
 app.set('views', path.join(__dirname, '../views'));
 

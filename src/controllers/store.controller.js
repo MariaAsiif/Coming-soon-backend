@@ -28,6 +28,8 @@ responseHelper = require("../helpers/response.helper")
 //const notificationtexts = require("../hardCodedData").notificationtexts
 const constants = require("../hardCodedData").constants
 
+const Store = mongoose.model('stores')
+
 var pageSize = parseInt(config.PAGE_SIZE)
 
 var createStoreOld = async (req, res) => {
@@ -141,7 +143,7 @@ var createStore = async (req, res) => {
                responseHelper.requestfailure(res, errorMessage)
         }else{
             
-            userData = JSON.parse(req.body.request)
+           let userData = JSON.parse(req.body.request)
 
         try {
             if(storeimg !== undefined){
@@ -217,7 +219,7 @@ var getStoresList = async (req, res) => {
     }
 }
 
-var updateStore = async (req, res) => {
+var updateStoreOld = async (req, res) => {
     console.log("request received for updateStore")
 
     var storeData = req.body
@@ -281,6 +283,151 @@ var findStoreById = async (req, res) => {
         responseHelper.requestfailure(res, err)
     }
 }
+
+var updateStore = async (req, res) => {
+    console.log("updateStore called")
+    var storeimg
+    let isErr = false
+    let errorMessage = ''
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            if (file.fieldname === "storeimg") {
+                cb(null, './public/uploads/storeimages')
+            }
+        },
+        filename: (req, file, cb) => {
+            if (file.fieldname === "storeimg") {
+                storeimg = Date.now() + '-' + file.originalname
+                cb(null, storeimg)
+            }
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: (req, file, cb) => {
+            
+            let ext = path.extname(file.originalname);
+            
+          let extentions = ['.png', '.jpg', '.jpeg', '.gif']
+          if (!extentions.includes(ext)){
+               
+               errorMessage = "Only PNG, JPG, JPEC and GIF Files allowed"
+               isErr = true
+               
+         }
+         cb(null, true);
+        }
+    }).fields(
+        [
+            {
+                name: 'storeimg',
+                maxCount: 1
+            }
+        ]
+    )
+
+    upload(req, res, async function (err) {
+        console.log("upload function called");
+        //console.log(err)
+
+        if (err instanceof multer.MulterError) {
+
+
+            if (err.field == "storeimg" && err.code == "LIMIT_UNEXPECTED_FILE") {
+
+                errorMessage = "Only 1 image can be uploaded";
+                isErr = true
+                //return res.status(500).json(message)
+
+            } else if (err.field == "storeimg" && err.code == "LIMIT_FILE_SIZE") {
+
+                errorMessage = "File Limit is 5 MB";
+                
+                isErr = true
+                
+            }
+
+
+
+        } else if (err) {
+            console.log('erro')
+            console.log(err)
+            return res.status(500).json(err)
+        }
+        
+        if(isErr){
+            if(errorMessage == "File Limit is 5 MB"){
+                return responseHelper.requestfailure(res, errorMessage)
+            } else if(errorMessage == "Only 1 image can be uploaded"){
+                return responseHelper.requestfailure(res, errorMessage)
+            }
+            
+            try {
+                fs.unlinkSync('./public/uploads/storeimages/' + storeimg);
+            } catch (err) {
+              return  responseHelper.requestfailure(res, err);
+
+            }
+            return responseHelper.requestfailure(res, errorMessage)
+        }else
+
+        {userData = JSON.parse(req.body.request);
+
+
+        //userData.businessImage = '/uploads/storeimages/' + storeimg
+
+        try {
+
+            if(storeimg !== undefined){
+                userData.businessImage = '/uploads/storeimages/' +storeimg;
+            }
+
+            var adminid = req.token_decoded.d
+            userData.lastModifiedBy = adminid
+
+            let existingStore = await Store.findById(userData.storeid)
+
+            if(storeimg !== undefined && existingStore.businessImage !== '') {
+                const imgpath = './public/' + existingStore.businessImage;
+                    try {
+                    fs.unlinkSync(imgpath);
+                    } catch(err) {
+                        console.log('Error Deleting old, probably already removed');
+                        return responseHelper.requestfailure(res, err);
+                    }
+                }
+
+            var result = await storeHelper.updateStore(userData)
+
+            
+                var message = "Feedback updated successfully"
+                return responseHelper.success(res, result, message)
+            
+    
+        } catch (err) {
+
+            try {
+                fs.unlinkSync('./public/uploads/storeimages/' + storeimg);
+            } catch (err) {
+                responseHelper.requestfailure(res, err);
+
+            }
+
+            logger.error(err)
+            responseHelper.requestfailure(res, err)
+        }
+
+
+
+        }
+
+    })
+  }
 
 
 module.exports = {

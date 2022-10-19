@@ -399,7 +399,7 @@ var createAppointmentRequest = async (req, res) => {
         
         //console.log('userdata')
         var appointmentData = req.body
-        //console.log(appointmentData)
+        console.log(req.token_decoded.r)
         var addedby = req.token_decoded.d
         appointmentData.addedby = addedby
 

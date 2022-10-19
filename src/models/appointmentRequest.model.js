@@ -7,7 +7,9 @@ var appointmentRequest = new Schema({
         required: true,
         ref: 'customers'
     },
-    
+    requestCategory: {
+        type: String
+    },
     reasonOfCurrentVisit: {
         type: String
     },

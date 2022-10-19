@@ -283,12 +283,6 @@ var findStoreById = async (req, res) => {
 }
 
 
-
-
-
-
-
-
 module.exports = {
     createStore,
     getStoresWithFullDetails,

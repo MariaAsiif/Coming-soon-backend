@@ -29,6 +29,10 @@ contentSchema = new Schema({
 })
 
 var individualServiceProviderSchema = new Schema({
+  user: {
+    type: String,
+    ref: "users"
+  },
   title: {
     type: String,
     required: true

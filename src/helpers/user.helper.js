@@ -233,15 +233,33 @@ module.exports = {
 
 
     getToken: (user) => {
-        console.log("getToken HelperFunction is called");
-        var jwt = require('jsonwebtoken');
+        console.log("getToken HelperFunction is called")
+        let userrole = '_a'
+        switch(user.role) {
+            case 'subscriber':
+                userrole = '_ss'
+              break
+            case 'jobapplicant':
+                userrole = '_ja'
+              break
+              case 'customer':
+                userrole = '_cst'
+              break
+              case 'doctor':
+                userrole = '_doc'
+              break
+            default:
+                userrole = '_a'
+          }
+        var jwt = require('jsonwebtoken')
         var token = jwt.sign({
             a: user.active,
             n: user.first_name,
             e: user.email,
             d: user._id,
             p: user.profile_picture_url,
-            r: user.role === 'subscriber' ? '_ss' : (user.role === 'jobapplicant' ? '_ja' : '_a'),
+            //r: user.role === 'subscriber' ? '_ss' : (user.role === 'jobapplicant' ? '_ja' : '_a'),
+            r: userrole
         }, process.env.JWT_SECRETE);
         return token;
     },

@@ -121,11 +121,13 @@ module.exports = {
         var where = {email: u_email};
         return User.findOne(where, {
             _id: 1,
+            first_name:1,
             email: 1,
             password: 1,
             approved:1,
             active: 1,
             role: 1,
+            profile_picture_url: 1,
             is_verified: 1
         })
             .then((user) => {

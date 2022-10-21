@@ -20,6 +20,7 @@ var async = require('async')
 var multer = require('multer')
 const productHelper = require('../helpers/products.helper')
 const Store = mongoose.model('stores')
+const Product = mongoose.model('products')
 //helper functions
 logger = require("../helpers/logger")
 
@@ -27,7 +28,7 @@ responseHelper = require("../helpers/response.helper")
 
 //const notificationtexts = require("../hardCodedData").notificationtexts
 const constants = require("../hardCodedData").constants
-
+var sizeOf = require('image-size')
 var pageSize = parseInt(config.PAGE_SIZE)
 //this function has to be changed
 var createProductOld = async (req, res) => {
@@ -100,7 +101,7 @@ var createProduct = async (req, res) => {
         [
             {
                 name: 'pictures',
-                maxCount: 3
+                maxCount: 5
             }
         ]
     )
@@ -114,7 +115,7 @@ var createProduct = async (req, res) => {
 
             if (err.field == "pictures" && err.code == "LIMIT_UNEXPECTED_FILE") {
 
-                errorMessage = "Only 3 images can be uploaded";
+                errorMessage = "Only 5 images can be uploaded";
                 isErr = true
                 
             } else if (err.field == "pictures" && err.code == "LIMIT_FILE_SIZE") {
@@ -153,7 +154,7 @@ var createProduct = async (req, res) => {
                 }
            console.log('first failure response')
                 return responseHelper.requestfailure(res, errorMessage)
-            } else if (errorMessage == "Only 3 images can be uploaded") {
+            } else if (errorMessage == "Only 5 images can be uploaded") {
                 return responseHelper.requestfailure(res, errorMessage)
             }
 
@@ -313,6 +314,41 @@ var findProductById = async (req, res) => {
     }
 }
 
+var deleteProductImages = async (req, res) => {
+    console.log("getProductsList called")
+    var productData = req.body
+
+
+
+    try {
+        let { images } = productData
+
+        console.log(images)
+
+        for (img of images) {
+            fs.unlinkSync('./public' + img)
+        }
+
+        let product = await Product.findById(productData.productid)
+
+        for (img of images) {
+            product.productImagesURLs.splice(product.productImagesURLs.indexOf(img), 1)
+        }
+
+        await product.save()
+        var message = 'Successfully loaded'
+
+        responseHelper.success(res, product, message)
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+
+
+
+
 
 
 
@@ -324,7 +360,8 @@ module.exports = {
     getProductsList,
     updateProduct,
     removeProduct,
-    findProductById
+    findProductById,
+    deleteProductImages
 
 }
 

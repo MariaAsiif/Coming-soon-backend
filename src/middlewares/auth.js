@@ -15,7 +15,8 @@ module.exports.authenticate =(req, res, next) => {
                                 jsonerr: { message:  'Failed to authenticate token.'}
                             });
                         } else {
-                        req.token_decoded = token_decoded;
+                        req.token_decoded = token_decoded
+                        req.originalToken = token
                         next();
                 }
             });

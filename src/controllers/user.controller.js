@@ -1136,7 +1136,7 @@ var listAllUsers = async (req, res) => {
 
         responseHelper.requestfailure(res, err);
     }
-};
+}
 
 var activeUser = async (req, res) => {
     console.log("request received for activeUser");
@@ -1153,6 +1153,135 @@ var activeUser = async (req, res) => {
 
 
 }; //end 
+
+var passwordLessLogin = async (req, res) => {
+    console.log("request received for activeUser");
+
+    try {
+        let userData = req.body
+
+        userData.email = userData.email.toLowerCase();
+            let exists = await userHelper.isUserEmailExists(userData.email);
+            let token
+            let user
+            if (exists) {
+               
+                if (exists.role == "subscriber") {
+                    let err = "User not allowed to signin";
+                    return responseHelper.requestfailure(res, err);
+                }
+                if (!exists.is_verified) {
+                    return responseHelper.requestfailure(res, 'Please verify your email address')
+                }
+
+                if (exists.approved !== "approved") {
+                    return responseHelper.requestfailure(res, 'Your account is not approved')
+                }
+
+                if (!exists.active) {
+                    return responseHelper.requestfailure(res, 'Your account is not approved/active')
+                }
+
+                const makeToken = (email) => {
+                    /* const expirationDate = new Date()
+                    
+                    expirationDate.setMinutes(new Date().getMinutes() + parseInt(userData.expiryTime))
+ */
+                    let userrole = '_a'
+                    switch (exists.role) {
+                        case 'subscriber':
+                            userrole = '_ss'
+                            break
+                        case 'jobapplicant':
+                            userrole = '_ja'
+                            break
+                        case 'customer':
+                            userrole = '_cst'
+                            break
+                        case 'doctor':
+                            userrole = '_doc'
+                            break
+                        default:
+                            userrole = '_a'
+                    }
+                    let jwt = require('jsonwebtoken')
+                    let token = jwt.sign({
+                        a: exists.active,
+                        n: exists.first_name,
+                        e: exists.email,
+                        d: exists._id,
+                        p: exists.profile_picture_url,
+                        r: userrole,
+                        
+                    },  process.env.JWT_SECRETE, { expiresIn: userData.expiryTime });
+                    return token
+                }
+
+                 token = makeToken(userData.email)
+
+                                    
+
+                let link = `https://recruit-page-five.vercel.app/passwordLessLogin/?token=${token}&expiryTime=${userData.expiryTime}`
+
+                res.mailer.send('emails/passwordLessLogin.html', {
+                    username: exists.first_name,
+                    link: link,
+                    expires: userData.expiryTime,
+                    to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                    subject: 'Temporary Login', // REQUIRED.
+                }, async (err) => {
+                    if (err) {
+                        return console.error("Email could not sent: ", err)
+                    }
+                })
+
+                
+            } else {
+                let err = "Email doesn't exists";
+                return responseHelper.requestfailure(res, err);
+            }
+        let message = "Login Link sent successfully";
+        return responseHelper.success(res, user, message);
+    } catch (err) {
+        responseHelper.requestfailure(res, err);
+    }
+
+
+
+}; //end 
+
+var verifyToken = async (req, res) => {
+    console.log("verifyToken called")
+
+    try {
+        var token = req.token_decoded
+
+        console.log('token')
+        console.log(token)
+        console.log(req.originalToken)
+
+        let user = await User.findById(token.d)
+        .populate({
+            path: 'rolePrivileges',
+            model: 'roles',
+            populate: {
+                path: 'permissions',
+                model: 'permissions'
+            }
+        })
+        var responseData = _.omit(user._doc, ['password'])
+
+        let message ="Login successfull"
+      
+        return responseHelper.success(res, responseData, message, req.originalToken)
+
+
+
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err)
+    }
+}
 
 
 
@@ -1183,7 +1312,9 @@ module.exports = {
     listAllUsers,
     updateuser,
     approveDisapproveUser,
-    activeUser
+    activeUser,
+    passwordLessLogin,
+    verifyToken
 
 };
 

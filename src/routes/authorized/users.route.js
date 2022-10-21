@@ -3,7 +3,9 @@
 const express = require('express')
 const router = express.Router()
 var permit = require("../../middlewares").permit
+const constants = require('../../hardCodedData').constants
 const controller = require('../../controllers').user
+
 
 //restricted routes
 
@@ -21,7 +23,8 @@ router.post('/listAllUsers', controller.listAllUsers)
 router.post('/updateuser', controller.updateuser)
 router.post('/approveDisapproveUser', controller.approveDisapproveUser)
 router.post('/activeUser', controller.activeUser)
-
+router.post('/passwordLessLogin',permit(['_a']), controller.passwordLessLogin)
+router.post('/verifyToken',permit(constants.allRolesPermitted), controller.verifyToken)
 router.post("/logout", controller.logout)
 
 //test

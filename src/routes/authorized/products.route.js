@@ -14,6 +14,7 @@ router.post('/updateProduct', permit(['_a']), controller.updateProduct)
 router.post('/removeProduct', permit(['_a']), controller.removeProduct)
 router.post('/getProductsList', permit(['_a']), controller.getProductsList)
 router.post('/findProductById', permit(['_a']), controller.findProductById)
+router.post('/deleteProductImages', permit(['_a']), controller.deleteProductImages)
 
 
 module.exports = router

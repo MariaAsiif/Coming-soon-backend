@@ -5,9 +5,9 @@ var variant = new Schema({
     variantTitle: {
         type: String
       },
-    atrributes: [{
+    attributes: [{
         type: String,
-        ref: "attributes"
+        ref: "productAttributes"
       }],
       status: {
         type: String,

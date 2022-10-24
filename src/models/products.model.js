@@ -8,7 +8,7 @@ var product = new Schema({
     variants: [
         {
             type: String,
-            ref: 'variant'
+            ref: 'variants'
         }
     ],
     productCategories: [

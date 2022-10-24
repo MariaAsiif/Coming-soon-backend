@@ -19,7 +19,7 @@ const promise = require('bluebird')
 var async = require('async')
 
 const productAttributesHelper = require('../helpers/productAttributes.helper')
-
+const Variant = mongoose.model('variants')
 //helper functions
 logger = require("../helpers/logger")
 
@@ -36,10 +36,17 @@ var createProductAttributes = async (req, res) => {
         var productAttributesData = req.body
         productAttributesData.addedby = req.token_decoded.d
 
-        
-            var result = await productAttributesHelper.createProductAttributes(productAttributesData)
-            var message = "ProductAttributes created successfully"
-            return responseHelper.success(res, result, message)
+        console.log(productAttributesData)
+            let result = await productAttributesHelper.createProductAttributes(productAttributesData)
+
+            let variant = await Variant.findById(productAttributesData.variantid)
+
+            variant.attributes.push(result._id)
+
+            await variant.save()
+
+            var message = "variantAttributes created successfully"
+            return responseHelper.success(res, variant, message)
         
 
     } catch (err) {

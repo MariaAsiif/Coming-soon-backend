@@ -32,6 +32,15 @@ module.exports = {
         .populate('lastModifiedBy', query.lastModifiedBy)
         .populate('productCategories', query.productCategories)
         .populate('store', query.store)
+        .populate({
+            path: 'variants',
+            select: query.productVariants,
+            populate: {
+                path: 'attributes',
+                model: 'productAttributes',
+                select: query.variantAttributes
+            }
+        })
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);
@@ -104,6 +113,15 @@ module.exports = {
         .populate('lastModifiedBy', query.lastModifiedBy)
         .populate('productCategories', query.productCategories)
         .populate('store', query.store)
+        .populate({
+            path: 'variants',
+            select: query.productVariants,
+            populate: {
+                path: 'attributes',
+                model: 'productAttributes',
+                select: query.variantAttributes
+            }
+        })
         return product;
         
 

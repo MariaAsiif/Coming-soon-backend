@@ -20,6 +20,7 @@ var async = require('async')
 
 
 const variantHelper = require('../helpers/variants.helper')
+const Product = mongoose.model('products')
 //helper functions
 logger = require("../helpers/logger")
 
@@ -39,11 +40,11 @@ var createVariant = async (req, res) => {
         
             let result = await variantHelper.createVariant(variantData)
 
-            /* let store = await Store.findById(variantData.store)
+            let product = await Product.findById(variantData.productid)
 
-            store.Variants.push(result._id)
+            product.variants.push(result._id)
 
-            await store.save() */
+            await product.save()
 
             let message = "Variant created successfully"
             return responseHelper.success(res, result, message)

@@ -72,7 +72,7 @@ router.use('/developmentnotes', developmentNoteRoutes)
 
 //Medical Consultation
 router.use('/diseases', diseasesRoutes)
-router.use('/symptoms', symptomRoutes)
+
 router.use('/appointmentrequests', appointmentRequestRoutes)
 router.use('/appointments', appointmentsRoutes)
 router.use('/doctorsreservations', doctorReservationRoutes)

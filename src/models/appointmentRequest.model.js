@@ -175,8 +175,7 @@ var appointmentRequest = new Schema({
         }
     }],
     symptoms: [{
-        type: String,
-        ref: "symptoms"
+        type: String
     }],
     consultationType: [{
         consultationFee: {

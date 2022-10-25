@@ -30,7 +30,7 @@ module.exports = {
   customers: require('./customers.model'),
   orders: require('./orders.model'),
   diseases: require('./diseases.model'),
-  symptoms: require('./symptoms.model'),
+  
   appointmentRequests: require('./appointmentRequest.model'),
   developmentNotes: require('./developmentNotes.model'),
   appointments: require('./appointments.model'),

@@ -29,7 +29,7 @@ const productAttributesRoutes = require('./productAttributes.route')
 const cutomerRoutes = require('./customers.route')
 const ordersRoutes = require('./orders.route')
 const diseasesRoutes = require('./diseases.route')
-const symptomRoutes = require('./symptoms.route')
+
 const lexiconRoutes = require('./lexicon.route')
 const developmentNoteRoutes = require('./developmentNotes.route')
 const appointmentRequestRoutes = require('./appointmentrequests.route')

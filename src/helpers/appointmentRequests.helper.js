@@ -42,7 +42,7 @@ module.exports = {
         })
         .populate('medicalHistory.disease', query.medicalHistoryDiseaseFields)
         .populate('familyDiseases.disease', query.medicalHistoryDiseaseFields)
-        .populate('symptoms', query.symptomsfields)
+        //.populate('symptoms', query.symptomsfields)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit)
@@ -133,7 +133,7 @@ module.exports = {
         })
         .populate('medicalHistory.disease', query.medicalHistoryDiseaseFields)
         .populate('familyDiseases.disease', query.medicalHistoryDiseaseFields)
-        .populate('symptoms', query.symptomsfields)
+        //.populate('symptoms', query.symptomsfields)
         
         return appointmentRequest;
         

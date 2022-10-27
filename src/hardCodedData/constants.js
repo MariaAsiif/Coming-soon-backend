@@ -7,6 +7,6 @@ module.exports = {
 		online: 1
 	},
 	platforms: [ 'facebook', 'google', 'email', 'apple'],
-	roles: [ 'subscriber', 'superadmin', 'jobapplicant', 'hr', 'interviewer', 'itsales', 'botonist', 'marketing', 'businessdevelopment', 'doctor', 'lawyer', 'chemist', 'pharmacist', 'vendor', 'agriculturescientist', 'customersupport', 'customer'],
-	allRolesPermitted: ['_ss', '_a', '_ja', '_hr', '_intrvr', 'itsl', '_btnst', '_mrkt', '_bsndev', '_doc', '_lwr', '_chmst', '_phrmst', '_vndr', '_agr', 'cstsprt', '_cst']
+	roles: [ 'subscriber', 'superadmin', 'jobapplicant', 'hr', 'interviewer', 'itsales', 'botonist', 'marketing', 'businessdevelopment', 'doctor', 'lawyer', 'chemist', 'pharmacist', 'vendor', 'agriculturescientist', 'customersupport', 'customer', 'individualtasker', 'companytasker'],
+	allRolesPermitted: ['_ss', '_a', '_ja', '_hr', '_intrvr', 'itsl', '_btnst', '_mrkt', '_bsndev', '_doc', '_lwr', '_chmst', '_phrmst', '_vndr', '_agr', 'cstsprt', '_cst', '_indvtskr', '_cmpntskr']
 }

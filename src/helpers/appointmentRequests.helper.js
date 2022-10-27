@@ -40,7 +40,7 @@ module.exports = {
                 select: query.customeruserfields
             }
         })
-        .populate('medicalHistory.disease', query.medicalHistoryDiseaseFields)
+        .populate('medicalHistory.disease', query.medicalHistory)
         .populate('familyDiseases.disease', query.medicalHistoryDiseaseFields)
         //.populate('symptoms', query.symptomsfields)
         .sort({ [sortProperty]: sortOrder })

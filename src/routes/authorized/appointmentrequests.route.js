@@ -18,5 +18,8 @@ router.post('/uploadMedicalImages', permit(['_a', '_cst', '_doc']), controller.u
 router.post('/uploadMedicalVideos', permit(['_a', '_cst', '_doc']), controller.uploadMedicalVideos)
 router.post('/uploadMedicinePrescription', permit(['_a', '_cst', '_doc']), controller.uploadMedicinePrescription)
 
+router.post('/uploadFileToGoogleCloud', permit(['_a', '_cst', '_doc']), controller.uploadFileToGoogleCloud)
+router.post('/uploadMultipleFilesToGoogleCloud', permit(['_a', '_cst', '_doc']), controller.uploadMultipleFilesToGoogleCloud)
+
 
 module.exports = router

@@ -17,7 +17,16 @@ const promise = require('bluebird')
 
 //async for async tasks
 var async = require('async')
-var multer = require('multer');
+//const googlekey = require('../config/hporx-google-cloud-key.json')
+
+const processFile = require('../middlewares/upload')
+const processMultipleFiles = require('../middlewares/uploadmultiple')
+const {format} = require('util')
+const  {Storage}  = require('@google-cloud/storage')
+const storage = new Storage({keyFilename: 'hporx-google-cloud-key.json'})
+const bucket = storage.bucket("hporxuploads")
+
+//var multer = require('multer');
 const fs = require('fs');
 
 
@@ -917,10 +926,158 @@ var uploadMedicinePrescription = async (req, res) => {
 } //end function
 
 
+var uploadFileToGoogleCloud = async (req, res) => {
+    console.log("uploadFileToGoogleCloud called")
+    try {
+        var role = req.token_decoded.r
+
+        
+            var appointmentData = req.body
+            appointmentData.lastModifiedBy = req.token_decoded.d
+            //-var result = await appointmentRequestHelper.removeAppointmentRequest(appointmentData)
+
+            
+    await processFile(req, res);
+    console.log(req.files)
+
+    if (!req.file) {
+      return res.status(400).send({ message: "Please upload a file!" });
+    }
+
+    // Create a new blob in the bucket and upload the file data.
+    const blob = bucket.file(req.file.originalname);
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+    });
+
+    blobStream.on("error", (err) => {
+        console.log("blob stream err")
+        console.log(err)
+      res.status(500).send({ message: err.message });
+    });
+
+    blobStream.on("finish", async (data) => {
+      // Create URL for directly file access via HTTP.
+      const publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+
+      try {
+        // Make the file public
+        await bucket.file(req.file.originalname).makePublic();
+      } catch {
+        return res.status(500).send({
+          message:
+            `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
+          url: publicUrl,
+        });
+      }
+
+      res.status(200).send({
+        message: "Uploaded the file successfully: " + req.file.originalname,
+        url: publicUrl,
+      });
+    });
+
+    blobStream.end(req.file.buffer);
+
+            //var message = "File uploaded to google could successfully"
+
+        
+            //return responseHelper.success(res, {}, message)
+       
+    } catch (err) {
+        let message = ''
+        if (err.code == "LIMIT_FILE_SIZE") {
+            message = "File size cannot be larger than 2MB!"
+          }
+         message = `Could not upload the file: ${req.file.originalname}. ${err}`
+        responseHelper.requestfailure(res, message, err)
+    }
+
+
+}
+
+var uploadMultipleFilesToGoogleCloud = async (req, res) => {
+    console.log("uploadFileToGoogleCloud called")
+    try {
+        var role = req.token_decoded.r
+
+
+        var appointmentData = req.body
+        appointmentData.lastModifiedBy = req.token_decoded.d
+        //-var result = await appointmentRequestHelper.removeAppointmentRequest(appointmentData)
+
+
+        await processMultipleFiles(req, res)
+
+
+        //let {files} = req
+        //console.log(files)
+
+        if (!req.files) {
+            return res.status(400).send({ message: "Please upload a file!" });
+        }
+        var counter = 0
+        let uploadedFilesUrls = []
+        req.files.forEach((file) => {
+            // Create a new blob in the bucket and upload the file data.
+            const blob = bucket.file(file.originalname)
+            const blobStream = blob.createWriteStream({
+                resumable: false,
+            })
+
+            blobStream.on("error", (err) => {
+
+                res.status(500).send({ message: err.message })
+            })
+
+            blobStream.on("finish", async (data) => {
+                counter += 1
+                // Create URL for directly file access via HTTP.
+                const publicUrl = format(
+                    `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+                )
+
+                try {
+                    // Make the file public
+                    await bucket.file(file.originalname).makePublic()
+                } catch {
+                    return res.status(500).send({
+                        message:
+                            `Uploaded the file successfully: ${file.originalname}, but public access is denied!`,
+                        url: publicUrl,
+                    })
+                }
+                uploadedFilesUrls.push(publicUrl)
+                if (counter == 2) {
+                    var message = "Files uploaded to google cloud successfully"
+                    return responseHelper.success(res, uploadedFilesUrls, message)
+                }
+
+            })
+
+            blobStream.end(file.buffer)
 
 
 
+        })
 
+
+    } catch (err) {
+        
+        let message = ''
+        if (err.code == "LIMIT_FILE_SIZE") {
+            message = "File size cannot be larger than 2MB!"
+        } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+            message = "Only 2 files can be uploaded"
+        }
+
+        responseHelper.requestfailure(res, message, err)
+    }
+
+
+}
 
 module.exports = {
     createPublicAppointmentRequest,
@@ -933,7 +1090,9 @@ module.exports = {
     //createTestAppointmentRequest,
     uploadMedicalImages,
     uploadMedicalVideos,
-    uploadMedicinePrescription
+    uploadMedicinePrescription,
+    uploadFileToGoogleCloud,
+    uploadMultipleFilesToGoogleCloud
 
 }
 

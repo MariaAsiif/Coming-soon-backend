@@ -5,7 +5,6 @@
 //import mongoose and models
 var mongoose = require('mongoose');
 
-const Task = mongoose.model('tasks')
 const TaskCategory = mongoose.model('taskCategories')
 
 //bluebird for promises

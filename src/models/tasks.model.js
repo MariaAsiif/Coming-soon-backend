@@ -81,4 +81,4 @@ var tasksSchema = new Schema({
 )
 
 
-module.exports = mongoose.model('taskss', tasksSchema);
+module.exports = mongoose.model('tasks', tasksSchema);

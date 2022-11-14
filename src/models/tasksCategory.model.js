@@ -26,4 +26,4 @@ var taskCategoriesSchema = new Schema({
 )
 
 
-module.exports = mongoose.model('taskCategoriess', taskCategoriesSchema);
+module.exports = mongoose.model('taskCategories', taskCategoriesSchema);

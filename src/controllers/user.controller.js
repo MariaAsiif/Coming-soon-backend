@@ -72,9 +72,9 @@ var getprofilefromid = (req, res) => {
 var signup = async (req, res) => {
     console.log("signup is called");
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    
+
     const locationData = lookup(ip)
-    
+
     try {
         var userData = req.body;
         userData.ipAddress = ip
@@ -108,10 +108,10 @@ var signup = async (req, res) => {
             userData.email = userData.email.toLowerCase();
             let exists = await userHelper.isUserEmailExists(userData.email);
             if (exists) {
-                
+
                 let err = "Email already exists";
                 return responseHelper.requestfailure(res, err);
-                
+
             } else {
                 let exists = await userHelper.isUserEmailExists(userData.email);
                 _.extend(userData, {
@@ -131,7 +131,7 @@ var signup = async (req, res) => {
                 newUser.setPassword(password);
                 await newUser.save();
 
-                if(userData.role != "subscriber"){
+                if (userData.role != "subscriber") {
                     res.mailer.send('emails/verification-code.html', {
                         verification_code: userData.verification_code,
                         title: project.title,
@@ -142,11 +142,11 @@ var signup = async (req, res) => {
                             return console.error("Email could not sent: ", err)
                         }
                     });
-    
+
                     sendSMS(req.body)
                 }
 
-                
+
 
 
 
@@ -257,7 +257,7 @@ var signin = async (req, res) => {
     console.log("signin is called");
     try {
         var userData = req.body;
-        
+
         if (userData._id) {
             let exists = await userHelper.isUserIdExists(userData._id);
             if (exists) {
@@ -271,7 +271,7 @@ var signin = async (req, res) => {
             let exists = await userHelper.isUserEmailExists(userData.email);
 
             if (exists) {
-               
+
                 if (exists.role == "subscriber") {
                     let err = "User not allowed to signin";
                     return responseHelper.requestfailure(res, err);
@@ -1161,85 +1161,132 @@ var passwordLessLogin = async (req, res) => {
         let userData = req.body
 
         userData.email = userData.email.toLowerCase();
-            let exists = await userHelper.isUserEmailExists(userData.email);
-            let token
-            let user
-            if (exists) {
-               
-                if (exists.role == "subscriber") {
-                    let err = "User not allowed to signin";
-                    return responseHelper.requestfailure(res, err);
-                }
-                if (!exists.is_verified) {
-                    return responseHelper.requestfailure(res, 'Please verify your email address')
-                }
+        let exists = await userHelper.isUserEmailExists(userData.email);
+        let token
+        let user
+        if (exists) {
 
-                if (exists.approved !== "approved") {
-                    return responseHelper.requestfailure(res, 'Your account is not approved')
-                }
-
-                if (!exists.active) {
-                    return responseHelper.requestfailure(res, 'Your account is not approved/active')
-                }
-
-                const makeToken = (email) => {
-                    /* const expirationDate = new Date()
-                    
-                    expirationDate.setMinutes(new Date().getMinutes() + parseInt(userData.expiryTime))
- */
-                    let userrole = '_a'
-                    switch (exists.role) {
-                        case 'subscriber':
-                            userrole = '_ss'
-                            break
-                        case 'jobapplicant':
-                            userrole = '_ja'
-                            break
-                        case 'customer':
-                            userrole = '_cst'
-                            break
-                        case 'doctor':
-                            userrole = '_doc'
-                            break
-                        default:
-                            userrole = '_a'
-                    }
-                    let jwt = require('jsonwebtoken')
-                    let token = jwt.sign({
-                        a: exists.active,
-                        n: exists.first_name,
-                        e: exists.email,
-                        d: exists._id,
-                        p: exists.profile_picture_url,
-                        r: userrole,
-                        
-                    },  process.env.JWT_SECRETE, { expiresIn: userData.expiryTime });
-                    return token
-                }
-
-                 token = makeToken(userData.email)
-
-                                    
-
-                let link = `https://recruit-page-five.vercel.app/passwordLessLogin/?token=${token}&expiryTime=${userData.expiryTime}`
-
-                res.mailer.send('emails/passwordLessLogin.html', {
-                    username: exists.first_name,
-                    link: link,
-                    expires: userData.expiryTime,
-                    to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
-                    subject: 'Temporary Login', // REQUIRED.
-                }, async (err) => {
-                    if (err) {
-                        return console.error("Email could not sent: ", err)
-                    }
-                })
-
-                
-            } else {
-                let err = "Email doesn't exists";
+            if (exists.role == "subscriber") {
+                let err = "User not allowed to signin";
                 return responseHelper.requestfailure(res, err);
             }
+            if (!exists.is_verified) {
+                return responseHelper.requestfailure(res, 'Please verify your email address')
+            }
+            if (exists.approved !== "approved") {
+                return responseHelper.requestfailure(res, 'Your account is not approved')
+            }
+
+            if (!exists.active) {
+                return responseHelper.requestfailure(res, 'Your account is not approved/active')
+            }
+
+            const makeToken = (email) => {
+                /* const expirationDate = new Date()
+                
+                expirationDate.setMinutes(new Date().getMinutes() + parseInt(userData.expiryTime))
+*/
+                let userrole = '_a'
+                switch (exists.role) {
+                    case 'subscriber':
+                        userrole = '_ss'
+                        break
+                    case 'jobapplicant':
+                        userrole = '_ja'
+                        break
+                    case 'hr':
+                        userrole = '_hr'
+                        break
+                    case 'interviewer':
+                        userrole = '_intrvr'
+                        break
+                    case 'itsales':
+                        userrole = 'itsl'
+                        break
+                    case 'botonist':
+                        userrole = '_btnst'
+                        break
+                    case 'marketing':
+                        userrole = '_mrkt'
+                        break
+                    case 'businessdevelopment':
+                        userrole = '_bsndev'
+                        break
+                    case 'businessdevelopment':
+                        userrole = '_bsndev'
+                        break
+                    case 'doctor':
+                        userrole = '_doc'
+                        break
+                    case 'lawyer':
+                        userrole = '_lwr'
+                        break
+                    case 'chemist':
+                        userrole = '_chmst'
+                        break
+                    case 'chemist':
+                        userrole = '_chmst'
+                        break
+                    case 'pharmacist':
+                        userrole = '_phrmst'
+                        break
+                    case 'vendor':
+                        userrole = '_vndr'
+                        break
+                    case 'agriculturescientist':
+                        userrole = '_agr'
+                        break
+                    case 'customersupport':
+                        userrole = '_cstsprt'
+                        break
+                    case 'customer':
+                        userrole = '_cst'
+                        break
+                    case 'individualtasker':
+                        userrole = '_indvtskr'
+                        break
+                    case 'companytasker':
+                        userrole = '_cmpntskr'
+                        break
+                    default:
+                        userrole = '_a'
+                }
+                let jwt = require('jsonwebtoken')
+                let token = jwt.sign({
+                    a: exists.active,
+                    n: exists.first_name,
+                    e: exists.email,
+                    d: exists._id,
+                    p: exists.profile_picture_url,
+                    r: userrole,
+
+                }, process.env.JWT_SECRETE, { expiresIn: userData.expiryTime });
+                return token
+            }
+
+            token = makeToken(userData.email)
+
+
+
+            let link = `https://recruit-page-five.vercel.app/passwordLessLogin/?token=${token}&expiryTime=${userData.expiryTime}`
+
+            res.mailer.send('emails/passwordLessLogin.html', {
+                username: exists.first_name,
+                link: link,
+                expires: userData.expiryTime,
+                to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                subject: 'Temporary Login', // REQUIRED.
+            }, async (err) => {
+                if (err) {
+                    return console.error("Email could not sent: ", err)
+                }
+            })
+
+
+        } else {
+            let err = "Email doesn't exists";
+            return responseHelper.requestfailure(res, err);
+        }
         let message = "Login Link sent successfully";
         return responseHelper.success(res, user, message);
     } catch (err) {
@@ -1261,18 +1308,18 @@ var verifyToken = async (req, res) => {
         console.log(req.originalToken)
 
         let user = await User.findById(token.d)
-        .populate({
-            path: 'rolePrivileges',
-            model: 'roles',
-            populate: {
-                path: 'permissions',
-                model: 'permissions'
-            }
-        })
+            .populate({
+                path: 'rolePrivileges',
+                model: 'roles',
+                populate: {
+                    path: 'permissions',
+                    model: 'permissions'
+                }
+            })
         var responseData = _.omit(user._doc, ['password'])
 
-        let message ="Login successfull"
-      
+        let message = "Login successfull"
+
         return responseHelper.success(res, responseData, message, req.originalToken)
 
 
@@ -1282,6 +1329,100 @@ var verifyToken = async (req, res) => {
         responseHelper.requestfailure(res, err)
     }
 }
+
+var sendVerificationEmail = async (req, res) => {
+    console.log("request received for verification email");
+
+    try {
+        let userData = req.body
+
+        userData.email = userData.email.toLowerCase();
+        let exists = await userHelper.isUserEmailExists(userData.email);
+        let token
+        let user
+        if (exists) {
+            if (exists.role == "subscriber") {
+                let err = "User not allowed to signin";
+                return responseHelper.requestfailure(res, err);
+            }
+            if (!exists.is_verified) {
+                return responseHelper.requestfailure(res, 'Please verify your email address')
+            }
+            if (exists.approved !== "approved") {
+                return responseHelper.requestfailure(res, 'Your account is not approved')
+            }
+
+            if (!exists.active) {
+                return responseHelper.requestfailure(res, 'Your account is not approved/active')
+            }
+
+            const makeToken = (email) => {
+                /* const expirationDate = new Date()
+                
+                expirationDate.setMinutes(new Date().getMinutes() + parseInt(userData.expiryTime))
+*/
+                let userrole = '_a'
+                switch (exists.role) {
+                    case 'subscriber':
+                        userrole = '_ss'
+                        break
+                    case 'jobapplicant':
+                        userrole = '_ja'
+                        break
+                    case 'customer':
+                        userrole = '_cst'
+                        break
+                    case 'doctor':
+                        userrole = '_doc'
+                        break
+                    default:
+                        userrole = '_a'
+                }
+                let jwt = require('jsonwebtoken')
+                let token = jwt.sign({
+                    a: exists.active,
+                    n: exists.first_name,
+                    e: exists.email,
+                    d: exists._id,
+                    p: exists.profile_picture_url,
+                    r: userrole,
+
+                }, process.env.JWT_SECRETE, { expiresIn: userData.expiryTime });
+                return token
+            }
+
+            token = makeToken(userData.email)
+
+
+
+            let link = `https://recruit-page-five.vercel.app/passwordLessLogin/?token=${token}&expiryTime=${userData.expiryTime}`
+
+            res.mailer.send('emails/passwordLessLogin.html', {
+                username: exists.first_name,
+                link: link,
+                expires: userData.expiryTime,
+                to: userData.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+                subject: 'Temporary Login', // REQUIRED.
+            }, async (err) => {
+                if (err) {
+                    return console.error("Email could not sent: ", err)
+                }
+            })
+
+
+        } else {
+            let err = "Email doesn't exists";
+            return responseHelper.requestfailure(res, err);
+        }
+        let message = "Login Link sent successfully";
+        return responseHelper.success(res, user, message);
+    } catch (err) {
+        responseHelper.requestfailure(res, err);
+    }
+
+
+
+}; //end
 
 
 
@@ -1314,7 +1455,8 @@ module.exports = {
     approveDisapproveUser,
     activeUser,
     passwordLessLogin,
-    verifyToken
+    verifyToken,
+    sendVerificationEmail
 
 };
 

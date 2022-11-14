@@ -38,7 +38,11 @@ module.exports = {
   doctorNotes: require('./doctorNotes.model'),
   medicinePrescriptions: require('./medicinePrescriptions.model'),
   testPrescriptions: require('./testPrescriptions.model'),
-  medicalCards: require('./medicalCards.model')
+  medicalCards: require('./medicalCards.model'),
+
+  //DAS
+  tasks: require('./tasks.model'),
+  taskCategories: require('./tasksCategory.model')
   
 
 }

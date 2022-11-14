@@ -39,6 +39,9 @@ const doctorNotesRoutes = require('./doctorNote.route')
 const medicinePrescriptionsRoutes = require('./medicinePrescription.route')
 const testPrescriptionsRoutes = require('./testPrescription.route')
 
+const tasksRoutes = require('./testPrescription.route')
+const taskCategoriesRoutes = require('./taskCategories.route')
+
 
 //call appropriate routes
 router.use ('/users', usersRoutes)
@@ -79,5 +82,7 @@ router.use('/doctorsreservations', doctorReservationRoutes)
 router.use('/doctornotes', doctorNotesRoutes)
 router.use('/medicineprescriptions', medicinePrescriptionsRoutes)
 router.use('/testprescriptions', testPrescriptionsRoutes)
+router.use('/tasks', tasksRoutes)
+router.use('/taskCategories', taskCategoriesRoutes)
 
 module.exports = router

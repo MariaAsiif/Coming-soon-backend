@@ -38,6 +38,10 @@ module.exports = {
   doctorsReservations: require('./doctorReservations.controller'),
   doctorNotes: require('./doctorNote.controller'),
   medicinePrescriptions: require('./medicinePrescriptions.controller'),
-  testPrescriptions: require('./testPrescriptions.controller')
+  testPrescriptions: require('./testPrescriptions.controller'),
+
+  //DAS
+  tasks: require('./tasks.controller'),
+  taskCategories: require('./taskCategories.controller')
 
 }

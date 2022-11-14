@@ -998,7 +998,7 @@ var uploadFileToGoogleCloud = async (req, res) => {
 
 }
 
-var uploadMultipleFilesToGoogleCloud = async (req, res) => {
+var uploadMultipleFilesToGoogleCloudOld = async (req, res) => {
     console.log("uploadFileToGoogleCloud called")
     try {
         var role = req.token_decoded.r
@@ -1062,6 +1062,66 @@ var uploadMultipleFilesToGoogleCloud = async (req, res) => {
 
 
         })
+
+
+    } catch (err) {
+        
+        let message = ''
+        if (err.code == "LIMIT_FILE_SIZE") {
+            message = "File size cannot be larger than 2MB!"
+        } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+            message = "Only 2 files can be uploaded"
+        }
+
+        responseHelper.requestfailure(res, message, err)
+    }
+
+
+}
+
+var uploadMultipleFilesToGoogleCloud = async (req, res) => {
+    console.log("uploadFileToGoogleCloud called")
+    try {
+        var role = req.token_decoded.r
+
+
+        var appointmentData = req.body
+        appointmentData.lastModifiedBy = req.token_decoded.d
+        //-var result = await appointmentRequestHelper.removeAppointmentRequest(appointmentData)
+
+
+        await processMultipleFiles(req, res)
+        if (!req.files) {
+            return res.status(400).send({ message: "Please upload a file!" });
+        }
+        let userData = JSON.parse(req.body.request)
+        let promises = []
+
+        req.files.forEach((file) => {
+            let uploadedfile = Date.now() + '-' + file.originalname
+            const blob = bucket.file(userData.folderName+'/' +uploadedfile)
+            const newPromise =  new Promise((resolve, reject) => {
+                blob.createWriteStream({
+                    metadata: { contentType: file.mimetype }
+                  }).on('finish', async response => {
+                    const Url = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+                    await blob.makePublic()
+                    //resolve(response)
+                    resolve({ name: userData.folderName+'/' +uploadedfile, url: Url });
+                  }).on('error', err => {
+                    reject('upload error: ', err)
+                  }).end(file.buffer)
+                }) //end promise
+               promises.push(newPromise)
+            
+        }) //end foreach
+
+        Promise
+        .all(promises)
+        .then((response) => {
+            // the response I get here is [undefined, undefined]
+            res.status(200).send(response)
+        })//.catch(err => console.log(err))
 
 
     } catch (err) {

@@ -138,7 +138,7 @@ var findTaskCategoryById = async (req, res) => {
             var taskCategoryData = req.body
 
             var result = await taskCategoriesHelper.findTaskCategoryById(taskCategoryData)
-            console.log(result)
+            
             var message = "TaskCategory find successfully"
             if (result == null) {
                 message = "TaskCategory does not exists."

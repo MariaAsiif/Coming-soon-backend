@@ -42,6 +42,11 @@ module.exports = {
 
   //DAS
   tasks: require('./tasks.controller'),
-  taskCategories: require('./taskCategories.controller')
+  taskCategories: require('./taskCategories.controller'),
+  jobBids: require('./jobBids.controller'),
+  taskers: require('./taskers.controller'),
+  taskerSkills: require('./taskerSkills.controller'),
+  taskerFeedbacks: require('./taskerfeedbacks.controller'),
+  taskerCompanies: require('./taskerCompanies.controller')
 
 }

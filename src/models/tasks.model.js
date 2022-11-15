@@ -2,7 +2,7 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var tasksSchema = new Schema({
-    job_title: {
+    task_title: {
         type: String
     },
     taskdate: {
@@ -26,7 +26,7 @@ var tasksSchema = new Schema({
     },
     jobstatus: {
         type: String,
-        enum: ["active", "schedule", "completed"]
+        enum: ["active", "scheduled", "completed"]
     },
     budgetestimate: {
         type: Number
@@ -44,7 +44,8 @@ var tasksSchema = new Schema({
         ref: 'tasksCategory'
     },
     jobsBids: [{
-        type: String
+        type: String,
+        ref: 'jobBids'
     }],
     jobLocation: {
         type: {
@@ -54,9 +55,7 @@ var tasksSchema = new Schema({
             type: Number
         }]
     },
-    active: {
-        type: Boolean
-    },
+    
     jobawarded: {
         type: Boolean
     },

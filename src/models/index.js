@@ -42,7 +42,12 @@ module.exports = {
 
   //DAS
   tasks: require('./tasks.model'),
-  taskCategories: require('./tasksCategory.model')
+  taskCategories: require('./tasksCategory.model'),
+  jobBids: require('./jobBids.model'),
+  taskers: require('./taskers.model'),
+  taskerSkills: require('./taskerSkills.model'),
+  taskfeedbacks: require('./taskfeedbacks.model'),
+  taskerCompanies: require('./taskerCompanies.model')
   
 
 }

@@ -39,8 +39,12 @@ const doctorNotesRoutes = require('./doctorNote.route')
 const medicinePrescriptionsRoutes = require('./medicinePrescription.route')
 const testPrescriptionsRoutes = require('./testPrescription.route')
 
-const tasksRoutes = require('./testPrescription.route')
+const tasksRoutes = require('./tasks.route')
 const taskCategoriesRoutes = require('./taskCategories.route')
+const jobBidRoutes = require('./jobBids.route')
+const taskerRoutes = require('./taskers.route')
+const taskerSkillRoutes = require('./taskerSkills.route')
+const taskerCompaniesRoutes = require('./taskerCompanies.route')
 
 
 //call appropriate routes
@@ -82,7 +86,13 @@ router.use('/doctorsreservations', doctorReservationRoutes)
 router.use('/doctornotes', doctorNotesRoutes)
 router.use('/medicineprescriptions', medicinePrescriptionsRoutes)
 router.use('/testprescriptions', testPrescriptionsRoutes)
+
+//DAS
 router.use('/tasks', tasksRoutes)
 router.use('/taskCategories', taskCategoriesRoutes)
+router.use('/jobBids', jobBidRoutes)
+router.use('/taskers', taskerRoutes)
+router.use('/taskerSkills', taskerSkillRoutes)
+router.use('/taskerCompanies', taskerCompaniesRoutes)
 
 module.exports = router

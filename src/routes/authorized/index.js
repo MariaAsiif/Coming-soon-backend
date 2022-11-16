@@ -45,6 +45,7 @@ const jobBidRoutes = require('./jobBids.route')
 const taskerRoutes = require('./taskers.route')
 const taskerSkillRoutes = require('./taskerSkills.route')
 const taskerCompaniesRoutes = require('./taskerCompanies.route')
+const taskerFeedbackRoutes = require('./taskerFeedbacks.route')
 
 
 //call appropriate routes
@@ -94,5 +95,6 @@ router.use('/jobBids', jobBidRoutes)
 router.use('/taskers', taskerRoutes)
 router.use('/taskerSkills', taskerSkillRoutes)
 router.use('/taskerCompanies', taskerCompaniesRoutes)
+router.use('/taskerFeedbacks', taskerFeedbackRoutes)
 
 module.exports = router

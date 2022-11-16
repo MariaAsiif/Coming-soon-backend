@@ -68,7 +68,7 @@ module.exports = {
 
     updateTaskerFeedback: async (data) => {
         console.log("updateTaskerFeedback HelperFunction is called");
-        const result = await promise.all([TaskerFeedback.findOneAndUpdate({_id: data.taskerfeedbacksid}, data, {new: true})])
+        const result = await promise.all([TaskerFeedback.findOneAndUpdate({_id: data.taskerfeedbackid}, data, {new: true})])
         
         return result; 
                 

@@ -48,7 +48,7 @@ module.exports = {
     getTaskerCompaniesList: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
         console.log("getTasks Model Function called")
 
-        const TaskerCompanies = await TaskerCompany.find(query.critarion).select(query.fields/* '_id TaskName' */)
+        const taskerCompanies = await TaskerCompany.find(query.critarion).select(query.fields/* '_id TaskName' */)
         
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)

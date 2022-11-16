@@ -25,20 +25,65 @@ module.exports = {
     getTaskersWithFullDetails: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
         console.log("getTaskers Model Function called")
 
-        const taskerss = await Tasker.find(query.critarion)
+        const taskers = await Tasker.find(query.critarion)
        
-        .populate('addedby', query.addedby)
-        
+        .populate('addedby', query.addedby)        
         .populate('lastModifiedBy', query.lastModifiedBy)
+        .populate('user', query.userFields)
+        .populate('taskerSkills', query.taskerSkillsFields)
+        .populate('taskfeedbacks', )
+        .populate({
+            path: 'taskfeedbacks',
+            select: query.taskfeedbacksFields,
+            populate: [{
+                path: 'task',
+                model: 'tasks',
+                //select: query.taskfields
+            },
+            {
+                path: 'feedbackby',
+                model: 'users',
+                select: query.feedbackbyfields
+            }]
+        })
+
+        .populate({
+            path: 'taskerCompany',
+            select: query.taskerCompanyFields,
+            populate: [/* {
+                path: 'industries',
+                model: 'industries',
+                //select: query.industriesfields
+            }, */
+            {
+                path: 'tasksCategory',
+                model: 'taskCategories',
+                //select: query.taskCategoriesfields
+            }]
+        })
+        /* .populate({
+            path: 'individualTasker',
+            select: query.individualTaskerFields,
+            populate: [{
+                path: 'assessmentAttempts',
+                model: 'assessmentAttempts',
+                //select: query.assessmentAttemptsfields
+            }]
+        }) */
+        .populate('individualTasker', query.individualTaskerFields)
+        
+        
+        
+        
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);
               
-        const taskersssize = taskerss.length
+        const taskerssize = taskers.length
 
         return {
-            taskerss: taskerss,
-            count: taskersssize,
+            taskers: taskers,
+            count: taskerssize,
             offset: offset,
             limit: limit
         };
@@ -48,17 +93,17 @@ module.exports = {
     getTaskersList: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
         console.log("getTaskers Model Function called")
 
-        const taskerss = await Tasker.find(query.critarion).select(query.fields/* '_id TaskerName' */)
-        
+        const taskers = await Tasker.find(query.critarion).select(query.fields/* '_id TaskerName' */)
+        .populate('user', query.userFields)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);
               
-        const taskersssize = taskerss.length
+        const taskerssize = taskers.length
 
         return {
-            taskerss: taskerss,
-            count: taskersssize,
+            taskers: taskers,
+            count: taskerssize,
             offset: offset,
             limit: limit
         };
@@ -99,6 +144,48 @@ module.exports = {
         .populate('addedby', query.addedby)
         
         .populate('lastModifiedBy', query.lastModifiedBy)
+        .populate('user', query.userFields)
+        .populate('taskerSkills', query.taskerSkillsFields)
+        .populate('taskfeedbacks', )
+        .populate({
+            path: 'taskfeedbacks',
+            select: query.taskfeedbacksFields,
+            populate: [{
+                path: 'task',
+                model: 'tasks',
+                //select: query.taskfields
+            },
+            {
+                path: 'feedbackby',
+                model: 'users',
+                select: query.feedbackbyfields
+            }]
+        })
+
+        .populate({
+            path: 'taskerCompany',
+            select: query.taskerCompanyFields,
+            populate: [/* {
+                path: 'industries',
+                model: 'industries',
+                //select: query.industriesfields
+            }, */
+            {
+                path: 'tasksCategory',
+                model: 'taskCategories',
+                //select: query.taskCategoriesfields
+            }]
+        })
+        /* .populate({
+            path: 'individualTasker',
+            select: query.individualTaskerFields,
+            populate: [{
+                path: 'assessmentAttempts',
+                model: 'assessmentAttempts',
+                //select: query.assessmentAttemptsfields
+            }]
+        }) */
+        .populate('individualTasker', query.individualTaskerFields)
         
         return taskers;
         

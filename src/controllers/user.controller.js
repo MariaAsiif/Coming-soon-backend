@@ -18,7 +18,10 @@ const promise = require('bluebird');
 
 //async for async tasks
 var async = require('async');
-const userHelper = require('../helpers/user.helper');
+const userHelper = require('../helpers/user.helper')
+const taskerHelper = require('../helpers/taskers.helper')
+const individualTaskerHelper = require('../helpers/individualTaskers.helper')
+const taskerCompapnyHelper = require('../helpers/taskerCompanies.helper')
 
 //helper functions
 logger = require("../helpers/logger");
@@ -113,6 +116,15 @@ var signup = async (req, res) => {
                 return responseHelper.requestfailure(res, err);
 
             } else {
+                if(userData.role === "companytasker") {
+                    let validInvalid = await checkEmailAddressString(userData)
+
+                    if(validInvalid === "invalid"){
+                        let companyEmailErr = "Comapny has to signup with its own domain based email"
+                        return responseHelper.requestfailure(res, companyEmailErr)
+                    }
+                    
+                }
                 let exists = await userHelper.isUserEmailExists(userData.email);
                 _.extend(userData, {
                     _id: mongoose.Types.ObjectId().toString()
@@ -145,12 +157,25 @@ var signup = async (req, res) => {
 
                     sendSMS(req.body)
                 }
-
-
-
-
-
+                
                 userandtoken = await userHelper.updateUser(userData)
+
+                if(userData.role === "individualtasker"){
+
+                    let indTask = await individualTaskerHelper.createIndividualTasker(userData)
+                    
+                    userData.user = userandtoken.user._doc._id
+                    userData.individualTasker = indTask._id
+
+                    await taskerHelper.createTasker(userData)
+
+                } else if(userData.role === "companytasker"){
+                    let tskCompan = await taskerCompapnyHelper.createTaskerCompany(userData)
+                    userData.user = userandtoken.user._doc._id
+                    userData.taskerCompany = tskCompan._id
+
+                    await taskerHelper.createTasker(userData)
+                }
             }
         }
         var message = 'Successfully Signed Up User';
@@ -163,7 +188,30 @@ var signup = async (req, res) => {
         responseHelper.requestfailure(res, err);
     }
 
-};
+}
+
+var checkEmailAddressString = async (userData) => {
+    console.log("checkEmailAddressString called")
+    try {
+        
+        if (userData.email) {
+            let matched = userData.email.match(/[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|hotmail.com|yahoo.com)/)
+            //console.log(matched)
+            if(matched === null) {
+                return "valid"
+            } else if(matched['index'] === 0){
+                return "invalid"
+            } 
+
+            
+        } else {
+            return "invalid"
+        }
+    } catch (err) {
+
+        responseHelper.requestfailure(res, err);
+    }
+} //
 
 function sendSMS(userData) {
     console.log('sendSMS Called')
@@ -1387,6 +1435,7 @@ var sendVerificationEmail = async (req, res) => {
                     p: exists.profile_picture_url,
                     r: userrole,
 
+
                 }, process.env.JWT_SECRETE, { expiresIn: userData.expiryTime });
                 return token
             }
@@ -1456,7 +1505,8 @@ module.exports = {
     activeUser,
     passwordLessLogin,
     verifyToken,
-    sendVerificationEmail
+    sendVerificationEmail,
+    
 
 };
 

@@ -47,7 +47,8 @@ module.exports = {
   taskers: require('./taskers.model'),
   taskerSkills: require('./taskerSkills.model'),
   taskfeedbacks: require('./taskfeedbacks.model'),
-  taskerCompanies: require('./taskerCompanies.model')
+  taskerCompanies: require('./taskerCompanies.model'),
+  individualTaskers: require('./individualTaskers.model')
   
 
 }

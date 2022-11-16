@@ -9,15 +9,23 @@ var taskersSchema = new Schema({
     hourlyrate: {
         type: Number
     },
+    hourlyRateCurrency: {
+        type: String
+    },
     experience: {
         type: String
     },
     taskfeedbacks: [{
-        type: String
+        type: String,
+        ref: "taskerfeedbacks"
     }],
     taskerSkills: [{
-        type: String
+        type: String,
+        ref: "taskerSkills"
     }],
+    tasksassigned: {
+        type: Number
+    },
     taskscompleted: {
         type: Number
     },

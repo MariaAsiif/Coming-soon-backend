@@ -13,6 +13,10 @@ var taskerCompaniesSchema = new Schema({
     type: String,
     ref: "taskCategories"
   }],
+  assessmentAttempts: {
+    type: String,
+    ref: "assessmentAttempts"
+  },
   businessProtfolioUrl: {
     type: String
   },

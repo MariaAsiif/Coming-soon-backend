@@ -48,6 +48,9 @@ module.exports = {
   taskerSkills: require('./taskerSkills.controller'),
   taskerFeedbacks: require('./taskerfeedbacks.controller'),
   taskerCompanies: require('./taskerCompanies.controller'),
-  individualTaskers: require('./individualTasker.controller')
+  individualTaskers: require('./individualTasker.controller'),
+  industries: require('./industries.controller'),
+  assessmentAttempts: require('./assessmentAttempts.controller'),
+  questions: require('./questions.controller')
 
 }

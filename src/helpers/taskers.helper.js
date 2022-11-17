@@ -38,7 +38,11 @@ module.exports = {
             populate: [{
                 path: 'task',
                 model: 'tasks',
-                //select: query.taskfields
+                select: query.taskfields,
+                populate: {
+                    path: "customer",
+                    model: "users"
+                }
             },
             {
                 path: 'feedbackby',
@@ -50,27 +54,36 @@ module.exports = {
         .populate({
             path: 'taskerCompany',
             select: query.taskerCompanyFields,
-            populate: [/* {
+            populate: [{
                 path: 'industries',
                 model: 'industries',
-                //select: query.industriesfields
-            }, */
+                select: query.industriesfields
+            },
             {
                 path: 'tasksCategory',
                 model: 'taskCategories',
-                //select: query.taskCategoriesfields
+                select: query.taskCategoriesfields
             }]
         })
-        /* .populate({
+        .populate({
             path: 'individualTasker',
             select: query.individualTaskerFields,
             populate: [{
+                path: 'industries',
+                model: 'industries',
+                select: query.industriesfields
+            },{
                 path: 'assessmentAttempts',
                 model: 'assessmentAttempts',
-                //select: query.assessmentAttemptsfields
+                select: query.assessmentAttemptsfields
+            },
+            {
+                path: 'tasksCategory',
+                model: 'taskCategories',
+                select: query.taskCategoriesfields
             }]
-        }) */
-        .populate('individualTasker', query.individualTaskerFields)
+        })
+        
         
         
         
@@ -153,7 +166,7 @@ module.exports = {
             populate: [{
                 path: 'task',
                 model: 'tasks',
-                //select: query.taskfields
+                select: query.taskfields
             },
             {
                 path: 'feedbackby',
@@ -165,27 +178,27 @@ module.exports = {
         .populate({
             path: 'taskerCompany',
             select: query.taskerCompanyFields,
-            populate: [/* {
+            populate: [{
                 path: 'industries',
                 model: 'industries',
-                //select: query.industriesfields
-            }, */
+                select: query.industriesfields
+            },
             {
                 path: 'tasksCategory',
                 model: 'taskCategories',
-                //select: query.taskCategoriesfields
+                select: query.taskCategoriesfields
             }]
         })
-        /* .populate({
+        .populate({
             path: 'individualTasker',
             select: query.individualTaskerFields,
             populate: [{
                 path: 'assessmentAttempts',
                 model: 'assessmentAttempts',
-                //select: query.assessmentAttemptsfields
+                select: query.assessmentAttemptsfields
             }]
-        }) */
-        .populate('individualTasker', query.individualTaskerFields)
+        })
+        /* .populate('individualTasker', query.individualTaskerFields) */
         
         return taskers;
         

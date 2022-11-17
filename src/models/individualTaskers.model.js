@@ -9,6 +9,14 @@ var individualTaskersSchema = new Schema({
         type: String,
         ref: "assessmentAttempts"
       },
+      industries: [{
+        type: String,
+        ref: "industries"
+      }],
+      tasksCategory: [{
+        type: String,
+        ref: "taskCategories"
+      }],
     active: {
         type: Boolean
     },

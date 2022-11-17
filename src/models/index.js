@@ -51,7 +51,8 @@ module.exports = {
   individualTaskers: require('./individualTaskers.model'),
   industries: require('./industries.model'),
   assessmentAttempts: require('./assessmentAttempts.model'),
-  questions: require('./questions.model')
+  questions: require('./questions.model'),
+  assessments: require('./assessments.model')
   
 
 }

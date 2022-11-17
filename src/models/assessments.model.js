@@ -1,17 +1,17 @@
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
-var assessmentAttemptsSchema = new Schema({
+var assessmentsSchema = new Schema({
+    industry: {
+        type: String,
+        ref: 'industries'
+    },
     tasker: {
         type: String,
         ref: 'taskers'
     },
-    attemptsTaken: {
-        type: Number
-    },
-    industy: {
-        type: String,
-        ref: 'industries'
+    assessmentResult: {
+        type: String
     },
     active: {
         type: Boolean,
@@ -33,4 +33,4 @@ var assessmentAttemptsSchema = new Schema({
 )
 
 
-module.exports = mongoose.model('assessmentAttempts', assessmentAttemptsSchema)
+module.exports = mongoose.model('assessments', assessmentsSchema)

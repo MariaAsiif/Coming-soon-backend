@@ -51,6 +51,7 @@ module.exports = {
   individualTaskers: require('./individualTasker.controller'),
   industries: require('./industries.controller'),
   assessmentAttempts: require('./assessmentAttempts.controller'),
-  questions: require('./questions.controller')
+  questions: require('./questions.controller'),
+  assessments: require('./assessments.controller')
 
 }

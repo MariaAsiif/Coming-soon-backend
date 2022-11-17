@@ -49,6 +49,7 @@ const taskerFeedbackRoutes = require('./taskerFeedbacks.route')
 const industriesRoutes = require('./industries.route')
 const assessmentAttemptRoutes = require('./assessmentAttempts.route')
 const questionRoutes = require('./questions.route')
+const assessmentRoutes = require('./assessments.route')
 
 
 //call appropriate routes
@@ -102,5 +103,6 @@ router.use('/taskerFeedbacks', taskerFeedbackRoutes)
 router.use('/industries', industriesRoutes)
 router.use('/assessmentAttempts', assessmentAttemptRoutes)
 router.use('/questions', questionRoutes)
+router.use('/assessments', assessmentRoutes)
 
 module.exports = router

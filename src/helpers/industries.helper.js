@@ -107,6 +107,18 @@ module.exports = {
 
     },
 
+    findIndustryByIdForAssessments: async (query) => {
+        console.log("findIndustryByIdForAssessments HelperFunction is called");
+        
+        const industry = await Industry.findOne(query.critarion)
+        
+        .populate('questions', query.questionsFields)
+        
+        return industry;
+        
+
+    },
+
     
 
 };

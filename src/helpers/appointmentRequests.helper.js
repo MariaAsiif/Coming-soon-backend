@@ -92,8 +92,7 @@ module.exports = {
     updateAppointmentRequest: async (data) => {
         console.log("updateAppointmentRequest HelperFunction is called");
         const result = await promise.all([AppointmentRequest.findOneAndUpdate({_id: data.appointmentRequestid}, data, {new: true})])
-        
-        return result; 
+        return result
                 
     },
 

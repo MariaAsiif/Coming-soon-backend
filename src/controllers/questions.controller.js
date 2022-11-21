@@ -19,6 +19,7 @@ const promise = require('bluebird')
 var async = require('async')
 
 const questionHelper = require('../helpers/questions.helper') 
+const Industry = mongoose.model('industries')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -39,7 +40,12 @@ var createQuestion = async (req, res) => {
 
         
             var result = await questionHelper.createQuestion(questionData)
-            var message = "Question created successfully"
+
+            let industry = await Industry.findById(questionData.industryid)
+            industry.questions.push(result._id)
+            await industry.save()
+
+            var message = "Question created and added to Industry successfully"
             return responseHelper.success(res, result, message)
         
 

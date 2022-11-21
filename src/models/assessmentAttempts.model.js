@@ -9,10 +9,10 @@ var assessmentAttemptsSchema = new Schema({
     attemptsTaken: {
         type: Number
     },
-    industy: {
+    assessments: [{
         type: String,
-        ref: 'industries'
-    },
+        ref: "assessments"
+    }],
     active: {
         type: Boolean,
         default: true

@@ -50,6 +50,7 @@ const industriesRoutes = require('./industries.route')
 const assessmentAttemptRoutes = require('./assessmentAttempts.route')
 const questionRoutes = require('./questions.route')
 const assessmentRoutes = require('./assessments.route')
+const uploadRoutes = require('./uploads.route')
 
 
 //call appropriate routes
@@ -104,5 +105,6 @@ router.use('/industries', industriesRoutes)
 router.use('/assessmentAttempts', assessmentAttemptRoutes)
 router.use('/questions', questionRoutes)
 router.use('/assessments', assessmentRoutes)
+router.use('/uploads', uploadRoutes)
 
 module.exports = router

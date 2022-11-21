@@ -40,6 +40,8 @@ module.exports = {
   medicinePrescriptions: require('./medicinePrescriptions.controller'),
   testPrescriptions: require('./testPrescriptions.controller'),
 
+  //MIsc
+  uploads: require('./uploads.controller'),
   //DAS
   tasks: require('./tasks.controller'),
   taskCategories: require('./taskCategories.controller'),
@@ -53,5 +55,7 @@ module.exports = {
   assessmentAttempts: require('./assessmentAttempts.controller'),
   questions: require('./questions.controller'),
   assessments: require('./assessments.controller')
+
+  
 
 }

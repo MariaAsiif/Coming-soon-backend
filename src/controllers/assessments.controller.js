@@ -20,6 +20,7 @@ var async = require('async')
 
 
 const assessmentHelper = require('../helpers/assessments.helper')
+const AssessmentAttempt = mongoose.model('assessmentAttempts')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -39,9 +40,14 @@ var createAssessment = async (req, res) => {
         assessmentData.addedby = req.token_decoded.d
 
         
-            var result = await assessmentHelper.createAssessment(assessmentData)
+            var newAssessment = await assessmentHelper.createAssessment(assessmentData)
+
+            let assmntAtmpt = await AssessmentAttempt.findById(assessmentData.assessmentAttemptId)
+            assmntAtmpt.assessments.push(newAssessment._id)
+            await assmntAtmpt.save()
+
             var message = "Assessment created successfully"
-            return responseHelper.success(res, result, message)
+            return responseHelper.success(res, newAssessment, message)
         
 
     } catch (err) {

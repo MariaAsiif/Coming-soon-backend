@@ -21,6 +21,9 @@ var async = require('async')
 const assessmentAttemptHelper = require('../helpers/assessmentAttempts.helper')
 const industryHelper = require('../helpers/industries.helper')
 const Industry = mongoose.model('industries')
+const Tasker = mongoose.model('taskers')
+const IndividualTasker = mongoose.model('individualTaskers')
+const TaskerCompany = mongoose.model('taskerCompanies')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -36,24 +39,23 @@ var createAssessmentAttempt = async (req, res) => {
     console.log('createAssessmentAttempt')
     try {
         var assessmentAttemptData = req.body
-        var role = req.token_decoded.r
+        
         assessmentAttemptData.addedby = req.token_decoded.d
 
         let { industries } = assessmentAttemptData
         let fetchedIndustries = []
         for (let ind of industries) {
-            ind.critarion = { "active": true }
-            ind.questionsFields = "questionText answers marks"
-            console.log(ind)
-            let inds = await industryHelper.findIndustryByIdForAssessments(ind)
+            //console.log(ind)
+            let query = {}
+            query.critarion = { "_id": ind }
+            query.questionsFields = "questionText answers marks"
+            let inds = await industryHelper.findIndustryByIdForAssessments(query)
+            console.log(inds._id)
             fetchedIndustries.push(inds)
         }
 
-        
-
         fetchedIndustries.map(ind => {
-            //let { questions } = ind
-            
+
             const nums = new Set();
             while (nums.size !== 10) {
                 nums.add(Math.floor(Math.random() * ind.questions.length));
@@ -61,29 +63,36 @@ var createAssessmentAttempt = async (req, res) => {
 
             let finalquestions = []
             let newnums = [...nums]
-            console.log('nums ' + newnums)
+
             for (let index of newnums) {
                 console.log(index)
                 finalquestions.push(ind.questions[index])
             }
 
-            /* for(var i = 0; i< finalquestions.length; i++){
-                console.log(finalquestions[i].questionText)
-            } */
+
             ind.questions = finalquestions
         })
 
-        /* const nums = new Set();
-while(nums.size !== 8) {
-  nums.add(Math.floor(Math.random() * 100) + 1);
-}
 
-console.log([...nums]) */
+        var newAssessmentAttempt = await assessmentAttemptHelper.createAssessmentAttempt(assessmentAttemptData)
+        let existingTasker = await Tasker.findById(assessmentAttemptData.tasker)
+        let extTsk = existingTasker.toObject()
 
-        //console.log(arr)
-        //var result = await assessmentAttemptHelper.createAssessmentAttempt(assessmentAttemptData)
+        if(extTsk.isIndividual){
+          let extIndTskr = await  IndividualTasker.findById(extTsk)
+          extIndTskr.assessmentAttempts.push(newAssessmentAttempt._id)
+            
+        }else {
+            let extTskrCmpny = await  TaskerCompany.findById(extTsk)
+          extTskrCmpny.assessmentAttempts.push(newAssessmentAttempt._id)
+        }
+
+        let resultSet = {
+            industries: fetchedIndustries,
+            assessmentAttemptId: result._id
+        }
         var message = "AssessmentAttempt created successfully"
-        return responseHelper.success(res, fetchedIndustries, message)
+        return responseHelper.success(res, resultSet, message)
 
 
     } catch (err) {

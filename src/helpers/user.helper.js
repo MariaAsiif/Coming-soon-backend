@@ -238,7 +238,7 @@ module.exports = {
         console.log("getToken HelperFunction is called")
         let userrole = '_a'
         switch(user.role) {
-            case 'subscriber':
+            /* case 'subscriber':
                 userrole = '_ss'
               break
             case 'jobapplicant':
@@ -251,7 +251,69 @@ module.exports = {
                 userrole = '_doc'
               break
             default:
-                userrole = '_a'
+                userrole = '_a' */
+                case 'subscriber':
+                    userrole = '_ss'
+                    break
+                case 'jobapplicant':
+                    userrole = '_ja'
+                    break
+                case 'hr':
+                    userrole = '_hr'
+                    break
+                case 'interviewer':
+                    userrole = '_intrvr'
+                    break
+                case 'itsales':
+                    userrole = 'itsl'
+                    break
+                case 'botonist':
+                    userrole = '_btnst'
+                    break
+                case 'marketing':
+                    userrole = '_mrkt'
+                    break
+                case 'businessdevelopment':
+                    userrole = '_bsndev'
+                    break
+                case 'businessdevelopment':
+                    userrole = '_bsndev'
+                    break
+                case 'doctor':
+                    userrole = '_doc'
+                    break
+                case 'lawyer':
+                    userrole = '_lwr'
+                    break
+                case 'chemist':
+                    userrole = '_chmst'
+                    break
+                case 'chemist':
+                    userrole = '_chmst'
+                    break
+                case 'pharmacist':
+                    userrole = '_phrmst'
+                    break
+                case 'vendor':
+                    userrole = '_vndr'
+                    break
+                case 'agriculturescientist':
+                    userrole = '_agr'
+                    break
+                case 'customersupport':
+                    userrole = '_cstsprt'
+                    break
+                case 'customer':
+                    userrole = '_cst'
+                    break
+                case 'individualtasker':
+                    userrole = '_indvtskr'
+                    break
+                case 'companytasker':
+                    userrole = '_cmpntskr'
+                    break
+                default:
+                    userrole = '_a'
           }
         var jwt = require('jsonwebtoken')
         var token = jwt.sign({

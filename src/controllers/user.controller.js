@@ -160,6 +160,7 @@ var signup = async (req, res) => {
                 
                 userandtoken = await userHelper.updateUser(userData)
 
+                
                 if(userData.role === "individualtasker"){
 
                     let indTask = await individualTaskerHelper.createIndividualTasker(userData)
@@ -167,20 +168,28 @@ var signup = async (req, res) => {
                     userData.user = userandtoken.user._doc._id
                     userData.individualTasker = indTask._id
 
-                    await taskerHelper.createTasker(userData)
+                    let newtsker = await taskerHelper.createTasker(userData)
+                    userandtoken.taskerid = newtsker._id
 
                 } else if(userData.role === "companytasker"){
                     let tskCompan = await taskerCompapnyHelper.createTaskerCompany(userData)
                     userData.user = userandtoken.user._doc._id
                     userData.taskerCompany = tskCompan._id
 
-                    await taskerHelper.createTasker(userData)
+                    newtsker = await taskerHelper.createTasker(userData)
+                    userandtoken.taskerid = newtsker._id
                 }
             }
         }
+
         var message = 'Successfully Signed Up User';
         var responseData = userandtoken.user._doc;
         responseData.new_user = new_user;
+
+        if(userData.role === "individualtasker" || userData.role === "companytasker"){
+            responseData.taskerid = userandtoken.taskerid 
+        }
+
         responseHelper.success(res, responseData, message, userandtoken.token);
     }
     catch (err) {

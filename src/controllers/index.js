@@ -48,6 +48,7 @@ module.exports = {
   jobBids: require('./jobBids.controller'),
   taskers: require('./taskers.controller'),
   taskerSkills: require('./taskerSkills.controller'),
+  taskerSkillsList: require('./taskerSkillsList.controller'),
   taskerFeedbacks: require('./taskerfeedbacks.controller'),
   taskerCompanies: require('./taskerCompanies.controller'),
   individualTaskers: require('./individualTasker.controller'),

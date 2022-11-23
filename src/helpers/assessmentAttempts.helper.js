@@ -95,7 +95,20 @@ module.exports = {
         console.log("findAssessmentAttemptById HelperFunction is called");
         
         const assessmentAttempts = await AssessmentAttempt.findOne(query.critarion)
+        .populate('assessments')
+        .populate('addedby', query.addedby)
         
+        .populate('lastModifiedBy', query.lastModifiedBy)
+        
+        return assessmentAttempts;
+        
+
+    },
+    findAssessmentAttemptByTaskerId: async (query) => {
+        console.log("findAssessmentAttemptByTaskerId HelperFunction is called");
+        
+        const assessmentAttempts = await AssessmentAttempt.findOne(query.critarion)
+        .populate('assessments')
         .populate('addedby', query.addedby)
         
         .populate('lastModifiedBy', query.lastModifiedBy)

@@ -151,6 +151,46 @@ var findTaskerById = async (req, res) => {
     }
 }
 
+var skippedTheTest = async (req, res) => {
+    console.log("findTaskerById called")
+    try {
+        
+            var taskerData = req.body
+            var result = await taskerHelper.skippedTheTest(taskerData)
+           
+            var message = "Tasker skipped the test successfully"
+            if (result == null) {
+                message = "Tasker does not exists."
+            }
+
+
+            return responseHelper.success(res, result, message)
+        
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+var addSkillToTasker = async (req, res) => {
+    console.log("addSkillToTasker called")
+    try {
+        
+            var taskerData = req.body
+            var result = await taskerHelper.addSkillToTasker(taskerData)
+           
+            var message = "Tasker Skill added successfully"
+            if (result == null) {
+                message = "Tasker does not exists."
+            }
+
+
+            return responseHelper.success(res, result, message)
+        
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
 
 
 
@@ -162,7 +202,9 @@ module.exports = {
     getTaskersList,
     updateTasker,
     removeTasker,
-    findTaskerById
+    findTaskerById,
+    skippedTheTest,
+    addSkillToTasker
 
 }
 

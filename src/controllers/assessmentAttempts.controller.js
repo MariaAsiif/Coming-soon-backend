@@ -39,7 +39,7 @@ var createAssessmentAttempt = async (req, res) => {
     console.log('createAssessmentAttempt')
     try {
         var assessmentAttemptData = req.body
-        
+
         assessmentAttemptData.addedby = req.token_decoded.d
 
         let { industries } = assessmentAttemptData
@@ -65,7 +65,6 @@ var createAssessmentAttempt = async (req, res) => {
             let newnums = [...nums]
 
             for (let index of newnums) {
-                console.log(index)
                 finalquestions.push(ind.questions[index])
             }
 
@@ -76,20 +75,25 @@ var createAssessmentAttempt = async (req, res) => {
 
         var newAssessmentAttempt = await assessmentAttemptHelper.createAssessmentAttempt(assessmentAttemptData)
         let existingTasker = await Tasker.findById(assessmentAttemptData.tasker)
+        existingTasker.skippedTest = false
+        await existingTasker.save()
         let extTsk = existingTasker.toObject()
+        
 
-        if(extTsk.isIndividual){
-          let extIndTskr = await  IndividualTasker.findById(extTsk)
-          extIndTskr.assessmentAttempts.push(newAssessmentAttempt._id)
-            
-        }else {
-            let extTskrCmpny = await  TaskerCompany.findById(extTsk)
-          extTskrCmpny.assessmentAttempts.push(newAssessmentAttempt._id)
+        if (extTsk.isIndividual) {
+            let extIndTskr = await IndividualTasker.findById(extTsk._id)
+            extIndTskr.assessmentAttempts.push(newAssessmentAttempt._id)
+            await extIndTskr.save()
+
+        } else {
+            let extTskrCmpny = await TaskerCompany.findById(extTsk._id)
+            extTskrCmpny.assessmentAttempts.push(newAssessmentAttempt._id)
+            await extTskrCmpny.save()
         }
 
         let resultSet = {
             industries: fetchedIndustries,
-            assessmentAttemptId: result._id
+            assessmentAttemptId: newAssessmentAttempt._id
         }
         var message = "AssessmentAttempt created successfully"
         return responseHelper.success(res, resultSet, message)
@@ -189,7 +193,28 @@ var findAssessmentAttemptById = async (req, res) => {
         var assessmentAttemptData = req.body
 
         var result = await assessmentAttemptHelper.findAssessmentAttemptById(assessmentAttemptData)
-        console.log(result)
+        var message = "AssessmentAttempt find successfully"
+        if (result == null) {
+            message = "AssessmentAttempt does not exists."
+        }
+
+
+        return responseHelper.success(res, result, message)
+
+    } catch (err) {
+        responseHelper.requestfailure(res, err)
+    }
+}
+
+var findAssessmentAttemptByTaskerId = async (req, res) => {
+    console.log("findAssessmentAttemptById called")
+    try {
+        var role = req.token_decoded.r
+
+
+        var assessmentAttemptData = req.body
+
+        var result = await assessmentAttemptHelper.findAssessmentAttemptByTaskerId(assessmentAttemptData)
         var message = "AssessmentAttempt find successfully"
         if (result == null) {
             message = "AssessmentAttempt does not exists."
@@ -214,7 +239,8 @@ module.exports = {
     getAssessmentAttemptsList,
     updateAssessmentAttempt,
     removeAssessmentAttempt,
-    findAssessmentAttemptById
+    findAssessmentAttemptById,
+    findAssessmentAttemptByTaskerId
 
 }
 

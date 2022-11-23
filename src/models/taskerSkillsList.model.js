@@ -1,24 +1,11 @@
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
-var taskerSkills = new Schema({
+var taskerSkillsListSchema = new Schema({
     skillname: {
         type: String
     },
-    testPassed: {
-        type: Boolean
-    },
-    testPassedOn: {
-        type: Date
-    },
-    industry: {
-        type: String,
-        ref: 'industries'
-    },
-    taskerSkillsList: {
-        type: String,
-        ref: 'taskerSkillsList'
-    },
+    
     active: {
         type: Boolean,
         default: true
@@ -40,4 +27,4 @@ var taskerSkills = new Schema({
 )
 
 
-module.exports = mongoose.model('taskerSkills', taskerSkills);
+module.exports = mongoose.model('taskerSkillsList', taskerSkillsListSchema);

@@ -5,10 +5,10 @@ var individualTaskersSchema = new Schema({
     aboutMe: {
         type: String
       },
-      assessmentAttempts: {
+      assessmentAttempts: [{
         type: String,
         ref: "assessmentAttempts"
-      },
+      }],
       industries: [{
         type: String,
         ref: "industries"

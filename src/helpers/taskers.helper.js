@@ -205,6 +205,30 @@ module.exports = {
 
     },
 
+    skippedTheTest: async (query) => {
+        console.log("findTaskerById HelperFunction is called");
+        
+        const tasker = await Tasker.findOne(query.critarion)
+        tasker.skippedTest = true
+        let result = await tasker.save()
+        
+        return result
+        
+
+    },
+
+    addSkillToTasker: async (query) => {
+        console.log("findTaskerById HelperFunction is called");
+        
+        const tasker = await Tasker.findOne(query.critarion)
+        tasker.taskerSkills.push(query.skillId)
+        let result = await tasker.save()
+        
+        return result
+        
+
+    },
+
     
 
 };

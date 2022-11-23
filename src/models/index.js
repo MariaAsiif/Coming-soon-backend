@@ -52,7 +52,8 @@ module.exports = {
   industries: require('./industries.model'),
   assessmentAttempts: require('./assessmentAttempts.model'),
   questions: require('./questions.model'),
-  assessments: require('./assessments.model')
+  assessments: require('./assessments.model'),
+  taskerSkillsList: require('./taskerSkillsList.model')
   
 
 }

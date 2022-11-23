@@ -6,6 +6,10 @@ var taskersSchema = new Schema({
         type: String,
         ref: 'users'
     },
+    skippedTest: {
+        type: Boolean,
+        default: true
+    },
     hourlyrate: {
         type: Number
     },

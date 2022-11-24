@@ -21,6 +21,8 @@ var async = require('async')
 
 const assessmentHelper = require('../helpers/assessments.helper')
 const AssessmentAttempt = mongoose.model('assessmentAttempts')
+const TaskerSkills = mongoose.model('taskerSkills')
+const Tasker = mongoose.model('taskers')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -36,19 +38,41 @@ var createAssessment = async (req, res) => {
     console.log('createAssessment')
     try {
         var assessmentData = req.body
-        var role = req.token_decoded.r
+
         assessmentData.addedby = req.token_decoded.d
 
-        
-            var newAssessment = await assessmentHelper.createAssessment(assessmentData)
 
-            let assmntAtmpt = await AssessmentAttempt.findById(assessmentData.assessmentAttemptId)
-            assmntAtmpt.assessments.push(newAssessment._id)
-            await assmntAtmpt.save()
+        var newAssessment = await assessmentHelper.createAssessment(assessmentData)
+        if (assessmentData.passed) {
+            const { tasker, industry } = assessmentData
+            let exstTasker = await Tasker.findById(tasker)
+            let extsTskObj = exstTasker.toObject()
+            const { taskerSkills } = extsTskObj
 
-            var message = "Assessment created successfully"
-            return responseHelper.success(res, newAssessment, message)
-        
+            for (var i = 0; i < taskerSkills.length; i++) {
+                let where = {_id: taskerSkills[i]}
+                let tskrSkill = await TaskerSkills.findOne(where)
+                let tskrSkillObj = tskrSkill.toObject()
+                                
+                if (tskrSkillObj.industry === industry) {
+                    let stDate = new Date()
+                    let passedon = stDate.toISOString()
+                    tskrSkill.testPassed = true
+                    tskrSkill.testPassedOn = passedon
+                    await tskrSkill.save()
+                    break
+                }
+            }
+        }
+
+
+        let assmntAtmpt = await AssessmentAttempt.findById(assessmentData.assessmentAttemptId)
+        assmntAtmpt.assessments.push(newAssessment._id)
+        await assmntAtmpt.save()
+
+        var message = "Assessment created successfully"
+        return responseHelper.success(res, {}, message)
+
 
     } catch (err) {
         logger.error(err)

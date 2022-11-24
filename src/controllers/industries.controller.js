@@ -19,6 +19,7 @@ const promise = require('bluebird')
 var async = require('async')
 
 const industryHelper = require('../helpers/industries.helper')
+const TaskerSkillsList = mongoose.model('taskerSkillsList')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -39,6 +40,14 @@ var createIndustry = async (req, res) => {
 
         
             var result = await industryHelper.createIndustry(industryData)
+
+            let taskerSkillsListItem = {
+                skillname: industryData.industryName,
+                industry: result._id
+            }
+
+            let newTaskerSkillsListItem = new TaskerSkillsList(taskerSkillsListItem)
+            await newTaskerSkillsListItem.save()
             var message = "Industry created successfully"
             return responseHelper.success(res, result, message)
         

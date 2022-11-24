@@ -26,7 +26,7 @@ module.exports = {
     getTaskerSkillsListWithFullDetails: async (sortProperty, sortOrder = -1, offset = 0, limit = 20, query) => {
         console.log("getTaskerSkillsList Model Function called")
 
-        const taskerSkillsList = await TaskerSkill.find(query.critarion)
+        const taskerSkillsList = await TaskerSkillsList.find(query.critarion)
 
             .populate('addedby', query.addedby)
 

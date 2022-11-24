@@ -26,8 +26,7 @@ var taskerSkills = new Schema({
     addedby: {
         type: String,
         ref: 'users'
-    }
-    ,
+    },
     lastModifiedBy: {
         type: String,
         ref: 'users'

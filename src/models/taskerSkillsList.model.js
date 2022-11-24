@@ -5,7 +5,10 @@ var taskerSkillsListSchema = new Schema({
     skillname: {
         type: String
     },
-    
+    industry: {
+        type: String,
+        ref: 'industries'
+    },
     active: {
         type: Boolean,
         default: true

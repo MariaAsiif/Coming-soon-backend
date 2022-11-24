@@ -19,6 +19,7 @@ const promise = require('bluebird')
 var async = require('async')
 
 const taskerHelper = require('../helpers/taskers.helper')
+const taskerSkillsHelper = require('../helpers/taskerSkills.helper')
 
 //helper functions
 logger = require("../helpers/logger")
@@ -176,7 +177,13 @@ var addSkillToTasker = async (req, res) => {
     try {
         
             var taskerData = req.body
-            var result = await taskerHelper.addSkillToTasker(taskerData)
+            let newSkill = await taskerSkillsHelper.createTaskerSkill(taskerData)
+
+            let query = {
+                critarion: taskerData.critarion,
+                skillId: newSkill._id 
+            }
+            var result = await taskerHelper.addSkillToTasker(query)
            
             var message = "Tasker Skill added successfully"
             if (result == null) {

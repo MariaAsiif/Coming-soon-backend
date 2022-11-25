@@ -52,6 +52,7 @@ const questionRoutes = require('./questions.route')
 const assessmentRoutes = require('./assessments.route')
 const taskerSkillsList = require('./taskerSkillsList.route')
 const faqsRoutes = require('./faqs.route')
+const tutorialRoutes = require('./tutorials.route')
 
 
 const uploadRoutes = require('./uploads.route')
@@ -111,6 +112,7 @@ router.use('/questions', questionRoutes)
 router.use('/assessments', assessmentRoutes)
 router.use('/taskerSkillsList', taskerSkillsList)
 router.use('/faqs', faqsRoutes)
+router.use('/tutorials', tutorialRoutes)
 router.use('/uploads', uploadRoutes)
 
 module.exports = router

@@ -56,7 +56,8 @@ module.exports = {
   assessmentAttempts: require('./assessmentAttempts.controller'),
   questions: require('./questions.controller'),
   assessments: require('./assessments.controller'),
-  faqs: require('./faqs.controller')
+  faqs: require('./faqs.controller'),
+  tutorials: require('./tutorials.controller')
 
   
 

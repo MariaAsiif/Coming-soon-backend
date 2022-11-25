@@ -32,6 +32,7 @@ var pageSize = parseInt(config.PAGE_SIZE)
 
 const processFile = require('../middlewares/upload')
 const processMultipleFiles = require('../middlewares/uploadmultiple')
+const processVideoTutorialFiles = require('../middlewares/uploadmultiplevideos')
 const { format } = require('util')
 const { Storage } = require('@google-cloud/storage')
 const storage = new Storage({ keyFilename: 'hporx-google-cloud-key.json' })
@@ -195,6 +196,124 @@ var deleteSingleFile = async (req, res) => {
 
 }
 
+var uploadVideoMultipleTutorials = async (req, res) => {
+  console.log("uploadVideoTutorials called")
+  try {
+      var role = req.token_decoded.r
+
+
+      var appointmentData = req.body
+      appointmentData.lastModifiedBy = req.token_decoded.d
+      
+      await processVideoTutorialFiles(req, res)
+      console.log(req.files)
+      if (!req.files || req.files.length === 0) {
+        console.log("err")
+          return res.status(400).send({ message: "Please attach atleast 1 file!" });
+      }
+      let userData = JSON.parse(req.body.request)
+      let promises = []
+
+      req.files.forEach((file) => {
+          let uploadedfile = Date.now() + '-' + file.originalname
+          const blob = bucket.file(userData.folderName+'/' +uploadedfile)
+          const newPromise =  new Promise((resolve, reject) => {
+              blob.createWriteStream({
+                  metadata: { contentType: file.mimetype }
+                }).on('finish', async response => {
+                  const Url = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+                  await blob.makePublic()
+                  //resolve(response)
+                  resolve({ name: userData.folderName+'/' +uploadedfile, url: Url });
+                }).on('error', err => {
+                  reject('upload error: ', err)
+                }).end(file.buffer)
+              }) //end promise
+             promises.push(newPromise)
+          
+      }) //end foreach
+
+      Promise
+      .all(promises)
+      .then((response) => {
+          // the response I get here is [undefined, undefined]
+          res.status(200).send(response)
+      })//.catch(err => console.log(err))
+
+
+  } catch (err) {
+      
+      let message = ''
+      if (err.code == "LIMIT_FILE_SIZE") {
+          message = "File size cannot be larger than 35 MB!"
+      } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+          message = "Only 5 files can be uploaded"
+      }
+
+      responseHelper.requestfailure(res, message, err)
+  }
+
+
+}
+
+var uploadVideoTutorial = async (req, res) => {
+  console.log("uploadVideoTutorial called")
+  try {
+      var role = req.token_decoded.r
+
+
+      var appointmentData = req.body
+      appointmentData.lastModifiedBy = req.token_decoded.d
+      
+      await processVideoTutorialFiles(req, res)
+        if (!req.file) {
+            return res.status(400).send({ message: "Please upload a file!" });
+        }
+        let userData = JSON.parse(req.body.request)
+        let promises = []
+
+        
+            let uploadedfile = Date.now() + '-' + req.file.originalname
+            const blob = bucket.file(userData.folderName+'/' +uploadedfile)
+            const newPromise =  new Promise((resolve, reject) => {
+                blob.createWriteStream({
+                    metadata: { contentType: req.file.mimetype }
+                  }).on('finish', async response => {
+                    const Url = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+                    await blob.makePublic()
+                    //resolve(response)
+                    resolve({ name: userData.folderName+'/' +uploadedfile, url: Url });
+                  }).on('error', err => {
+                    reject('upload error: ', err)
+                  }).end(req.file.buffer)
+                }) //end promise
+               promises.push(newPromise)
+            
+        
+
+        Promise
+        .all(promises)
+        .then((response) => {
+            
+            res.status(200).send(response)
+        })
+
+
+  } catch (err) {
+      
+      let message = ''
+      if (err.code == "LIMIT_FILE_SIZE") {
+          message = "File size cannot be larger than 35 MB!"
+      } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+          message = "Only 1 file can be uploaded"
+      }
+
+      responseHelper.requestfailure(res, message, err)
+  }
+
+
+}
+
 
 
 
@@ -202,7 +321,8 @@ var deleteSingleFile = async (req, res) => {
 
 module.exports = {
     uploadSingleFile,
-    deleteSingleFile
+    deleteSingleFile,
+    uploadVideoTutorial
 
 
 }

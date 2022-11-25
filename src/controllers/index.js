@@ -55,7 +55,8 @@ module.exports = {
   industries: require('./industries.controller'),
   assessmentAttempts: require('./assessmentAttempts.controller'),
   questions: require('./questions.controller'),
-  assessments: require('./assessments.controller')
+  assessments: require('./assessments.controller'),
+  faqs: require('./faqs.controller')
 
   
 

@@ -53,7 +53,8 @@ module.exports = {
   assessmentAttempts: require('./assessmentAttempts.model'),
   questions: require('./questions.model'),
   assessments: require('./assessments.model'),
-  taskerSkillsList: require('./taskerSkillsList.model')
+  taskerSkillsList: require('./taskerSkillsList.model'),
+  faqs: require('./faqs.model')
   
 
 }

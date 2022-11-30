@@ -81,7 +81,7 @@ var signup = async (req, res) => {
     try {
         var userData = req.body;
         userData.ipAddress = ip
-        if (locationData != null) { userData.country = locationData.country }
+        if (locationDajta != null) { userData.country = locationData.country }
 
         //console.log(userData);
         if (userData._id) {
@@ -138,6 +138,7 @@ var signup = async (req, res) => {
 
                 let randomize = require('randomatic');
                 userData.verification_code = randomize('0', 4, {});
+                userData.approved = "approved"
                 let newUser = new User(userData);
                 await newUser.save();
                 newUser.setPassword(password);
@@ -508,7 +509,8 @@ var jobapplicantsignup = async (req, res) => {
 
                     let randomize = require('randomatic');
                     userData.verification_code = randomize('0', 4, {});
-                    userData.approved = false
+
+                    userData.approved = "approved"
                     userData.active = false
                     let newUser = new User(userData);
                     await newUser.save();

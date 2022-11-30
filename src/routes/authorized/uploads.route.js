@@ -11,6 +11,7 @@ const controller = require('../../controllers').uploads
 router.post('/uploadSingleFile', permit(['_a']), controller.uploadSingleFile)
 router.post('/deleteSingleFile', permit(['_a']), controller.deleteSingleFile)
 router.post('/uploadVideoTutorial', permit(['_a']), controller.uploadVideoTutorial)
+router.post('/uploadUserDp', permit(['_a']), controller.uploadUserDp)
 
 
 

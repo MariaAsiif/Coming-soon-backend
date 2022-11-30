@@ -81,7 +81,7 @@ var signup = async (req, res) => {
     try {
         var userData = req.body;
         userData.ipAddress = ip
-        if (locationDajta != null) { userData.country = locationData.country }
+        if (locationData != null) { userData.country = locationData.country }
 
         //console.log(userData);
         if (userData._id) {

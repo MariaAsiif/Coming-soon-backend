@@ -1517,7 +1517,7 @@ module.exports = {
     passwordLessLogin,
     verifyToken,
     sendVerificationEmail,
-    
+        
 
 };
 

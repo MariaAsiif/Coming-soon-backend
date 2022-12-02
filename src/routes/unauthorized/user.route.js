@@ -17,4 +17,5 @@ router.post('/sendVerificationEmail', controller.sendVerificationEmail)
 router.get('/as', controller.AS)
 router.post('/jobapplicantsignup', controller.jobapplicantsignup)
 
+
 module.exports = router;

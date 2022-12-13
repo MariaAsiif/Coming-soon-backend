@@ -55,7 +55,8 @@ module.exports = {
   assessments: require('./assessments.model'),
   taskerSkillsList: require('./taskerSkillsList.model'),
   faqs: require('./faqs.model'),
-  tutorials: require('./tutorials.model')
+  tutorials: require('./tutorials.model'),
+  productsOfStore: require('./productsOfStore.model')
   
 
 }

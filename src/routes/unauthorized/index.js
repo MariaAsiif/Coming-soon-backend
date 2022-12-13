@@ -16,6 +16,7 @@ const termsRoutes = require('./termsconditions.route')
 const rolesRoutes = require('./roles.route')
 const productsRoutes = require('./products.route')
 const lexiconRoutes = require('./lexicon.route')
+const productsOfStoreRoutes = require('./productsOfStore.route')
 
 
 //call appropriate routes
@@ -33,6 +34,7 @@ router.use ('/terms', termsRoutes)
 router.use ('/roles', rolesRoutes)
 router.use('/productspublic', productsRoutes)
 router.use('/lexiconpublic', lexiconRoutes)
+router.use('/productsOfStore', productsOfStoreRoutes)
 
 
 module.exports = router;

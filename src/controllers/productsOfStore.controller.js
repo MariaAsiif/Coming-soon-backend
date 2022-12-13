@@ -38,7 +38,7 @@ var createProductsOfStore = async (req, res) => {
         var role = req.token_decoded.r
         productsOfStoreData.addedby = req.token_decoded.d
         var result
-        let allproducts = [
+        /* let allproducts = [
             {
               "nameofProduct": "Hemp Webbing Belt ",
               "category": "Clothing",
@@ -1731,8 +1731,13 @@ var createProductsOfStore = async (req, res) => {
 
             store.products.push(result._id)
             await store.save()
-           } //end for
+           } //end for */
                 
+           var result = await productsOfStoreHelper.createProductsOfStore(productsOfStoreData)
+           let store = await Store.findById(productsOfStoreData.storeid)
+
+           store.products.push(result._id)
+           await store.save()
             
             var message = "Product created successfully"
             return responseHelper.success(res, result, message)

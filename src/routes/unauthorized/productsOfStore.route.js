@@ -12,6 +12,7 @@ const controller = require('../../controllers').productsOfStore
 router.post('/getProductsWithFullDetailsPublic', controller.getProductsOfStoresWithFullDetails)
 
 router.post('/getProductsListPublic', controller.getProductsOfStoresList)
+router.post('/findProductsOfStoreById', controller.findProductsOfStoreById)
 
 
 

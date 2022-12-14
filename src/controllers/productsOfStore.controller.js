@@ -1831,8 +1831,7 @@ var removeProductsOfStore = async (req, res) => {
 var findProductsOfStoreById = async (req, res) => {
     console.log("findProductsOfStoreById called")
     try {
-        var role = req.token_decoded.r
-
+       
         
             var productsOfStoreData = req.body
 

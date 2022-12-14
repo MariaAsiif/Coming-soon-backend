@@ -54,6 +54,7 @@ const taskerSkillsList = require('./taskerSkillsList.route')
 const faqsRoutes = require('./faqs.route')
 const tutorialRoutes = require('./tutorials.route')
 const productsOfStoreRoutes = require('./productsOfStore.route')
+const productsWishListRoutes = require('./productsWishList.route')
 
 
 const uploadRoutes = require('./uploads.route')
@@ -115,6 +116,7 @@ router.use('/taskerSkillsList', taskerSkillsList)
 router.use('/faqs', faqsRoutes)
 router.use('/tutorials', tutorialRoutes)
 router.use('/productsOfStore', productsOfStoreRoutes)
+router.use('/productsWishList', productsWishListRoutes)
 router.use('/uploads', uploadRoutes)
 
 module.exports = router

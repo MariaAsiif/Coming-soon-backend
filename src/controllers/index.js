@@ -27,6 +27,7 @@ module.exports = {
   productCategories: require('./productCategories.controller'),
   products: require('./products.controller'),
   productsOfStore: require('./productsOfStore.controller'),
+  productsWishLists: require('./productsWishList.controller'),
   variants: require('./variants.controller'),
   productAttributes: require('./productAttributes.controller'),
   customers: require('./customers.controller'),

@@ -56,7 +56,8 @@ module.exports = {
   taskerSkillsList: require('./taskerSkillsList.model'),
   faqs: require('./faqs.model'),
   tutorials: require('./tutorials.model'),
-  productsOfStore: require('./productsOfStore.model')
+  productsOfStore: require('./productsOfStore.model'),
+  productsWishLists: require('./productsWishList.model')
   
 
 }

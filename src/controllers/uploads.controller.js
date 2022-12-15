@@ -395,7 +395,7 @@ var uploadProductImgs = async (req, res) => {
       if (!req.file) {
           return res.status(400).send({ message: "Please upload a file!" });
       }
-      let userData = JSON.parse(req.body.request)
+      //let userData = JSON.parse(req.body.request)
       let promises = []
 
       

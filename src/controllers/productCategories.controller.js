@@ -55,13 +55,14 @@ var createCategory = async (req, res) => {
 
 
 var getCategories = async (req, res) => {
-  console.log("getCategories called");
+  console.log("getCategories new called");
   var categoryData = req.body;
-
+console.log(categoryData
+  )
 
   try {
 
-    var categories = await productCategoryHelper.getCategories(categoryData.sortproperty, categoryData.sortorder, categoryData.offset, categoryData.limit);
+    var categories = await productCategoryHelper.getCategories(categoryData.sortproperty, categoryData.sortorder, categoryData.offset, categoryData.limit, categoryData.query);
 
     var message = 'Successfully loaded';
 

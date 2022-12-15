@@ -26,9 +26,12 @@ module.exports = {
         return category;
         
     },
-    getCategories: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000) => {
+    getCategories: async (sortProperty, sortOrder = -1, offset = 0, limit = 100000, query) => {
         console.log("getCategories Model Function called")
-        const categories = await Category.find()
+        const categories = await Category.find(query.critarion)
+        .populate('addedby', query.addedby)
+        
+        .populate('lastModifiedBy', query.lastModifiedBy)
         .sort({ [sortProperty]: sortOrder })
         .skip(offset)
         .limit(limit);

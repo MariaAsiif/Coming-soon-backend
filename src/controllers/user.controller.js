@@ -1484,6 +1484,52 @@ var sendVerificationEmail = async (req, res) => {
 
 }; //end
 
+var ageVerificationEmail = async (req, res) => {
+    console.log("request received for ageVerificationEmail");
+
+    try {
+        let userData = req.body
+
+        var birthday = userData.dateOfBirth//'1994-01-01';
+var dateObj = new Date(birthday);
+var diffTime = Date.now() - dateObj.getTime();
+var diffAge = new Date(diffTime);
+var age = diffAge.getFullYear() - 1970;
+if(age < 21 ){
+    //do whatever here
+    responseHelper.requestfailure(res, "Age is below 21 years!")
+} else {
+    
+
+
+        let randomize = require('randomatic');
+    let verification_code = randomize('0', 4, {});
+    
+    
+        res.mailer.send('emails/verification-code.html', {
+            verification_code: verification_code,
+            title: userData.name,
+            to: userData.email, 
+            subject: 'Verification Code',
+        }, async (err) => {
+            if (err) {
+                return console.error("Email could not sent: ", err)
+                //responseHelper.requestfailure(res, err)
+            }
+        });
+
+        let message = "Verification OTP is sent to your email address";
+        return responseHelper.success(res, {verification_code}, message);
+    }
+       
+    } catch (err) {
+        responseHelper.requestfailure(res, err);
+    }
+
+    
+
+}; //end
+
 
 
 
@@ -1517,6 +1563,7 @@ module.exports = {
     passwordLessLogin,
     verifyToken,
     sendVerificationEmail,
+    ageVerificationEmail
         
 
 };

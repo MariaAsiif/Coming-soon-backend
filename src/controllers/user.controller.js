@@ -1362,10 +1362,6 @@ var verifyToken = async (req, res) => {
     try {
         var token = req.token_decoded
 
-        console.log('token')
-        console.log(token)
-        console.log(req.originalToken)
-
         let user = await User.findById(token.d)
             .populate({
                 path: 'rolePrivileges',
@@ -1489,44 +1485,50 @@ var ageVerificationEmail = async (req, res) => {
 
     try {
         let userData = req.body
+        var userId = req.token_decoded.d
+
 
         var birthday = userData.dateOfBirth//'1994-01-01';
-var dateObj = new Date(birthday);
-var diffTime = Date.now() - dateObj.getTime();
-var diffAge = new Date(diffTime);
-var age = diffAge.getFullYear() - 1970;
-if(age < 21 ){
-    //do whatever here
-    responseHelper.requestfailure(res, "Age is below 21 years!")
-} else {
-    
+        var dateObj = new Date(birthday);
+        var diffTime = Date.now() - dateObj.getTime();
+        var diffAge = new Date(diffTime);
+        var age = diffAge.getFullYear() - 1970;
+        if (age < 21) {
+            
+            responseHelper.requestfailure(res, "Age is below 21 years!")
+        } else {
+
+            
+        let user = await User.findById(userId)
+        user.ageGateVerified = true
+        await user.save()
 
 
-        let randomize = require('randomatic');
-    let verification_code = randomize('0', 4, {});
-    
-    
-        res.mailer.send('emails/verification-code.html', {
-            verification_code: verification_code,
-            title: userData.name,
-            to: userData.email, 
-            subject: 'Verification Code',
-        }, async (err) => {
-            if (err) {
-                return console.error("Email could not sent: ", err)
-                //responseHelper.requestfailure(res, err)
-            }
-        });
 
-        let message = "Verification OTP is sent to your email address";
-        return responseHelper.success(res, {verification_code}, message);
-    }
-       
+            let randomize = require('randomatic');
+            let verification_code = randomize('0', 4, {});
+
+
+            res.mailer.send('emails/verification-code.html', {
+                verification_code: verification_code,
+                title: userData.name,
+                to: userData.email,
+                subject: 'Verification Code',
+            }, async (err) => {
+                if (err) {
+                    return console.error("Email could not sent: ", err)
+                    }
+            });
+
+            let message = "Verification OTP is sent to your email address";
+            return responseHelper.success(res, { verification_code }, message);
+        }
+
     } catch (err) {
         responseHelper.requestfailure(res, err);
     }
 
-    
+
 
 }; //end
 

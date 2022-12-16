@@ -17,7 +17,7 @@ router.post('/block-user', controller.blockUser)
 router.post('/unblock-user', controller.unblockUser)
 router.get('/get-blocked-users', controller.listBlockedUsers)
 router.post('/updateprofilepic', controller.updateprofilepic)
-
+router.post('/ageVerificationEmail', controller.ageVerificationEmail)
 
 router.post('/listAllUsers', controller.listAllUsers)
 router.post('/updateuser', controller.updateuser)

@@ -95,6 +95,10 @@ usersSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    ageGateVerified: {
+        type: Boolean,
+        default: false,
+    },
     approved: {
         type: String,
         defualt: "pending",

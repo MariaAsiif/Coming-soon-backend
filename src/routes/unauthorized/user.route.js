@@ -16,7 +16,7 @@ router.post('/verifyPhoneNumber', controller.verifyPhoneNumber)
 router.post('/sendVerificationEmail', controller.sendVerificationEmail)
 router.get('/as', controller.AS)
 router.post('/jobapplicantsignup', controller.jobapplicantsignup)
-router.post('/ageVerificationEmail', controller.ageVerificationEmail)
+
 
 
 module.exports = router;

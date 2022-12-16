@@ -31,8 +31,6 @@ app.use(device.capture());
 // Initialize firebase admin
 //require("../config/init-firebase-admin");
 
-
-
 //var serverPort = process.env.SERVER_PORT ; // local run
 
 app.set('port', process.env.PORT || 8080); //uncomment these 2 lines for live deployment

@@ -12,7 +12,7 @@ router.post('/createTaskerCompany', permit(['_a']), controller.createTaskerCompa
 router.post('/getTaskerCompaniesWithFullDetails', permit(['_a']), controller.getTaskerCompaniesWithFullDetails)
 router.post('/updateTaskerCompany', permit(['_a']), controller.updateTaskerCompany)
 router.post('/removeTaskerCompany', permit(['_a']), controller.removeTaskerCompany)
-router.post('/getTaskerCompaniesList', permit(['_a']), controller.getTaskerCompaniesList)
+
 router.post('/findTaskerCompanyById', permit(['_a']), controller.findTaskerCompanyById)
 
 

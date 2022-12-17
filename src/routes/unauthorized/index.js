@@ -17,6 +17,9 @@ const rolesRoutes = require('./roles.route')
 const productsRoutes = require('./products.route')
 const lexiconRoutes = require('./lexicon.route')
 const productsOfStoreRoutes = require('./productsOfStore.route')
+const taskerCompanyRoutes = require('./taskerCompanies.route')
+const taskerCategoryRoutes = require('./taskCategories.route')
+const uploadRoutes = require('./uploads.route')
 
 
 //call appropriate routes
@@ -35,6 +38,9 @@ router.use ('/roles', rolesRoutes)
 router.use('/productspublic', productsRoutes)
 router.use('/lexiconpublic', lexiconRoutes)
 router.use('/productsOfStore', productsOfStoreRoutes)
+router.use('/taskerCompanies', taskerCompanyRoutes)
+router.use('/taskCategories', taskerCategoryRoutes)
+router.use('/uploads', uploadRoutes)
 
 
 module.exports = router;

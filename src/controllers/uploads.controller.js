@@ -410,6 +410,8 @@ var uploadProductImgs = async (req, res) => {
                   //resolve(response)
                   resolve({ name: uploadedfile, url: Url });
                 }).on('error', err => {
+                  console.log('error in promise')
+                  console.log(err)
                   reject('upload error: ', err)
                 }).end(req.file.buffer)
               }) //end promise

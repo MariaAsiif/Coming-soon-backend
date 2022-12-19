@@ -9,6 +9,7 @@ const router = express.Router()
 const controller = require('../../controllers').uploads
 
 router.post('/uploadSingleFilePublic', controller.uploadSingleFilePublic)
+router.post('/uploadCompanyLogoFile', controller.uploadCompanyLogoFile)
 
 
 

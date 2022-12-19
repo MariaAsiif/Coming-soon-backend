@@ -447,6 +447,68 @@ var uploadProductImgs = async (req, res) => {
 
 }
 
+var uploadCompanyLogoFile = async (req, res) => {
+  console.log("uploadCompanyLogoFile called")
+  try {
+      var role = req.token_decoded.r
+      const compLogoBucket = storage.bucket("dascompanylogos")
+
+      
+      await processFile(req, res)
+      if (!req.file) {
+          return res.status(400).send({ message: "Please upload a file!" });
+      }
+      
+      let promises = []
+      
+          let uploadedfile = Date.now() + '-' + req.file.originalname
+          const blob = compLogoBucket.file(uploadedfile)
+          const newPromise =  new Promise((resolve, reject) => {
+              blob.createWriteStream({
+                  metadata: { contentType: req.file.mimetype }
+                }).on('finish', async response => {
+                  const Url = `https://storage.googleapis.com/${compLogoBucket.name}/${blob.name}`
+                  await blob.makePublic()
+                  //resolve(response)
+                  resolve({ name: uploadedfile, url: Url });
+                }).on('error', err => {
+                  console.log('error in promise')
+                  console.log(err)
+                  reject('upload error: ', err)
+                }).end(req.file.buffer)
+              }) //end promise
+             promises.push(newPromise)
+          
+      
+
+      Promise
+      .all(promises)
+      .then((response) => {
+          
+          res.status(200).send(response)
+      }).catch(err => {
+
+        console.log('reject')
+        console.log(err)
+
+      })
+
+
+  } catch (err) {
+      console.log(err)
+      let message = ''
+      if (err.code == "LIMIT_FILE_SIZE") {
+          message = "File size cannot be larger than 2MB!"
+      } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+          message = "Only 1 file can be uploaded"
+      }
+
+      responseHelper.requestfailure(res, message, err)
+  }
+
+
+}
+
 var uploadSingleFilePublic = async (req, res) => {
   console.log("uploadFileToGoogleCloud called")
   try {
@@ -517,9 +579,8 @@ module.exports = {
     uploadVideoTutorial,
     uploadUserDp,
     uploadProductImgs,
-    uploadSingleFilePublic
-
-
+    uploadSingleFilePublic,
+    uploadCompanyLogoFile
 }
 
 
